@@ -1,0 +1,61 @@
+name: Deploy GitHub Pages
+
+on:
+  push:
+    branches: [main, dev]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          path: main-branch
+
+      - name: Checkout dev
+        uses: actions/checkout@v4
+        with:
+          ref: dev
+          path: dev-branch
+
+      - name: Assemble site
+        run: |
+          mkdir -p site/dev
+          # Main branch → root
+          cp main-branch/dashboard_hogares_sisben.html site/
+          cp main-branch/index.html site/
+          # Dev branch → /dev subfolder
+          cp dev-branch/dashboard_hogares_sisben.html site/dev/
+          # Simple index for /dev/ that redirects to the dashboard
+          cat > site/dev/index.html << 'EOF'
+          <!DOCTYPE html>
+          <html lang="es">
+          <head>
+            <meta charset="UTF-8">
+            <meta http-equiv="refresh" content="0; url=dashboard_hogares_sisben.html">
+            <title>Dashboard SISBEN IV + DANE — Caldas (dev)</title>
+            <style>
+              body { font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background: #1a2332; color: #fff; }
+              a { color: #4fc3f7; font-size: 1.2em; }
+            </style>
+          </head>
+          <body>
+            <p>Redirigiendo… <a href="dashboard_hogares_sisben.html">Abrir dashboard (dev)</a></p>
+          </body>
+          </html>
+          EOF
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./site
+          publish_branch: gh-pages
+          force_orphan: false
+          keep_files: false
