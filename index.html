@@ -2,14 +2,105 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="refresh" content="0; url=dashboard_hogares_sisben.html">
-  <title>Dashboard SISBEN IV — Caldas</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dinámicas Familiares — Caldas</title>
   <style>
-    body { font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background: #1a2332; color: #fff; }
-    a { color: #4fc3f7; font-size: 1.2em; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #0f1b2d;
+      color: #e2e8f0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+    .logo { font-size: 2.2rem; font-weight: 700; color: #4fc3f7; margin-bottom: 0.4rem; }
+    .subtitle { color: #94a3b8; font-size: 1rem; margin-bottom: 3rem; text-align: center; }
+    .cards {
+      display: flex;
+      gap: 2rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      max-width: 900px;
+    }
+    .card {
+      background: #1a2e45;
+      border: 1px solid #2d4a6b;
+      border-radius: 16px;
+      padding: 2rem;
+      width: 380px;
+      text-decoration: none;
+      color: inherit;
+      transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      border-color: #4fc3f7;
+      box-shadow: 0 8px 32px rgba(79,195,247,0.15);
+    }
+    .card-badge {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      padding: 0.25rem 0.65rem;
+      border-radius: 999px;
+      margin-bottom: 1rem;
+    }
+    .badge-sisben { background: #1e40af22; color: #60a5fa; border: 1px solid #1e40af; }
+    .badge-unificado { background: #065f4622; color: #34d399; border: 1px solid #065f46; }
+    .card-title { font-size: 1.25rem; font-weight: 700; margin-bottom: 0.6rem; }
+    .card-desc { font-size: 0.88rem; color: #94a3b8; line-height: 1.6; margin-bottom: 1.4rem; }
+    .card-meta { font-size: 0.8rem; color: #64748b; }
+    .card-meta span { color: #4fc3f7; }
+    .btn {
+      display: inline-block;
+      margin-top: 1.2rem;
+      padding: 0.55rem 1.2rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      background: #1e40af;
+      color: #fff;
+      transition: background 0.2s;
+    }
+    .card:hover .btn { background: #2563eb; }
+    .btn-green { background: #065f46; }
+    .card:hover .btn-green { background: #047857; }
+    footer { margin-top: 3rem; font-size: 0.78rem; color: #475569; text-align: center; }
   </style>
 </head>
 <body>
-  <p>Redirigiendo… <a href="dashboard_hogares_sisben.html">Abrir dashboard</a></p>
+  <div class="logo">📊 Dinámicas Familiares · Caldas</div>
+  <p class="subtitle">Proyecto de caracterización demográfica — Departamento de Caldas · 2026</p>
+
+  <div class="cards">
+    <a class="card" href="dashboard_hogares_sisben.html">
+      <span class="card-badge badge-sisben">SISBEN IV · 2026</span>
+      <div class="card-title">Dashboard SISBEN</div>
+      <div class="card-desc">Caracterización de hogares con datos SISBEN IV. Cross-filter interactivo por municipio, género, zona, estado civil y tipología familiar.</div>
+      <div class="card-meta">
+        <span>255,845</span> hogares · <span>605,843</span> personas · <span>27</span> municipios
+      </div>
+      <span class="btn">Abrir dashboard →</span>
+    </a>
+
+    <a class="card" href="dashboard_unificado.html">
+      <span class="card-badge badge-unificado">SISBEN + DANE · 2005 · 2018 · 2026</span>
+      <div class="card-title">Dashboard Unificado</div>
+      <div class="card-desc">Análisis longitudinal que integra Censos DANE 2005 y 2018 con SISBEN IV 2026. Permite comparar la evolución demográfica del departamento en tres cortes temporales.</div>
+      <div class="card-meta">
+        Fuentes: <span>DANE</span> · <span>SISBEN IV</span> · <span>3 cortes temporales</span>
+      </div>
+      <span class="btn btn-green">Abrir dashboard →</span>
+    </a>
+  </div>
+
+  <footer>
+    Proyecto Dinámicas Familiares Caldas · Johan Piña &amp; Santiago Barrero · 2026
+  </footer>
 </body>
 </html>
