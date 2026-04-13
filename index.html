@@ -17,7 +17,7 @@
       justify-content: center;
       padding: 2rem;
     }
-    .logo { font-size: 2.2rem; font-weight: 700; color: #4fc3f7; margin-bottom: 0.4rem; }
+    .logo { font-size: 2.2rem; font-weight: 700; color: #4fc3f7; margin-bottom: 0.4rem; text-align:center; }
     .subtitle { color: #94a3b8; font-size: 1rem; margin-bottom: 3rem; text-align: center; }
     .cards {
       display: flex;
@@ -50,11 +50,17 @@
       border-radius: 999px;
       margin-bottom: 1rem;
     }
-    .badge-sisben { background: #1e40af22; color: #60a5fa; border: 1px solid #1e40af; }
+    .badge-sisben  { background: #1e40af22; color: #60a5fa; border: 1px solid #1e40af; }
     .badge-unificado { background: #065f4622; color: #34d399; border: 1px solid #065f46; }
     .card-title { font-size: 1.25rem; font-weight: 700; margin-bottom: 0.6rem; }
-    .card-desc { font-size: 0.88rem; color: #94a3b8; line-height: 1.6; margin-bottom: 1.4rem; }
-    .card-meta { font-size: 0.8rem; color: #64748b; }
+    .card-desc { font-size: 0.88rem; color: #94a3b8; line-height: 1.6; margin-bottom: 1.2rem; }
+    .card-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1.2rem; }
+    .tag {
+      font-size: 0.72rem; padding: 0.2rem 0.55rem;
+      border-radius: 6px; background: #0f1b2d; color: #64748b; border: 1px solid #2d4a6b;
+    }
+    .tag-new { color: #fbbf24; border-color: #78350f; background: #78350f22; }
+    .card-meta { font-size: 0.8rem; color: #64748b; margin-bottom: 0.2rem; }
     .card-meta span { color: #4fc3f7; }
     .btn {
       display: inline-block;
@@ -78,25 +84,35 @@
   <p class="subtitle">Proyecto de caracterización demográfica — Departamento de Caldas · 2026</p>
 
   <div class="cards">
+
     <a class="card" href="dashboard_hogares_sisben.html">
       <span class="card-badge badge-sisben">SISBEN IV · 2026</span>
       <div class="card-title">Dashboard SISBEN</div>
       <div class="card-desc">Caracterización de hogares con datos SISBEN IV. Cross-filter interactivo por municipio, género, zona, estado civil y tipología familiar.</div>
-      <div class="card-meta">
-        <span>255,845</span> hogares · <span>605,843</span> personas · <span>27</span> municipios
+      <div class="card-tags">
+        <span class="tag">Cross-filter</span>
+        <span class="tag">27 municipios</span>
+        <span class="tag">Mapa Caldas</span>
+        <span class="tag">Composición hogar</span>
       </div>
+      <div class="card-meta"><span>255,845</span> hogares · <span>605,843</span> personas</div>
       <span class="btn">Abrir dashboard →</span>
     </a>
 
     <a class="card" href="dashboard_unificado.html">
-      <span class="card-badge badge-unificado">SISBEN + DANE · 2005 · 2018 · 2026</span>
+      <span class="card-badge badge-unificado">SISBEN + DANE + SIVIGILA</span>
       <div class="card-title">Dashboard Unificado</div>
-      <div class="card-desc">Análisis longitudinal que integra Censos DANE 2005 y 2018 con SISBEN IV 2026. Permite comparar la evolución demográfica del departamento en tres cortes temporales.</div>
-      <div class="card-meta">
-        Fuentes: <span>DANE</span> · <span>SISBEN IV</span> · <span>3 cortes temporales</span>
+      <div class="card-desc">Análisis longitudinal que integra Censos DANE 2005 y 2018, SISBEN IV 2026 y datos de Vigilancia en Salud Pública (SIVIGILA). Tres cortes temporales y perfil epidemiológico municipal.</div>
+      <div class="card-tags">
+        <span class="tag">DANE 2005 · 2018</span>
+        <span class="tag">SISBEN 2026</span>
+        <span class="tag tag-new">✦ SIVIGILA</span>
+        <span class="tag">Tipologías familiares</span>
       </div>
+      <div class="card-meta">Fuentes: <span>DANE</span> · <span>SISBEN IV</span> · <span>SIVIGILA</span></div>
       <span class="btn btn-green">Abrir dashboard →</span>
     </a>
+
   </div>
 
   <footer>
