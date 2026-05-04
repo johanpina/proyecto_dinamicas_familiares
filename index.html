@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dinámicas Familiares — Caldas</title>
+  <title>Dinámicas Familiares — Eje Cafetero</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Segoe UI', sans-serif; background: #0f1b2d; color: #e2e8f0; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2.5rem 1.5rem; }
@@ -11,43 +11,48 @@
     .subtitle { color: #94a3b8; font-size: 0.95rem; margin-bottom: 0.6rem; text-align: center; }
     .authors { color: #475569; font-size: 0.82rem; margin-bottom: 2.8rem; text-align: center; }
     .authors span { color: #64748b; }
-    .cards { display: flex; gap: 1.5rem; flex-wrap: wrap; justify-content: center; max-width: 1160px; }
-    .card { background: #1a2e45; border: 1px solid #2d4a6b; border-radius: 16px; padding: 1.75rem; width: 340px; text-decoration: none; color: inherit; display: flex; flex-direction: column; transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s; position: relative; }
+    .cards { display: flex; gap: 1.4rem; flex-wrap: wrap; justify-content: center; max-width: 1500px; }
+    .card { background: #1a2e45; border: 1px solid #2d4a6b; border-radius: 16px; padding: 1.6rem; width: 320px; text-decoration: none; color: inherit; display: flex; flex-direction: column; transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s; position: relative; }
     .card:hover { transform: translateY(-5px); border-color: #4fc3f7; box-shadow: 0 10px 36px rgba(79,195,247,0.13); }
-    .version-pill { position: absolute; top: -11px; right: 18px; font-size: 0.68rem; font-weight: 800; letter-spacing: 0.1em; padding: 0.2rem 0.7rem; border-radius: 999px; border: 1.5px solid; }
+    .version-pill { position: absolute; top: -11px; right: 16px; font-size: 0.68rem; font-weight: 800; letter-spacing: 0.1em; padding: 0.2rem 0.65rem; border-radius: 999px; border: 1.5px solid; }
     .v1 { background: #1e40af18; color: #60a5fa; border-color: #1e40af; }
     .v2 { background: #06514018; color: #34d399; border-color: #065f46; }
     .v3 { background: #6d28d918; color: #c4b5fd; border-color: #6d28d9; }
-    .card-badge { display: inline-block; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em; padding: 0.22rem 0.6rem; border-radius: 6px; margin-bottom: 0.9rem; width: fit-content; }
-    .badge-blue { background: #1e40af22; color: #93c5fd; }
-    .badge-green { background: #065f4622; color: #6ee7b7; }
+    .v4 { background: #92400e18; color: #fcd34d; border-color: #92400e; }
+    .card-badge { display: inline-block; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.06em; padding: 0.2rem 0.55rem; border-radius: 6px; margin-bottom: 0.85rem; width: fit-content; }
+    .badge-blue   { background: #1e40af22; color: #93c5fd; }
+    .badge-green  { background: #065f4622; color: #6ee7b7; }
     .badge-purple { background: #6d28d922; color: #ddd6fe; }
-    .card-title { font-size: 1.15rem; font-weight: 700; margin-bottom: 0.5rem; line-height: 1.3; }
-    .card-desc { font-size: 0.85rem; color: #94a3b8; line-height: 1.65; margin-bottom: 1.1rem; flex: 1; }
-    .modules { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-bottom: 1.1rem; }
-    .mod { font-size: 0.7rem; padding: 0.18rem 0.5rem; border-radius: 5px; background: #0f1b2d; color: #64748b; border: 1px solid #2d4a6b; white-space: nowrap; }
+    .badge-amber  { background: #92400e22; color: #fcd34d; }
+    .card-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.45rem; line-height: 1.3; }
+    .card-desc { font-size: 0.83rem; color: #94a3b8; line-height: 1.65; margin-bottom: 1rem; flex: 1; }
+    .modules { display: flex; flex-wrap: wrap; gap: 0.32rem; margin-bottom: 1rem; }
+    .mod { font-size: 0.68rem; padding: 0.16rem 0.45rem; border-radius: 5px; background: #0f1b2d; color: #64748b; border: 1px solid #2d4a6b; white-space: nowrap; }
     .mod-new { color: #fbbf24; border-color: #92400e; background: #92400e1a; }
-    .card-meta { font-size: 0.78rem; color: #475569; }
+    .card-meta { font-size: 0.76rem; color: #475569; }
     .card-meta b { color: #4fc3f7; font-weight: 600; }
-    .btn { display: inline-block; margin-top: 1.1rem; padding: 0.5rem 1.1rem; border-radius: 8px; font-size: 0.88rem; font-weight: 600; color: #fff; transition: filter 0.2s; align-self: flex-start; }
+    .btn { display: inline-block; margin-top: 1rem; padding: 0.48rem 1rem; border-radius: 8px; font-size: 0.86rem; font-weight: 600; color: #fff; transition: filter 0.2s; align-self: flex-start; }
     .btn:hover { filter: brightness(1.15); }
-    .btn-blue { background: #1e40af; }
-    .btn-green { background: #065f46; }
+    .btn-blue   { background: #1e40af; }
+    .btn-green  { background: #065f46; }
     .btn-purple { background: #5b21b6; }
-    .divider { width: 100%; max-width: 1160px; height: 1px; background: #1e3a55; margin: 2.5rem 0 1.5rem; }
+    .btn-amber  { background: #92400e; }
+    .divider { width: 100%; max-width: 1500px; height: 1px; background: #1e3a55; margin: 2.5rem 0 1.5rem; }
     footer { font-size: 0.76rem; color: #374151; text-align: center; }
   </style>
 </head>
 <body>
-  <div class="logo">📊 Dinámicas Familiares · Caldas</div>
-  <p class="subtitle">Proyecto de caracterización demográfica multifuente — Departamento de Caldas</p>
+  <div class="logo">📊 Dinámicas Familiares · Eje Cafetero</div>
+  <p class="subtitle">Proyecto de caracterización demográfica multifuente</p>
   <p class="authors"><span>Johan Piña</span> &amp; <span>Santiago Barrero</span> · 2026</p>
+
   <div class="cards">
+
     <a class="card" href="dashboard_hogares_sisben.html">
       <span class="version-pill v1">V 1.0</span>
-      <span class="card-badge badge-blue">SISBEN IV · 2026</span>
+      <span class="card-badge badge-blue">SISBEN IV · Caldas 2026</span>
       <div class="card-title">Dashboard SISBEN</div>
-      <div class="card-desc">Caracterización completa de los hogares registrados en SISBEN IV. Cross-filter interactivo por municipio, género, zona, estado civil y tipología familiar.</div>
+      <div class="card-desc">Caracterización completa de los hogares registrados en SISBEN IV Caldas. Cross-filter interactivo por municipio, género, zona, estado civil y tipología familiar.</div>
       <div class="modules">
         <span class="mod">Mapa municipal</span>
         <span class="mod">Composición hogar</span>
@@ -58,6 +63,7 @@
       <div class="card-meta"><b>255,845</b> hogares · <b>605,843</b> personas · <b>27</b> municipios</div>
       <span class="btn btn-blue">Abrir →</span>
     </a>
+
     <a class="card" href="dashboard_unificado.html">
       <span class="version-pill v2">V 2.0</span>
       <span class="card-badge badge-green">SISBEN · DANE · SIVIGILA</span>
@@ -72,13 +78,14 @@
       <div class="card-meta">Fuentes: <b>DANE</b> · <b>SISBEN IV</b> · <b>SIVIGILA</b> · 3 cortes temporales</div>
       <span class="btn btn-green">Abrir →</span>
     </a>
+
     <a class="card" href="dashboard_ecv.html">
       <span class="version-pill v3">V 3.0</span>
       <span class="card-badge badge-purple">SISBEN · DANE · SIVIGILA · ECV 2025</span>
       <div class="card-title">Dashboard ECV Integrado</div>
-      <div class="card-desc">Versión más completa. Cubre tres departamentos del Eje Cafetero: Caldas (SISBEN IV), Quindío y Risaralda (DANE 2005). Módulos ECV 2025: Vivienda, Educación y Salud.</div>
+      <div class="card-desc">Incorpora tres módulos de la Encuesta de Calidad de Vida 2025: Vivienda, Educación y Salud, con datos binarios por hogar (33 bytes/hogar).</div>
       <div class="modules">
-        <span class="mod">Todo lo anterior</span><span class="mod mod-new">✦ Quindío · Risaralda</span>
+        <span class="mod">Todo lo anterior</span>
         <span class="mod mod-new">✦ ECV Vivienda</span>
         <span class="mod mod-new">✦ ECV Educación</span>
         <span class="mod mod-new">✦ ECV Salud</span>
@@ -86,8 +93,24 @@
       <div class="card-meta">Fuentes: <b>DANE</b> · <b>SISBEN IV</b> · <b>SIVIGILA</b> · <b>ECV 2025</b></div>
       <span class="btn btn-purple">Abrir →</span>
     </a>
+
+    <a class="card" href="dashboard_v4.html">
+      <span class="version-pill v4">V 4.0</span>
+      <span class="card-badge badge-amber">Eje Cafetero · 3 Departamentos</span>
+      <div class="card-title">Dashboard Eje Cafetero</div>
+      <div class="card-desc">Expansión regional: cubre Caldas, Quindío y Risaralda con fuentes diferenciadas por departamento. La versión más completa y de mayor cobertura geográfica.</div>
+      <div class="modules">
+        <span class="mod">Todo lo anterior</span>
+        <span class="mod mod-new">✦ Quindío (DANE)</span>
+        <span class="mod mod-new">✦ Risaralda (DANE)</span>
+        <span class="mod">Caldas (SISBEN IV)</span>
+      </div>
+      <div class="card-meta">Cobertura: <b>Caldas</b> · <b>Quindío</b> · <b>Risaralda</b></div>
+      <span class="btn btn-amber">Abrir →</span>
+    </a>
+
   </div>
   <div class="divider"></div>
-  <footer>Proyecto Dinámicas Familiares Caldas · Johan Piña &amp; Santiago Barrero · 2026</footer>
+  <footer>Proyecto Dinámicas Familiares Eje Cafetero · Johan Piña &amp; Santiago Barrero · 2026</footer>
 </body>
 </html>
