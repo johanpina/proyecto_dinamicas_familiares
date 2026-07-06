@@ -11,6 +11,9 @@
     .subtitle { color: #94a3b8; font-size: 0.95rem; margin-bottom: 0.6rem; text-align: center; }
     .authors { color: #475569; font-size: 0.82rem; margin-bottom: 2.8rem; text-align: center; }
     .authors span { color: #64748b; }
+    .section-head { width: 100%; max-width: 1500px; text-align: center; margin-bottom: 1.4rem; }
+    .section-head .st { font-size: 1.2rem; font-weight: 700; color: #e2e8f0; }
+    .section-head .ss { font-size: 0.85rem; color: #94a3b8; margin-top: 0.25rem; }
     .cards { display: flex; gap: 1.4rem; flex-wrap: wrap; justify-content: center; max-width: 1500px; }
     .card { background: #1a2e45; border: 1px solid #2d4a6b; border-radius: 16px; padding: 1.6rem; width: 320px; text-decoration: none; color: inherit; display: flex; flex-direction: column; transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s; position: relative; }
     .card:hover { transform: translateY(-5px); border-color: #4fc3f7; box-shadow: 0 10px 36px rgba(79,195,247,0.13); }
@@ -40,14 +43,47 @@
     .btn-purple { background: #5b21b6; }
     .btn-amber  { background: #92400e; }
     .btn-teal   { background: #0f766e; }
-    .divider { width: 100%; max-width: 1500px; height: 1px; background: #1e3a55; margin: 2.5rem 0 1.5rem; }
-    footer { font-size: 0.76rem; color: #374151; text-align: center; }
+    /* historias */
+    .hero-band { width: 100%; max-width: 1500px; background: linear-gradient(135deg, #12303a, #143b2f); border: 1px solid #1f5145; border-radius: 18px; padding: 1.8rem 2rem; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1.2rem; }
+    .hero-band .ht { font-size: 1.35rem; font-weight: 800; color: #eafaf4; }
+    .hero-band .hd { font-size: 0.9rem; color: #a7d8ca; margin-top: 0.35rem; max-width: 60ch; line-height: 1.6; }
+    .hero-band .hb { display: inline-block; padding: 0.6rem 1.3rem; border-radius: 10px; font-size: 0.9rem; font-weight: 700; color: #06231c; background: #46e0c1; text-decoration: none; white-space: nowrap; }
+    .hero-band .hb:hover { filter: brightness(1.08); }
+    .muni-row { width: 100%; max-width: 1500px; display: flex; flex-wrap: wrap; gap: 0.7rem; justify-content: center; margin-top: 1.2rem; }
+    .muni { text-decoration: none; font-size: 0.86rem; font-weight: 700; color: #e2e8f0; background: #16233a; border: 1px solid #2d4a6b; border-left-width: 4px; border-radius: 10px; padding: 0.6rem 1.1rem; transition: transform 0.15s, border-color 0.2s; }
+    .muni:hover { transform: translateY(-3px); }
+    .muni small { display: block; font-size: 0.68rem; font-weight: 600; color: #7c8aa0; margin-top: 0.1rem; }
+    .divider { width: 100%; max-width: 1500px; height: 1px; background: #1e3a55; margin: 2.6rem 0 2rem; }
+    footer { font-size: 0.76rem; color: #374151; text-align: center; margin-top: 2.6rem; }
   </style>
 </head>
 <body>
   <div class="logo">📊 Dinámicas Familiares · Eje Cafetero</div>
   <p class="subtitle">Proyecto de caracterización demográfica multifuente</p>
   <p class="authors"><span>Johan Piña</span> &amp; <span>Santiago Barrero</span> · 2026</p>
+
+  <!-- ====== HISTORIAS INTERACTIVAS (portada) ====== -->
+  <div class="hero-band">
+    <div>
+      <div class="ht">📖 Historias interactivas por municipio</div>
+      <div class="hd">Scrollytelling visual sobre cómo cambian las familias en Caldas: hogares que se encogen, jefatura femenina, envejecimiento, discapacidad y brechas del campo. Datos DANE 2005/2018 y SISBÉN IV 2026.</div>
+    </div>
+    <a class="hb" href="familias.html">Abrir portada de historias →</a>
+  </div>
+  <div class="muni-row">
+    <a class="muni" href="historia_aranzazu.html" style="border-left-color:#16887a">Aránzazu<small>Norte</small></a>
+    <a class="muni" href="historia_salamina.html" style="border-left-color:#a9741a">Salamina<small>Norte · Patrimonio</small></a>
+    <a class="muni" href="historia_riosucio.html" style="border-left-color:#b1542a">Riosucio<small>Embera-Chamí</small></a>
+    <a class="muni" href="historia_viterbo.html" style="border-left-color:#5d7a2e">Viterbo<small>Valle del Risaralda</small></a>
+    <a class="muni" href="historia_neira.html" style="border-left-color:#2f6690">Neira<small>Centro Sur</small></a>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section-head">
+    <div class="st">Tableros de datos interactivos</div>
+    <div class="ss">Microdato completo con filtros cruzados · Caldas, Quindío y Risaralda</div>
+  </div>
 
   <div class="cards">
 
@@ -129,7 +165,6 @@
     </a>
 
   </div>
-  <div class="divider"></div>
   <footer>Proyecto Dinámicas Familiares Eje Cafetero · Johan Piña &amp; Santiago Barrero · 2026</footer>
 </body>
 </html>
