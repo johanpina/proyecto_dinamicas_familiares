@@ -1,0 +1,373 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Viterbo · El único que crece, el que más rápido envejece</title>
+<style>
+:root{
+  --accent:#5d7a2e; --accent2:#39500f; --accent-soft:#e6eed5;
+  --ink:#1c2016; --ink2:#5a6150; --paper:#f4f3e9; --paper2:#e5e7d1; --card:#fffdf6;
+  --warn:#c0512f; --gold:#c39a2f; --sis:#8a5cc0;
+  --hero-photo:url("https://picsum.photos/seed/viterbo-caldas/1920/1080");
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--paper);color:var(--ink);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+.serif{font-family:"Iowan Old Style",Georgia,"Times New Roman",serif}
+.progress{position:fixed;top:0;left:0;height:4px;width:0;background:var(--accent);z-index:100;transition:width .1s linear}
+.dots{position:fixed;right:24px;top:50%;transform:translateY(-50%);z-index:90;display:flex;flex-direction:column;gap:15px}
+.dots a{width:10px;height:10px;border-radius:50%;background:#c3c3ab;display:block;transition:.3s;position:relative}
+.dots a.on{background:var(--accent);transform:scale(1.6)}
+.dots a span{position:absolute;right:20px;top:50%;transform:translateY(-50%);white-space:nowrap;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink2);opacity:0;transition:.25s;pointer-events:none;font-weight:700}
+.dots a:hover span{opacity:1}
+.printbtn{position:fixed;right:22px;bottom:20px;z-index:95;background:var(--accent);color:#fff;border:0;border-radius:30px;padding:11px 18px;font-size:12px;font-weight:700;cursor:pointer;box-shadow:0 6px 20px rgba(0,0,0,.18)}
+.scene{min-height:100vh;display:flex;align-items:center;position:relative;overflow:hidden;padding:10vh 7vw}
+.scene.tint{background:var(--paper2)}
+.wrap{width:100%;max-width:1180px;margin:0 auto;position:relative;z-index:3}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:5vw;align-items:center}
+@media(max-width:820px){.grid{grid-template-columns:1fr;gap:34px}.scene{padding:8vh 8vw}.dots{display:none}.implies{grid-template-columns:1fr!important}}
+.bg{position:absolute;inset:0;z-index:0;overflow:hidden;pointer-events:none}
+.bg svg{position:absolute;width:100%;height:100%}
+.bgart{opacity:.08}
+.photo{position:absolute;inset:0;background-image:var(--hero-photo);background-size:cover;background-position:center;background-color:var(--paper2)}
+.scrim{position:absolute;inset:0}
+.hero-scrim{background:linear-gradient(100deg,rgba(244,243,233,.94) 0%,rgba(244,243,233,.66) 42%,rgba(244,243,233,.12) 100%)}
+[data-anim]{opacity:0;transform:translateY(40px);transition:opacity 1s cubic-bezier(.2,.7,.2,1),transform 1s cubic-bezier(.2,.7,.2,1)}
+[data-anim].in{opacity:1;transform:none}
+.d1{transition-delay:.12s}.d2{transition-delay:.24s}.d3{transition-delay:.36s}
+.kick{font-size:clamp(14px,1.5vw,18px);letter-spacing:.24em;text-transform:uppercase;font-weight:800;color:var(--accent);margin-bottom:22px}
+h1.hero{font-family:"Iowan Old Style",Georgia,serif;font-size:clamp(84px,17vw,290px);line-height:.82;letter-spacing:-4px;font-weight:700}
+.sectitle{font-family:"Iowan Old Style",Georgia,serif;font-size:clamp(44px,7vw,112px);line-height:.96;letter-spacing:-2px;font-weight:700}
+.lead{font-family:"Iowan Old Style",Georgia,serif;font-size:clamp(24px,3.4vw,46px);line-height:1.18;color:var(--ink2);font-weight:400}
+.stat{font-family:"Iowan Old Style",Georgia,serif;font-weight:700;line-height:.82;letter-spacing:-3px;font-size:clamp(120px,22vw,320px);color:var(--accent)}
+.stat .suf{font-size:.36em;letter-spacing:0}
+.statlabel{font-size:clamp(17px,2vw,26px);color:var(--ink2);max-width:24ch;margin-top:16px;line-height:1.4}
+.small{font-size:clamp(14px,1.4vw,17px);color:var(--ink2);line-height:1.5}
+.chips{display:flex;gap:14px;flex-wrap:wrap;margin-top:40px}
+.chip{display:flex;flex-direction:column;background:rgba(255,255,255,.8);backdrop-filter:blur(4px);border:1px solid rgba(0,0,0,.06);border-left:5px solid var(--accent);border-radius:14px;padding:16px 22px;box-shadow:0 8px 24px rgba(0,0,0,.08)}
+.chip b{font-family:Georgia,serif;font-size:clamp(36px,4.2vw,56px);line-height:1;color:var(--ink)}
+.chip span{font-size:clamp(10px,1vw,13px);letter-spacing:.05em;text-transform:uppercase;color:var(--ink2);font-weight:700;margin-top:6px}
+.scrollcue{position:absolute;bottom:28px;left:50%;transform:translateX(-50%);z-index:4;font-size:11px;letter-spacing:.25em;text-transform:uppercase;color:var(--ink2);display:flex;flex-direction:column;align-items:center;gap:8px}
+.scrollcue .ln{width:2px;height:40px;background:var(--ink2);opacity:.5;animation:cue 1.8s ease-in-out infinite}
+@keyframes cue{0%,100%{transform:scaleY(.4);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}}
+.draw{fill:none;stroke-linecap:round;stroke-linejoin:round}
+.draw.path{stroke-dasharray:1;stroke-dashoffset:1;transition:stroke-dashoffset 2s cubic-bezier(.3,.6,.2,1)}
+.in .draw.path{stroke-dashoffset:0}
+.donutfg{transition:stroke-dashoffset 1.8s cubic-bezier(.3,.6,.2,1)}
+.pop{opacity:0;transform:scale(.55);transform-origin:center;transition:opacity .8s ease,transform .8s cubic-bezier(.2,1.4,.4,1)}
+.in .pop{opacity:1;transform:scale(1)}.in .pop.p2{transition-delay:.5s}.in .pop.p3{transition-delay:.85s}
+.areafill{opacity:0;transition:opacity 1.5s ease .5s}.in .areafill{opacity:1}
+.grow-h{height:0;transition:height 1.5s cubic-bezier(.2,.7,.2,1)}
+.grow-w{width:0;transition:width 1.5s cubic-bezier(.2,.7,.2,1)}
+.dist{display:flex;gap:clamp(8px,1.8vw,26px);align-items:flex-end}
+.dgroup{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end}
+.dbars{display:flex;gap:6px;align-items:flex-end;height:clamp(230px,42vh,360px);justify-content:center;width:100%}
+.dbar{width:clamp(16px,2.8vw,44px);border-radius:9px 9px 0 0;position:relative;display:flex;justify-content:center}
+.dbar span{position:absolute;top:-26px;font-size:clamp(11px,1.3vw,16px);font-weight:800;font-family:Georgia,serif;white-space:nowrap}
+.dbar.ghost{background:#c8c8ac}.dbar.ghost span{color:#8f8f72}
+.dbar.now{background:var(--accent)}.dbar.now span{color:var(--accent2)}
+.dbar.sis{background:var(--sis)}.dbar.sis span{color:var(--sis)}
+.dlab{margin-top:14px;font-size:clamp(13px,1.5vw,20px);font-weight:800;color:var(--ink);text-align:center}
+.dsub{font-size:12px;color:var(--ink2)}
+.ranked{display:flex;flex-direction:column;gap:clamp(10px,1.6vw,18px)}
+.rrow{display:grid;grid-template-columns:minmax(160px,1.1fr) 3fr auto;gap:16px;align-items:center}
+.rlab{font-size:clamp(15px,1.7vw,22px);font-weight:600;text-align:right;color:var(--ink)}
+.rtrack{background:var(--paper2);border-radius:10px;height:clamp(24px,3.2vw,40px);overflow:hidden}
+.rfill{height:100%;border-radius:10px;background:linear-gradient(90deg,var(--warn),var(--gold))}
+.rval{font-family:Georgia,serif;font-size:clamp(22px,2.6vw,36px);font-weight:700;color:var(--ink);min-width:88px;text-align:right}
+.svc{display:flex;flex-direction:column;gap:clamp(10px,1.5vw,16px)}
+.svcrow{display:grid;grid-template-columns:minmax(120px,1fr) 3.4fr auto;gap:14px;align-items:center}
+.svcrow .sl{font-size:clamp(14px,1.6vw,20px);font-weight:600;text-align:right}
+.svctrack{position:relative;height:clamp(24px,3.2vw,38px);background:var(--paper2);border-radius:9px;overflow:hidden}
+.svc05{position:absolute;left:0;top:0;height:100%;background:#c8c8ac;border-radius:9px}
+.svc18{position:absolute;left:0;top:0;height:100%;background:var(--accent);border-radius:9px}
+.svcval{font-family:Georgia,serif;font-size:clamp(19px,2.3vw,32px);font-weight:700;min-width:74px;text-align:right}
+.agewrap{display:flex;flex-direction:column;gap:clamp(16px,2.4vw,30px)}
+.agerow .albl{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:9px}
+.agerow .albl b{font-family:Georgia,serif;font-size:clamp(18px,2.1vw,27px)}
+.agerow .albl .chg{font-size:clamp(14px,1.6vw,20px);font-weight:800}
+.atrack{height:clamp(26px,3.6vw,44px);background:var(--paper2);border-radius:11px;position:relative;overflow:hidden}
+.af05{position:absolute;left:0;top:0;height:100%;background:#c8c8ac;border-radius:11px}
+.af18{position:absolute;left:0;top:0;height:100%;border-radius:11px}
+.up .af18{background:var(--warn)}.down .af18{background:var(--accent)}
+.split{display:flex;gap:14px;align-items:flex-end;height:min(48vh,400px)}
+.splitcol{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:100%}
+.splitbar{width:100%;border-radius:16px 16px 0 0;display:flex;align-items:flex-start;justify-content:center;padding-top:18px;min-height:0}
+.splitbar b{font-family:Georgia,serif;font-size:clamp(34px,5vw,68px);font-weight:700;color:#fff}
+.splitcol .cap{font-size:clamp(12px,1.4vw,17px);font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-top:12px;text-align:center;color:var(--ink2)}
+.ratiobadge{display:inline-block;color:#fff;font-weight:800;font-size:clamp(14px,1.6vw,19px);border-radius:30px;padding:9px 20px;margin-top:18px;background:var(--warn)}
+.card{background:var(--card);border:1px solid rgba(0,0,0,.06);border-radius:20px;padding:clamp(18px,2.4vw,32px);box-shadow:0 18px 50px rgba(0,0,0,.08)}
+.captitle{font-size:clamp(12px,1.3vw,15px);letter-spacing:.1em;text-transform:uppercase;font-weight:800;color:var(--ink2);margin-bottom:8px}
+.legend{display:flex;gap:22px;flex-wrap:wrap;font-size:clamp(12px,1.4vw,16px);color:var(--ink2);margin:6px 0 20px;font-weight:600}
+.legend i{width:15px;height:15px;border-radius:4px;display:inline-block;margin-right:7px;vertical-align:-2px}
+.footer{background:var(--accent2);color:#e8f0d8;padding:80px 7vw 60px;position:relative;overflow:hidden}
+.footer h3{font-family:Georgia,serif;color:#fff;font-size:clamp(28px,4vw,48px);margin-bottom:20px;position:relative;z-index:2}
+.srcs{font-size:clamp(12px,1.3vw,15px);line-height:1.8;color:#cbdcac;max-width:900px;position:relative;z-index:2}.srcs b{color:#fff}
+.metarow{display:flex;flex-wrap:wrap;gap:12px;margin:24px 0;position:relative;z-index:2}
+.metarow .m{border:1px solid rgba(255,255,255,.28);border-radius:30px;padding:8px 16px;font-size:12px;color:#e8f0d8}
+.implies{display:grid;grid-template-columns:repeat(3,1fr);gap:30px;margin-top:24px}
+.implies .serif{font-size:clamp(56px,7vw,96px);color:var(--accent);line-height:1}
+.implies h3{font-family:Georgia,serif;font-size:clamp(23px,2.7vw,34px);margin:6px 0 10px;color:var(--ink)}
+.implies p{font-size:clamp(15px,1.6vw,19px);color:var(--ink2);line-height:1.5}
+@media print{.dots.printbtn.progress.scrollcue{display:none}.scene{min-height:auto;page-break-inside:avoid;padding:30px}[data-anim]{opacity:1;transform:none}.photo{display:none}.footer{background:#fff;color:#333}.footer h3{color:#111}.srcs{color:#333}.metarow .m{color:#333;border-color:#ccc}}
+</style>
+</head>
+<body>
+<div class="progress" id="prog"></div>
+<nav class="dots" id="dots"></nav>
+<button class="printbtn" onclick="window.print()">Guardar PDF</button>
+
+<section class="scene" data-name="Viterbo">
+  <div class="bg"><div class="photo"></div><div class="scrim hero-scrim"></div></div>
+  <div class="wrap">
+    <div class="kick" data-anim>Viterbo · Bajo Occidente · Caldas</div>
+    <h1 class="hero d1" data-anim>Viterbo</h1>
+    <p class="lead d2" data-anim style="margin-top:24px;max-width:24ch;color:var(--ink)">El único que <em>crece</em>… y el que más rápido envejece.</p>
+    <div class="chips d3" data-anim>
+      <div class="chip"><b>3,1</b><span>Personas por hogar</span></div>
+      <div class="chip"><b>36,5%</b><span>Jefatura femenina</span></div>
+      <div class="chip"><b>104,0</b><span>Índice de envejecimiento</span></div>
+      <div class="chip"><b>26,0%</b><span>Pobreza multidimensional</span></div>
+    </div>
+  </div>
+  <div class="scrollcue">Desliza<div class="ln"></div></div>
+</section>
+
+<section class="scene tint" data-name="Crece y se encoge">
+  <div class="bg"><svg class="bgart" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice"><g fill="none" stroke="var(--accent)" stroke-width="3"><path d="M-50 300 C250 250 450 350 700 300 S1100 260 1260 320"/><path d="M-50 460 C250 410 450 510 700 460 S1100 420 1260 480"/></g></svg></div>
+  <div class="wrap">
+    <div class="kick" data-anim>En una sola generación</div>
+    <h2 class="sectitle d1" data-anim style="max-width:18ch">Crece en gente, pero la familia se encoge.</h2>
+    <div class="grid" style="margin-top:48px">
+      <div class="d1" data-anim>
+        <div class="captitle">Población · personas censadas</div>
+        <svg viewBox="0 0 460 200" width="100%">
+          <defs><linearGradient id="vi_g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--accent)" stop-opacity=".30"/><stop offset="1" stop-color="var(--accent)" stop-opacity="0"/></linearGradient></defs>
+          <path class="areafill" fill="url(#vi_g)" d="M30 140 C170 130 320 96 440 78 L440 185 L30 185 Z"/>
+          <path class="draw path" d="M30 140 C170 130 320 96 440 78" stroke="var(--accent)" stroke-width="6" pathLength="1"/>
+          <circle class="pop" cx="30" cy="140" r="9" fill="#c8c8ac"/><circle class="pop p2" cx="440" cy="78" r="11" fill="var(--accent)"/>
+          <text x="24" y="168" class="serif" font-size="30" font-weight="700" fill="#5a6150">11.805</text>
+          <text x="322" y="66" class="serif" font-size="30" font-weight="700" fill="var(--accent2)">12.432</text>
+        </svg>
+      </div>
+      <div class="d2" data-anim>
+        <div class="captitle">Tamaño promedio del hogar</div>
+        <svg viewBox="0 0 460 200" width="100%">
+          <line class="draw path" x1="110" y1="105" x2="360" y2="105" stroke="var(--ink2)" stroke-width="4" pathLength="1"/>
+          <circle class="pop" cx="110" cy="105" r="64" fill="#c3c3a6"/>
+          <text class="pop serif" x="110" y="118" text-anchor="middle" font-size="48" font-weight="700" fill="#fff">3,9</text>
+          <text x="110" y="195" text-anchor="middle" font-size="17" fill="#5a6150">2005</text>
+          <circle class="pop p3" cx="360" cy="105" r="52" fill="var(--accent)"/>
+          <text class="pop p3 serif" x="360" y="116" text-anchor="middle" font-size="40" font-weight="700" fill="#fff">3,1</text>
+          <text x="360" y="195" text-anchor="middle" font-size="17" fill="#5a6150">2018</text>
+        </svg>
+      </div>
+    </div>
+    <p class="lead d3" data-anim style="margin-top:30px;max-width:32ch">Es el <b style="color:var(--accent)">único que gana población</b>, favorecido por su ubicación estratégica, pero el hogar promedio perdió casi una persona.</p>
+  </div>
+</section>
+
+<section class="scene" data-name="Cómo son los hogares">
+  <div class="bg"><svg class="bgart" style="opacity:.05" viewBox="0 0 1200 300" preserveAspectRatio="xMidYMax slice"><g fill="var(--accent)" id="crowd"></g></svg></div>
+  <div class="wrap">
+    <div class="kick" data-anim>La composición de los hogares</div>
+    <h2 class="sectitle d1" data-anim style="max-width:20ch">El cambio más drástico de los cinco.</h2>
+    <div class="legend d2" data-anim><span><i style="background:#c8c8ac"></i>2005</span><span><i style="background:var(--accent)"></i>2018</span></div>
+    <div class="dist d2" data-anim>
+      <div class="dgroup"><div class="dbars"><div class="dbar ghost grow-h" data-h="44"><span>11,4</span></div><div class="dbar now grow-h" data-h="67"><span>17,5</span></div></div><div class="dlab">1</div><div class="dsub">persona</div></div>
+      <div class="dgroup"><div class="dbars"><div class="dbar ghost grow-h" data-h="52"><span>13,6</span></div><div class="dbar now grow-h" data-h="91"><span>23,8</span></div></div><div class="dlab">2</div></div>
+      <div class="dgroup"><div class="dbars"><div class="dbar ghost grow-h" data-h="74"><span>19,4</span></div><div class="dbar now grow-h" data-h="92"><span>24,1</span></div></div><div class="dlab">3</div></div>
+      <div class="dgroup"><div class="dbars"><div class="dbar ghost grow-h" data-h="83"><span>21,7</span></div><div class="dbar now grow-h" data-h="73"><span>19,1</span></div></div><div class="dlab">4</div></div>
+      <div class="dgroup"><div class="dbars"><div class="dbar ghost grow-h" data-h="56"><span>14,6</span></div><div class="dbar now grow-h" data-h="31"><span>8,1</span></div></div><div class="dlab">5</div></div>
+      <div class="dgroup"><div class="dbars"><div class="dbar ghost grow-h" data-h="74"><span>19,4</span></div><div class="dbar now grow-h" data-h="28"><span>7,4</span></div></div><div class="dlab">6+</div></div>
+    </div>
+    <p class="lead d3" data-anim style="margin-top:34px;max-width:34ch">Las familias de <b>6 o más</b> se desplomaron de 19,4% a <b style="color:var(--accent)">7,4%</b>, la caída más fuerte de los cinco municipios.</p>
+  </div>
+</section>
+
+<section class="scene tint" data-name="Solos y mayores">
+  <div class="bg"><svg class="bgart" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice"><g fill="none" stroke="var(--accent)" stroke-width="3"><path d="M-50 360 C250 310 450 410 700 360 S1100 320 1260 380"/></g></svg></div>
+  <div class="wrap">
+    <div class="kick" data-anim>El nuevo perfil de la población</div>
+    <h2 class="sectitle d1" data-anim style="max-width:16ch">Tantos mayores como niños.</h2>
+    <div class="grid" style="margin-top:44px;align-items:center">
+      <div class="d1" data-anim style="display:grid;grid-template-columns:1fr 1fr;gap:24px;text-align:center">
+        <div>
+          <div class="captitle">Hogares de 1 persona</div>
+          <svg viewBox="0 0 200 200" width="100%" style="max-width:270px">
+            <circle cx="100" cy="100" r="76" fill="none" stroke="#dde0c8" stroke-width="26"/>
+            <circle class="donutfg" cx="100" cy="100" r="76" fill="none" stroke="var(--accent)" stroke-width="26" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100" data-donut="17.5" transform="rotate(-90 100 100)" stroke-linecap="round"/>
+            <text x="100" y="94" text-anchor="middle" class="serif" font-size="44" font-weight="700" fill="var(--ink)">17,5</text>
+            <text x="100" y="120" text-anchor="middle" font-size="15" font-weight="700" fill="var(--ink2)">% · 1 de 6</text>
+          </svg>
+          <div class="small">en 2005 era 11,4%</div>
+        </div>
+        <div>
+          <div class="captitle">Envejecimiento</div>
+          <svg viewBox="0 0 220 150" width="100%" style="max-width:290px">
+            <path d="M20 132 A90 90 0 0 1 200 132" fill="none" stroke="#dde0c8" stroke-width="22"/>
+            <path class="donutfg" d="M20 132 A90 90 0 0 1 200 132" fill="none" stroke="var(--warn)" stroke-width="22" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100" data-donut="80.0" stroke-linecap="round"/>
+            <text x="110" y="120" text-anchor="middle" class="serif" font-size="48" font-weight="700" fill="var(--warn)">104,0</text>
+          </svg>
+          <div class="small">se multiplicó por 2,7 · era 38,2 en 2005</div>
+        </div>
+      </div>
+      <div class="d2" data-anim>
+        <div class="captitle">Estructura por edad · 2005 → 2018</div>
+        <div class="agewrap">
+          <div class="agerow down"><div class="albl"><b>Niñez · 0–14</b><span class="chg" style="color:var(--accent)">30,6% → 18,5%</span></div><div class="atrack"><div class="af05 grow-w" data-w="100"></div><div class="af18 grow-w" data-w="60"></div></div></div>
+          <div class="agerow up"><div class="albl"><b>Mayores · 60+</b><span class="chg" style="color:var(--warn)">11,7% → 19,3%</span></div><div class="atrack"><div class="af05 grow-w" data-w="38"></div><div class="af18 grow-w" data-w="63"></div></div></div>
+        </div>
+        <p class="lead" style="margin-top:24px;font-size:clamp(19px,2.2vw,30px)">Con la dependencia más baja (60,7), Viterbo tiene hoy una ventana de <b>bono demográfico</b>.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="scene" data-name="Jefatura femenina">
+  <div class="bg"><svg class="bgart" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice"><g fill="none" stroke="var(--accent)" stroke-width="3"><path d="M-50 340 C250 290 450 390 700 340 S1100 300 1260 360"/></g></svg></div>
+  <div class="wrap">
+    <div class="kick" data-anim>Quién encabeza el hogar</div>
+    <h2 class="sectitle d1" data-anim style="max-width:18ch">La mujer, cada vez más al frente.</h2>
+    <div class="grid" style="margin-top:40px;align-items:center">
+      <div class="d1" data-anim>
+        <div class="stat" data-count="36.5" data-decimals="1" style="font-size:clamp(96px,17vw,240px)"><span class="val">0</span><span class="suf">%</span></div>
+        <div class="statlabel">de los hogares tiene <b>jefatura femenina</b>, desde 32,1% en 2005.</div>
+      </div>
+      <div class="d2" data-anim>
+        <div class="captitle">Jefatura femenina · ciudad vs campo</div>
+        <div class="legend"><span><i style="background:#c8c8ac"></i>2005</span><span><i style="background:var(--accent)"></i>2018</span></div>
+        <div class="dist" style="max-width:420px">
+          <div class="dgroup"><div class="dbars" style="height:clamp(180px,30vh,260px)"><div class="dbar ghost grow-h" data-h="77"><span>34,7</span></div><div class="dbar now grow-h" data-h="88"><span>39,7</span></div></div><div class="dlab">Ciudad</div></div>
+          <div class="dgroup"><div class="dbars" style="height:clamp(180px,30vh,260px)"><div class="dbar ghost grow-h" data-h="26"><span>11,8</span></div><div class="dbar now grow-h" data-h="33"><span>15,0</span></div></div><div class="dlab">Campo</div></div>
+        </div>
+        <p class="lead" style="margin-top:18px;font-size:clamp(18px,2.1vw,28px)">En la ciudad <b>4 de cada 10</b> hogares los encabeza una mujer; en el campo, apenas <b>1,5 de cada 10</b>.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="scene tint" data-name="Contraste de fuentes">
+  <div class="bg"><svg class="bgart" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice"><g fill="none" stroke="var(--sis)" stroke-width="3"><path d="M-50 380 C250 330 450 430 700 380 S1100 340 1260 400"/></g></svg></div>
+  <div class="wrap">
+    <div class="kick" data-anim>Tres fuentes, una misma historia</div>
+    <h2 class="sectitle d1" data-anim style="max-width:22ch">Entre los hogares vulnerables, todo se agudiza.</h2>
+    <div class="legend d2" data-anim><span><i style="background:#c8c8ac"></i>DANE 2005</span><span><i style="background:var(--accent)"></i>DANE 2018</span><span><i style="background:var(--sis)"></i>SISBÉN 2026 · Caldas</span></div>
+    <div class="dist d2" data-anim style="max-width:820px">
+      <div class="dgroup"><div class="dbars"><div class="dbar ghost grow-h" data-h="54"><span>32,1</span></div><div class="dbar now grow-h" data-h="61"><span>36,5</span></div><div class="dbar sis grow-h" data-h="92"><span>55,5</span></div></div><div class="dlab">Jefatura femenina</div></div>
+      <div class="dgroup"><div class="dbars"><div class="dbar ghost grow-h" data-h="19"><span>11,4</span></div><div class="dbar now grow-h" data-h="29"><span>17,5</span></div><div class="dbar sis grow-h" data-h="60"><span>36,1</span></div></div><div class="dlab">Hogares unipersonales</div></div>
+      <div class="dgroup"><div class="dbars"><div class="dbar ghost grow-h" data-h="18"><span>10,5</span></div><div class="dbar now grow-h" data-h="24"><span>14,4</span></div><div class="dbar sis grow-h" data-h="36"><span>21,3</span></div></div><div class="dlab">Hogares con discapacidad</div></div>
+    </div>
+    <p class="lead d3" data-anim style="margin-top:30px;max-width:40ch">En los hogares registrados en el <b style="color:var(--sis)">SISBÉN (los más vulnerables de Caldas)</b>, la jefatura femenina, la soledad y la discapacidad son <b>mucho más altas</b>: ahí se concentra la necesidad de apoyo.</p>
+  </div>
+</section>
+
+<section class="scene" data-name="Situaciones que impiden">
+  <div class="bg"><svg class="bgart" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice"><g fill="none" stroke="var(--warn)" stroke-width="3"><path d="M-50 420 C250 370 450 470 700 420 S1100 380 1260 440"/></g></svg></div>
+  <div class="wrap">
+    <div class="kick" data-anim>Quiénes necesitan más ayuda</div>
+    <h2 class="sectitle d1" data-anim style="max-width:22ch">Las situaciones que impiden a las familias salir adelante.</h2>
+    <div class="grid" style="margin-top:34px;align-items:end">
+      <div class="d1" data-anim>
+        <div class="captitle" style="color:var(--ink2)">Pobreza multidimensional · ciudad vs campo</div>
+        <div class="split">
+          <div class="splitcol"><div class="splitbar grow-h" data-h="45" style="background:var(--accent-soft)"><b style="color:var(--accent2)">22,2%</b></div><div class="cap">Cabecera urbana</div></div>
+          <div class="splitcol"><div class="splitbar grow-h" data-h="100" style="background:var(--warn)"><b>49,0%</b></div><div class="cap">Centros poblados y rural</div></div>
+        </div>
+        <div class="ratiobadge">Brecha rural 2,2×</div>
+      </div>
+      <div class="d2" data-anim>
+        <div class="captitle" style="color:var(--ink2)">% de hogares afectados · IPM DANE 2018</div>
+        <div class="ranked">
+          <div class="rrow"><div class="rlab">Trabajo informal</div><div class="rtrack"><div class="rfill grow-w" data-w="81.2"></div></div><div class="rval">81,2%</div></div>
+          <div class="rrow"><div class="rlab">Bajo logro educativo</div><div class="rtrack"><div class="rfill grow-w" data-w="61.7"></div></div><div class="rval">61,7%</div></div>
+          <div class="rrow"><div class="rlab">Dependencia económica</div><div class="rtrack"><div class="rfill grow-w" data-w="27.9"></div></div><div class="rval">27,9%</div></div>
+          <div class="rrow"><div class="rlab">Rezago escolar</div><div class="rtrack"><div class="rfill grow-w" data-w="17.3"></div></div><div class="rval">17,3%</div></div>
+          <div class="rrow"><div class="rlab">Sin aseguramiento en salud</div><div class="rtrack"><div class="rfill grow-w" data-w="17.2"></div></div><div class="rval">17,2%</div></div>
+        </div>
+      </div>
+    </div>
+    <p class="lead d3" data-anim style="margin-top:26px;max-width:38ch">Aunque tiene el IPM más bajo, su <b style="color:var(--warn)">14% rural</b> duplica en pobreza a la cabecera, y 1 de cada 6 hogares no tiene aseguramiento en salud.</p>
+  </div>
+</section>
+
+<section class="scene tint" data-name="Campo y conectividad">
+  <div class="bg"><svg class="bgart" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice"><g fill="none" stroke="var(--accent)" stroke-width="3"><path d="M-50 360 C250 310 450 410 700 360 S1100 320 1260 380"/></g></svg></div>
+  <div class="wrap">
+    <div class="kick" data-anim>Brechas del campo y conectividad</div>
+    <h2 class="sectitle d1" data-anim style="max-width:18ch">Buenos servicios, falta la conectividad.</h2>
+    <div class="legend d1" data-anim><span><i style="background:#c8c8ac"></i>2005</span><span><i style="background:var(--accent)"></i>2018</span></div>
+    <div class="svc d2" data-anim>
+      <div class="svcrow"><div class="sl">Energía</div><div class="svctrack"><div class="svc05 grow-w" data-w="99.4"></div><div class="svc18 grow-w" data-w="99.5"></div></div><div class="svcval">99,5%</div></div>
+      <div class="svcrow"><div class="sl">Acueducto</div><div class="svctrack"><div class="svc05 grow-w" data-w="98.6"></div><div class="svc18 grow-w" data-w="93.1"></div></div><div class="svcval">93,1%</div></div>
+      <div class="svcrow"><div class="sl">Alcantarillado</div><div class="svctrack"><div class="svc05 grow-w" data-w="98.2"></div><div class="svc18 grow-w" data-w="87.5"></div></div><div class="svcval">87,5%</div></div>
+      <div class="svcrow"><div class="sl">Gas natural</div><div class="svctrack"><div class="svc05 grow-w" data-w="0"></div><div class="svc18 grow-w" data-w="72.5"></div></div><div class="svcval">72,5%</div></div>
+      <div class="svcrow"><div class="sl">Internet</div><div class="svctrack"><div class="svc05 grow-w" data-w="0"></div><div class="svc18 grow-w" data-w="23.8" style="background:var(--warn)"></div></div><div class="svcval" style="color:var(--warn)">23,8%</div></div>
+    </div>
+    <p class="lead d3" data-anim style="margin-top:28px;max-width:36ch">Gran avance del gas (0 → 72,5%), pero <b style="color:var(--warn)">la conectividad se quedó atrás</b>: solo 24 de cada 100 hogares tienen internet, motor del empleo joven.</p>
+  </div>
+</section>
+
+<section class="scene" data-name="El municipio">
+  <div class="bg"><svg class="bgart" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice"><g fill="none" stroke="var(--accent)" stroke-width="3"><path d="M-50 320 C250 270 450 370 700 320 S1100 280 1260 340"/></g></svg></div>
+  <div class="wrap">
+    <div class="kick" data-anim>De qué vive el municipio</div>
+    <h2 class="sectitle d1" data-anim style="max-width:18ch">Valle estratégico: caña, ganadería y logística.</h2>
+    <div class="grid" style="margin-top:36px;align-items:stretch">
+      <div class="d1" data-anim><div class="card" style="height:100%"><div class="captitle">Economía y territorio</div><p class="lead" style="font-size:clamp(18px,2.1vw,27px);color:var(--ink);margin-top:6px">En el valle del río Risaralda y en el triángulo <b>Pereira-Manizales-Medellín</b>, Viterbo vive de la <b>caña</b>, la <b>ganadería</b> y algo de café. Su ubicación estratégica le da potencial logístico y agroindustrial, y explica que sea el único que gana población.</p></div></div>
+      <div class="d2" data-anim><div class="card" style="height:100%;background:var(--accent-soft);border-color:transparent"><div class="captitle" style="color:var(--accent2)">Mensaje clave para la gestión</div><p class="lead" style="font-size:clamp(18px,2.1vw,27px);color:var(--ink);margin-top:6px">Viterbo debe <b>aprovechar su bono demográfico</b> generando empleo formal joven, apoyado en su ubicación, y <b>anticipar el cuidado</b> de una población que envejece a gran velocidad.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="scene" data-name="Qué hacer">
+  <div class="bg"><svg class="bgart" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice"><g fill="none" stroke="var(--accent)" stroke-width="3"><path d="M-50 300 C250 250 450 350 700 300 S1100 260 1260 320"/><path d="M-50 470 C250 420 450 520 700 470 S1100 430 1260 490"/></g></svg></div>
+  <div class="wrap">
+    <div class="kick" data-anim>Hacia dónde dirigir la política pública</div>
+    <h2 class="sectitle d1" data-anim style="max-width:20ch">A quién ayudar primero.</h2>
+    <div class="implies">
+      <div data-anim><div class="serif">01</div><h3>Jóvenes y bono demográfico</h3><p>La dependencia más baja (60,7): empleo formal y emprendimiento antes de que la ventana se cierre.</p></div>
+      <div data-anim><div class="serif">02</div><h3>Futuros mayores y mujeres jefas</h3><p>El envejecimiento crece más rápido (×2,7): planear cuidado y salud geriátrica desde ya.</p></div>
+      <div data-anim><div class="serif">03</div><h3>El 14% rural</h3><p>IPM rural 49,0%: inversión social y servicios en centros poblados y rural disperso.</p></div>
+      <div data-anim><div class="serif">04</div><h3>Aseguramiento en salud</h3><p>El 17,2% de hogares sin afiliación y rezago escolar 17,3%: campañas de afiliación y permanencia.</p></div>
+      <div data-anim><div class="serif">05</div><h3>Conectividad</h3><p>Internet 23,8%, la deuda pendiente: conectividad y formación digital como motor del empleo joven.</p></div>
+      <div data-anim><div class="serif">06</div><h3>Hogares con discapacidad</h3><p>Subió a 14,4% (SISBÉN 21,3%): cuidado y accesibilidad, sobre todo en el campo.</p></div>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <svg class="bgart" style="opacity:.08" viewBox="0 0 1200 400" preserveAspectRatio="xMidYMid slice"><g fill="none" stroke="#fff" stroke-width="2"><path d="M-50 160 C250 120 450 200 700 160 S1100 130 1260 180"/><path d="M-50 280 C250 240 450 320 700 280 S1100 250 1260 300"/></g></svg>
+  <h3 class="serif">Viterbo, en una generación</h3>
+  <p class="srcs">Población <b>+5,3%</b> (único que crece) · Hogar promedio <b>3,9 → 3,1</b> · Unipersonales <b>11,4% → 17,5%</b> (SISBÉN 36,1%) · Jefatura femenina <b>32,1% → 36,5%</b> (urbana 39,7% · rural 15,0%) · Discapacidad <b>10,5% → 14,4%</b> (SISBÉN 21,3%) · Envejecimiento <b>38,2 → 104,0</b> · Dependencia <b>60,7</b> · IPM <b>26,0%</b> (rural 49,0%) · Internet <b>23,8%</b>.</p>
+  <div class="metarow">
+    <span class="m">DANE · Censo 2005 / CNPV 2018 · Ficha 17877</span>
+    <span class="m">Tablero Dinámicas Familiares · SISBÉN IV 2026 Caldas</span>
+    <span class="m">DANE · IPM municipal censal 2018</span>
+  </div>
+  <p class="srcs">Jefatura femenina, unipersonales y discapacidad extraídos del tablero (microdato censal DANE 2005/2018); SISBÉN IV 2026 a nivel Caldas. Marco: Observatorio de Familias del DNP. Dashboard: johanpina.github.io/proyecto_dinamicas_familiares · Junio 2026.</p>
+</footer>
+
+<script>
+const fmt=(n,d)=>n.toLocaleString('es-CO',{minimumFractionDigits:d,maximumFractionDigits:d});
+function countUp(host){host.querySelectorAll('[data-count]').forEach(el=>{if(el.dataset.done)return;el.dataset.done=1;
+  const target=parseFloat(el.dataset.count),dec=parseInt(el.dataset.decimals||'0',10);const valEl=el.querySelector('.val')||el;const dur=1600;let t0=null;
+  function step(ts){if(!t0)t0=ts;const p=Math.min((ts-t0)/dur,1);const e=1-Math.pow(1-p,3);valEl.textContent=fmt(target*e,dec);if(p<1)requestAnimationFrame(step);}requestAnimationFrame(step);});}
+function activateGraphics(sc){sc.querySelectorAll('[data-donut]').forEach(c=>{c.style.strokeDashoffset=(100-parseFloat(c.dataset.donut));});
+  sc.querySelectorAll('.grow-h[data-h]').forEach(b=>{b.style.height=b.dataset.h+'%';});
+  sc.querySelectorAll('.grow-w[data-w]').forEach(b=>{b.style.width=b.dataset.w+'%';});}
+(function(){const g=document.getElementById('crowd');if(!g)return;let s='';for(let i=0;i<46;i++){const x=20+i*26,y=200+(i%3)*8;s+=`<g transform="translate(${x},${y})"><circle cx="0" cy="0" r="7" fill="currentColor"/><path d="M-10 60 C-10 30 -6 18 0 18 C6 18 10 30 10 60 Z" fill="currentColor"/></g>`;}g.innerHTML=s;})();
+const io=new IntersectionObserver((es)=>{es.forEach(en=>{if(en.isIntersecting){
+  en.target.querySelectorAll('[data-anim]').forEach((el,i)=>setTimeout(()=>el.classList.add('in'),i*80));
+  en.target.classList.add('in');countUp(en.target);activateGraphics(en.target);}});},{threshold:.18});
+document.querySelectorAll('.scene').forEach(s=>io.observe(s));
+const scenes=[...document.querySelectorAll('.scene')];const dots=document.getElementById('dots');
+scenes.forEach((s)=>{const a=document.createElement('a');a.href='#';a.innerHTML='<span>'+(s.dataset.name||'')+'</span>';a.onclick=e=>{e.preventDefault();s.scrollIntoView();};dots.appendChild(a);});
+const dotEls=[...dots.children];
+function onScroll(){const h=document.documentElement;const sc=h.scrollTop/(h.scrollHeight-h.clientHeight);document.getElementById('prog').style.width=(sc*100)+'%';
+  let idx=0;scenes.forEach((s,i)=>{if(s.getBoundingClientRect().top<=window.innerHeight*.5)idx=i;});dotEls.forEach((d,i)=>d.classList.toggle('on',i===idx));}
+window.addEventListener('scroll',onScroll,{passive:true});onScroll();
+</script>
+</body>
+</html>
