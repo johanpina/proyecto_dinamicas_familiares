@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dinámicas Familiares en Caldas · Cinco municipios</title>
+<meta name="description" content="Cómo han cambiado las familias en Aránzazu, Salamina, Riosucio, Viterbo y Neira (Caldas). Historias interactivas con datos DANE 2005/2018 y SISBÉN IV 2026.">
+<style>
+:root{
+  --ink:#1d2228;--ink2:#5c6470;--paper:#f4f1e8;--paper2:#ece6d8;--card:#fffdf7;--line:#e2dccd;
+  --ar:#16887a;--sa:#a9741a;--ri:#b1542a;--vi:#5d7a2e;--ne:#2f6690;--sis:#8a5cc0;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--paper);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.5}
+.serif{font-family:"Iowan Old Style",Georgia,"Times New Roman",serif}
+.wrap{max-width:1180px;margin:0 auto;padding:0 6vw}
+/* hero */
+.hero{position:relative;overflow:hidden;padding:12vh 0 8vh;background:
+  radial-gradient(120% 80% at 100% 0%, rgba(138,92,192,.10), transparent 60%),
+  radial-gradient(120% 80% at 0% 100%, rgba(22,136,122,.12), transparent 60%), var(--paper)}
+.hero .kick{font-size:14px;letter-spacing:.24em;text-transform:uppercase;font-weight:800;color:var(--ar);margin-bottom:20px}
+.hero h1{font-family:"Iowan Old Style",Georgia,serif;font-size:clamp(46px,8vw,104px);line-height:.98;letter-spacing:-2px;font-weight:700;max-width:16ch}
+.hero p.lead{font-family:"Iowan Old Style",Georgia,serif;font-style:italic;font-size:clamp(20px,2.6vw,32px);color:var(--ink2);margin-top:22px;max-width:34ch}
+.hero .rule{height:5px;width:min(520px,80vw);margin-top:34px;border-radius:3px;background:linear-gradient(90deg,var(--ar) 0 20%,var(--sa) 20% 40%,var(--ri) 40% 60%,var(--vi) 60% 80%,var(--ne) 80% 100%)}
+.blob{position:absolute;pointer-events:none;opacity:.5;z-index:0}
+/* section */
+section{padding:7vh 0}
+.eyebrow{font-size:13px;letter-spacing:.16em;text-transform:uppercase;font-weight:800;color:var(--ink2);margin-bottom:8px}
+h2.sec{font-family:"Iowan Old Style",Georgia,serif;font-size:clamp(28px,4.5vw,52px);letter-spacing:-1px;line-height:1.02;margin-bottom:8px}
+.sub{color:var(--ink2);font-size:clamp(15px,1.7vw,19px);max-width:60ch;margin-bottom:34px}
+/* cards */
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:22px}
+.card{display:flex;flex-direction:column;text-decoration:none;color:inherit;background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:0 12px 34px rgba(0,0,0,.07);transition:transform .18s ease, box-shadow .18s ease}
+.card:hover{transform:translateY(-6px);box-shadow:0 22px 50px rgba(0,0,0,.13)}
+.card .top{height:130px;position:relative;display:flex;align-items:flex-end;padding:18px 22px;color:#fff;overflow:hidden}
+.card .top .num{position:absolute;top:-14px;right:14px;font-family:Georgia,serif;font-size:88px;font-weight:700;opacity:.22;line-height:1}
+.card .top h3{font-family:Georgia,serif;font-size:30px;font-weight:700;position:relative;z-index:2}
+.card .body{padding:18px 22px 22px}
+.card .tag{font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--ink2)}
+.card .desc{font-size:14.5px;color:var(--ink2);margin:8px 0 14px;min-height:66px}
+.card .mini{display:flex;gap:16px;border-top:1px dashed var(--line);padding-top:12px}
+.card .mini div{font-size:10px;text-transform:uppercase;letter-spacing:.04em;font-weight:800;color:var(--ink2)}
+.card .mini b{display:block;font-family:Georgia,serif;font-size:20px;color:var(--ink);letter-spacing:0;text-transform:none}
+.card .go{margin-top:14px;font-size:13px;font-weight:800}
+.card.ar .top{background:linear-gradient(135deg,var(--ar),#0f5f55)} .card.ar .go{color:var(--ar)}
+.card.sa .top{background:linear-gradient(135deg,var(--sa),#6e470c)} .card.sa .go{color:var(--sa)}
+.card.ri .top{background:linear-gradient(135deg,var(--ri),#732f12)} .card.ri .go{color:var(--ri)}
+.card.vi .top{background:linear-gradient(135deg,var(--vi),#39500f)} .card.vi .go{color:var(--vi)}
+.card.ne .top{background:linear-gradient(135deg,var(--ne),#1c3f5c)} .card.ne .go{color:var(--ne)}
+/* alt band */
+.band{background:var(--paper2)}
+.rows{display:flex;flex-wrap:wrap;gap:14px}
+.pill{display:inline-flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:40px;padding:12px 20px;text-decoration:none;color:var(--ink);font-weight:700;font-size:14px;box-shadow:0 6px 18px rgba(0,0,0,.05)}
+.pill:hover{border-color:#c9c2b0}
+.pill .dot{width:10px;height:10px;border-radius:50%}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px}
+.linkcard{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;text-decoration:none;color:inherit;display:block;box-shadow:0 8px 22px rgba(0,0,0,.06)}
+.linkcard:hover{border-color:#c9c2b0}
+.linkcard h4{font-family:Georgia,serif;font-size:21px;margin-bottom:6px}
+.linkcard p{font-size:14px;color:var(--ink2)}
+/* footer */
+footer{background:var(--ink);color:#c7ccd4;padding:56px 0 44px}
+footer .wrap{max-width:1180px}
+footer h4{color:#fff;font-family:Georgia,serif;font-size:22px;margin-bottom:14px}
+footer p{font-size:13px;line-height:1.8;color:#98a0ab;max-width:820px}
+footer a{color:#cfe6e0}
+.badges{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0}
+.badges span{border:1px solid #39404b;border-radius:30px;padding:7px 14px;font-size:12px;color:#c7ccd4}
+@media(max-width:620px){.card .desc{min-height:0}}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <svg class="blob" style="top:-60px;right:-40px;width:40vw" viewBox="0 0 500 500"><circle cx="250" cy="250" r="250" fill="#16887a" opacity=".08"/></svg>
+  <div class="wrap" style="position:relative;z-index:2">
+    <div class="kick">Proyecto Dinámicas Familiares · SISBÉN IV Caldas · 2026</div>
+    <h1 class="serif">Cómo cambian las familias en Caldas</h1>
+    <p class="lead">Cinco municipios, una misma transformación: hogares más pequeños, más solos y una población que envejece.</p>
+    <div class="rule"></div>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <div class="eyebrow">Historias interactivas</div>
+    <h2 class="sec serif">Explora cada municipio</h2>
+    <p class="sub">Desliza cada historia para ver cómo se transformaron las familias entre los censos de 2005 y 2018, contrastadas con el SISBÉN IV 2026. Diseñadas para autoridades y planeación.</p>
+    <div class="cards">
+
+      <a class="card ar" href="historia_aranzazu.html">
+        <div class="top"><div class="num serif">01</div><h3>Aránzazu</h3></div>
+        <div class="body">
+          <div class="tag">Subregión Norte</div>
+          <div class="desc">La familia que se hizo pequeña: población que decrece, jefatura femenina que casi se duplica y auge del aguacate Hass.</div>
+          <div class="mini"><div>Hogar<b>2,9</b></div><div>Jefatura F.<b>49,2%</b></div><div>IPM<b>32,1%</b></div></div>
+          <div class="go">Abrir historia →</div>
+        </div>
+      </a>
+
+      <a class="card sa" href="historia_salamina.html">
+        <div class="top"><div class="num serif">02</div><h3>Salamina</h3></div>
+        <div class="body">
+          <div class="tag">Norte · Pueblo Patrimonio</div>
+          <div class="desc">El pueblo que envejeció primero: el índice de envejecimiento más alto y el reto de arraigar a los jóvenes.</div>
+          <div class="mini"><div>Hogar<b>2,8</b></div><div>60+<b>21,3%</b></div><div>Envej.<b>117,6</b></div></div>
+          <div class="go">Abrir historia →</div>
+        </div>
+      </a>
+
+      <a class="card ri" href="historia_riosucio.html">
+        <div class="top"><div class="num serif">03</div><h3>Riosucio</h3></div>
+        <div class="body">
+          <div class="tag">Bajo Occidente · Embera-Chamí</div>
+          <div class="desc">Una familia que cambia sin perder su raíz: 75,7% indígena, hogares grandes y un fuerte subregistro censal.</div>
+          <div class="mini"><div>Indígena<b>75,7%</b></div><div>Hogar<b>3,3</b></div><div>IPM<b>29,3%</b></div></div>
+          <div class="go">Abrir historia →</div>
+        </div>
+      </a>
+
+      <a class="card vi" href="historia_viterbo.html">
+        <div class="top"><div class="num serif">04</div><h3>Viterbo</h3></div>
+        <div class="body">
+          <div class="tag">Bajo Occidente · Valle del Risaralda</div>
+          <div class="desc">El único que crece y el que más rápido envejece: bono demográfico abierto y conectividad como deuda pendiente.</div>
+          <div class="mini"><div>Hogar<b>3,1</b></div><div>Depend.<b>60,7</b></div><div>Internet<b>23,8%</b></div></div>
+          <div class="go">Abrir historia →</div>
+        </div>
+      </a>
+
+      <a class="card ne" href="historia_neira.html">
+        <div class="top"><div class="num serif">05</div><h3>Neira</h3></div>
+        <div class="body">
+          <div class="tag">Centro Sur · cerca de Manizales</div>
+          <div class="desc">Uno de los pueblos más longevos de Colombia: la mayor caída del tamaño del hogar y la conectividad más baja.</div>
+          <div class="mini"><div>Hogar<b>3,2</b></div><div>60+<b>18,8%</b></div><div>Internet<b>15,6%</b></div></div>
+          <div class="go">Abrir historia →</div>
+        </div>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+<section class="band">
+  <div class="wrap">
+    <div class="eyebrow">Versión imprimible</div>
+    <h2 class="sec serif">Policy briefs en PDF</h2>
+    <p class="sub">Folletos de 2 páginas listos para imprimir o exportar a PDF, y un comparativo regional de los cinco municipios.</p>
+    <div class="rows">
+      <a class="pill" href="index_folletos.html"><span class="dot" style="background:var(--ink)"></span>Índice + comparativo regional</a>
+      <a class="pill" href="folleto_aranzazu.html"><span class="dot" style="background:var(--ar)"></span>Aránzazu</a>
+      <a class="pill" href="folleto_salamina.html"><span class="dot" style="background:var(--sa)"></span>Salamina</a>
+      <a class="pill" href="folleto_riosucio.html"><span class="dot" style="background:var(--ri)"></span>Riosucio</a>
+      <a class="pill" href="folleto_viterbo.html"><span class="dot" style="background:var(--vi)"></span>Viterbo</a>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="eyebrow">Datos en vivo</div>
+    <h2 class="sec serif">Los tableros del proyecto</h2>
+    <p class="sub">Explora el microdato completo con filtros cruzados por municipio, tipología del hogar y fuente (DANE 2005/2018, SISBÉN IV 2026, ECV, SIVIGILA).</p>
+    <div class="two">
+      <a class="linkcard" href="dashboard_comparativa_hogares.html"><h4>Tablero comparativo de hogares →</h4><p>Composición y comparación de fuentes por municipio y subregión de Caldas.</p></a>
+      <a class="linkcard" href="dashboard_hogares_sisben.html"><h4>Tablero SISBÉN IV Caldas →</h4><p>255.845 hogares registrados: tipología, demografía, programas y condiciones de vida.</p></a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <h4 class="serif">Sobre este proyecto</h4>
+    <p>Análisis de las dinámicas familiares en Caldas a partir de los censos DANE 2005 y 2018, la medición de pobreza multidimensional (IPM 2018) y el SISBÉN IV 2026. Jefatura femenina, hogares unipersonales y discapacidad se extrajeron del tablero (microdato censal); el SISBÉN es a nivel departamental (hogares vulnerables). Marco analítico: Observatorio de Familias del DNP.</p>
+    <div class="badges">
+      <span>DANE · CNPV 2005 / 2018</span>
+      <span>DANE · IPM censal 2018</span>
+      <span>SISBÉN IV 2026 · Caldas</span>
+      <span>DNP · Observatorio de Familias</span>
+    </div>
+    <p>Proyecto Dinámicas Familiares, Johan Pina · <a href="https://github.com/johanpina/proyecto_dinamicas_familiares">Repositorio en GitHub</a> · 2026</p>
+  </div>
+</footer>
+
+</body>
+</html>
