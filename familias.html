@@ -9,6 +9,7 @@
 :root{
   --ink:#1d2228;--ink2:#5c6470;--paper:#f4f1e8;--paper2:#ece6d8;--card:#fffdf7;--line:#e2dccd;
   --ar:#16887a;--sa:#a9741a;--ri:#b1542a;--vi:#5d7a2e;--ne:#2f6690;--sis:#8a5cc0;
+  --pe:#2e7d5b;--do:#b23a48;--ma:#3f7d8c;--ag:#9c7a1e;--ch:#6f4a2f;--mz:#3b4ea0;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
@@ -48,6 +49,12 @@ h2.sec{font-family:"Iowan Old Style",Georgia,serif;font-size:clamp(28px,4.5vw,52
 .card.ri .top{background:linear-gradient(135deg,var(--ri),#732f12)} .card.ri .go{color:var(--ri)}
 .card.vi .top{background:linear-gradient(135deg,var(--vi),#39500f)} .card.vi .go{color:var(--vi)}
 .card.ne .top{background:linear-gradient(135deg,var(--ne),#1c3f5c)} .card.ne .go{color:var(--ne)}
+.card.pe .top{background:linear-gradient(135deg,var(--pe),#17503a)} .card.pe .go{color:var(--pe)}
+.card.do .top{background:linear-gradient(135deg,var(--do),#6f222c)} .card.do .go{color:var(--do)}
+.card.ma .top{background:linear-gradient(135deg,var(--ma),#244f5a)} .card.ma .go{color:var(--ma)}
+.card.ag .top{background:linear-gradient(135deg,var(--ag),#665012)} .card.ag .go{color:var(--ag)}
+.card.ch .top{background:linear-gradient(135deg,var(--ch),#47301d)} .card.ch .go{color:var(--ch)}
+.card.mz .top{background:linear-gradient(135deg,var(--mz),#26326b)} .card.mz .go{color:var(--mz)}
 /* alt band */
 .band{background:var(--paper2)}
 .rows{display:flex;flex-wrap:wrap;gap:14px}
@@ -77,7 +84,7 @@ footer a{color:#cfe6e0}
   <div class="wrap" style="position:relative;z-index:2">
     <div class="kick">Proyecto Dinámicas Familiares · SISBÉN IV Caldas · 2026</div>
     <h1 class="serif">Cómo cambian las familias en Caldas</h1>
-    <p class="lead">Cinco municipios, una misma transformación: hogares más pequeños, más solos y una población que envejece.</p>
+    <p class="lead">Once municipios, una misma transformación: hogares más pequeños, más solos y una población que envejece.</p>
     <div class="rule"></div>
   </div>
 </header>
@@ -123,7 +130,7 @@ footer a{color:#cfe6e0}
         <div class="top"><div class="num serif">04</div><h3>Viterbo</h3></div>
         <div class="body">
           <div class="tag">Bajo Occidente · Valle del Risaralda</div>
-          <div class="desc">El único que crece y el que más rápido envejece: bono demográfico abierto y conectividad como deuda pendiente.</div>
+          <div class="desc">Gana población mientras el hogar se encoge: bono demográfico abierto y conectividad como deuda pendiente.</div>
           <div class="mini"><div>Hogar<b>3,1</b></div><div>Depend.<b>60,7</b></div><div>Internet<b>23,8%</b></div></div>
           <div class="go">Abrir historia →</div>
         </div>
@@ -135,6 +142,66 @@ footer a{color:#cfe6e0}
           <div class="tag">Centro Sur · cerca de Manizales</div>
           <div class="desc">Uno de los pueblos más longevos de Colombia: la mayor caída del tamaño del hogar y la conectividad más baja.</div>
           <div class="mini"><div>Hogar<b>3,2</b></div><div>60+<b>18,8%</b></div><div>Internet<b>15,6%</b></div></div>
+          <div class="go">Abrir historia →</div>
+        </div>
+      </a>
+
+      <a class="card pe" href="historia_pensilvania.html">
+        <div class="top"><div class="num serif">06</div><h3>Pensilvania</h3></div>
+        <div class="body">
+          <div class="tag">Subregión Oriente</div>
+          <div class="desc">Un municipio de montaña que perdió uno de cada cuatro habitantes: se fueron los jóvenes y quedó una población que envejece.</div>
+          <div class="mini"><div>Hogar<b>2,8</b></div><div>Población<b>−26%</b></div><div>IPM<b>37,3%</b></div></div>
+          <div class="go">Abrir historia →</div>
+        </div>
+      </a>
+
+      <a class="card do" href="historia_ladorada.html">
+        <div class="top"><div class="num serif">07</div><h3>La Dorada</h3></div>
+        <div class="body">
+          <div class="tag">Magdalena Caldense</div>
+          <div class="desc">Puerto y comercio del Magdalena: la población se mantiene, pero el hogar se encoge y la jefatura femenina rural se dispara.</div>
+          <div class="mini"><div>Hogar<b>2,9</b></div><div>Jefatura F.<b>46,4%</b></div><div>IPM<b>26,8%</b></div></div>
+          <div class="go">Abrir historia →</div>
+        </div>
+      </a>
+
+      <a class="card ma" href="historia_marulanda.html">
+        <div class="top"><div class="num serif">08</div><h3>Marulanda</h3></div>
+        <div class="body">
+          <div class="tag">Alto Oriente · Páramo</div>
+          <div class="desc">Un pequeño municipio de páramo que se despuebla: hogares diminutos, mucha ruralidad y una población mayor.</div>
+          <div class="mini"><div>Hogar<b>2,8</b></div><div>Población<b>−23%</b></div><div>Envej.<b>78,7</b></div></div>
+          <div class="go">Abrir historia →</div>
+        </div>
+      </a>
+
+      <a class="card ag" href="historia_aguadas.html">
+        <div class="top"><div class="num serif">09</div><h3>Aguadas</h3></div>
+        <div class="body">
+          <div class="tag">Subregión Norte · Patrimonio</div>
+          <div class="desc">Café, sombrero de iraca y patrimonio: hogares más pequeños y una población que envejece con fuerza.</div>
+          <div class="mini"><div>Hogar<b>2,9</b></div><div>Envej.<b>91,7</b></div><div>IPM<b>30,0%</b></div></div>
+          <div class="go">Abrir historia →</div>
+        </div>
+      </a>
+
+      <a class="card ch" href="historia_chinchina.html">
+        <div class="top"><div class="num serif">10</div><h3>Chinchiná</h3></div>
+        <div class="body">
+          <div class="tag">Centrosur · Cafetero</div>
+          <div class="desc">Corazón cafetero conurbado con Manizales: hogares más pequeños y solos, con un envejecimiento acelerado.</div>
+          <div class="mini"><div>Hogar<b>3,0</b></div><div>Envej.<b>94,9</b></div><div>IPM<b>21,8%</b></div></div>
+          <div class="go">Abrir historia →</div>
+        </div>
+      </a>
+
+      <a class="card mz" href="historia_manizales.html">
+        <div class="top"><div class="num serif">11</div><h3>Manizales</h3></div>
+        <div class="body">
+          <div class="tag">Capital de Caldas</div>
+          <div class="desc">La capital que gana población pero encanece: más hogares de una sola persona y ya más mayores que niños.</div>
+          <div class="mini"><div>Hogar<b>2,9</b></div><div>Envej.<b>115,5</b></div><div>IPM<b>13,9%</b></div></div>
           <div class="go">Abrir historia →</div>
         </div>
       </a>
