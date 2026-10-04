@@ -109,7 +109,6 @@ h1.hero{font-family:"Iowan Old Style",Georgia,serif;font-size:clamp(84px,17vw,29
 <div class="progress" id="prog"></div>
 <nav class="dots" id="dots"></nav>
 <button class="printbtn" onclick="window.print()">Guardar PDF</button>
-
 <section class="scene" data-name="Samaná">
   <div class="bg"><div class="photo"></div><div class="scrim hero-scrim"></div></div>
   <div class="wrap">
@@ -125,7 +124,6 @@ h1.hero{font-family:"Iowan Old Style",Georgia,serif;font-size:clamp(84px,17vw,29
   </div>
   <div class="scrollcue">Desliza<div class="ln"></div></div>
 </section>
-
 <section class="scene tint" data-name="La familia cambió">
   <div class="bg"><svg class="bgart" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice"><g fill="none" stroke="var(--accent)" stroke-width="3"><path d="M-50 380 C250 330 450 430 700 380 S1100 340 1260 400"/></g></svg></div>
   <div class="wrap">
@@ -135,8 +133,8 @@ h1.hero{font-family:"Iowan Old Style",Georgia,serif;font-size:clamp(84px,17vw,29
       <div class="d1" data-anim>
         <div class="captitle">Población censada · 2005 → 2018</div>
         <svg viewBox="0 0 460 200" width="100%">
-          <defs><linearGradient id="g_samana" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--accent)" stop-opacity=".30"/><stop offset="1" stop-color="var(--accent)" stop-opacity="0"/></linearGradient></defs>
-          <path class="areafill" fill="url(#g_samana)" d="M30 78 C170 109 320 109 440 140 L440 185 L30 185 Z"/>
+          <defs><linearGradient id="gp_samana" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--accent)" stop-opacity=".30"/><stop offset="1" stop-color="var(--accent)" stop-opacity="0"/></linearGradient></defs>
+          <path class="areafill" fill="url(#gp_samana)" d="M30 78 C170 109 320 109 440 140 L440 185 L30 185 Z"/>
           <path class="draw path" d="M30 78 C170 109 320 109 440 140" stroke="var(--accent)" stroke-width="6" pathLength="1"/>
           <circle class="pop" cx="30" cy="78" r="9" fill="#c8c8ac"/><circle class="pop p2" cx="440" cy="140" r="11" fill="var(--accent)"/>
           <text x="24" y="62" class="serif" font-size="30" font-weight="700" fill="#5a6150">18.295</text>
@@ -159,7 +157,6 @@ h1.hero{font-family:"Iowan Old Style",Georgia,serif;font-size:clamp(84px,17vw,29
     <p class="lead d3" data-anim style="margin-top:30px;max-width:34ch">La población pasó de 18.295 a 17.466 personas y el hogar promedio bajó de 3,5 a 2,7.</p>
   </div>
 </section>
-
 <section class="scene" data-name="Cómo son los hogares">
   <div class="bg"><svg class="bgart" style="opacity:.05" viewBox="0 0 1200 300" preserveAspectRatio="xMidYMax slice"><g fill="var(--accent)" id="crowd"></g></svg></div>
   <div class="wrap">
@@ -170,45 +167,46 @@ h1.hero{font-family:"Iowan Old Style",Georgia,serif;font-size:clamp(84px,17vw,29
     <p class="lead d3" data-anim style="margin-top:34px;max-width:36ch">Los hogares de una persona subieron de 13,1% a <b style="color:var(--accent)">23,1%</b>, mientras las familias de 6 o más se redujeron.</p>
   </div>
 </section>
-
-<section class="scene tint" data-name="Solos y mayores">
-  <div class="bg"><svg class="bgart" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice"><g fill="none" stroke="var(--accent)" stroke-width="3"><path d="M-50 380 C250 330 450 430 700 380 S1100 340 1260 400"/></g></svg></div>
+<section class="scene tint" data-name="Trabajo del jefe">
+  <div class="bg"><svg class="bgart" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice"><g fill="none" stroke="var(--warn)" stroke-width="3"><path d="M-50 380 C250 330 450 430 700 380 S1100 340 1260 400"/></g></svg></div>
   <div class="wrap">
-    <div class="kick" data-anim>El nuevo perfil de la población</div>
-    <h2 class="sectitle d1" data-anim style="max-width:18ch">Una población que envejece rápido.</h2>
-    <div class="grid" style="margin-top:44px;align-items:center">
-      <div class="d1" data-anim style="display:grid;grid-template-columns:1fr 1fr;gap:24px;text-align:center">
-        <div>
-          <div class="captitle">Hogares de 1 persona</div>
-          <svg viewBox="0 0 200 200" width="100%" style="max-width:250px">
-            <circle cx="100" cy="100" r="76" fill="none" stroke="#dde0c8" stroke-width="26"/>
-            <circle class="donutfg" cx="100" cy="100" r="76" fill="none" stroke="var(--accent)" stroke-width="26" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100" data-donut="23.1" transform="rotate(-90 100 100)" stroke-linecap="round"/>
-            <text x="100" y="94" text-anchor="middle" class="serif" font-size="42" font-weight="700" fill="var(--ink)">23,1</text>
-            <text x="100" y="120" text-anchor="middle" font-size="14" font-weight="700" fill="var(--ink2)">%</text>
-          </svg>
-          <div class="small">en 2005 era 13,1%</div>
-        </div>
-        <div>
-          <div class="captitle">Población de 60+</div>
-          <svg viewBox="0 0 200 200" width="100%" style="max-width:250px">
-            <circle cx="100" cy="100" r="76" fill="none" stroke="#dde0c8" stroke-width="26"/>
-            <circle class="donutfg" cx="100" cy="100" r="76" fill="none" stroke="var(--warn)" stroke-width="26" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100" data-donut="16.8" transform="rotate(-90 100 100)" stroke-linecap="round"/>
-            <text x="100" y="94" text-anchor="middle" class="serif" font-size="42" font-weight="700" fill="var(--warn)">16,8</text>
-            <text x="100" y="120" text-anchor="middle" font-size="14" font-weight="700" fill="var(--ink2)">%</text>
-          </svg>
-          <div class="small">niñez 0–14: 22,8%</div>
-        </div>
+    <div class="kick" data-anim>De qué vive quien encabeza el hogar</div>
+    <h2 class="sectitle d1" data-anim style="max-width:22ch">El trabajo del jefe de hogar.</h2>
+    <div class="small d1" data-anim style="margin:2px 0 18px;font-size:clamp(14px,1.5vw,18px)">Actividad del jefe · hogares del <b>SISBÉN IV 2026</b></div>
+    <div class="grid" style="margin-top:6px;align-items:center">
+      <div class="d1" data-anim>
+        <div class="captitle" style="color:var(--ink2)">Jefes buscando trabajo</div>
+        <div class="stat" data-count="38.6" data-decimals="1" style="font-size:clamp(90px,15vw,220px)"><span class="val">0</span><span class="suf">%</span></div>
+        <div class="statlabel">de los jefes de hogar está <b>buscando trabajo</b>: el desempleo es la barrera más dura.</div>
       </div>
       <div class="d2" data-anim>
-        <div class="captitle" style="color:var(--ink2)">Índice de envejecimiento · 65+ por cada 100 menores de 15</div>
-        <div class="stat" data-count="73.4" data-decimals="1" style="font-size:clamp(90px,15vw,220px)"><span class="val">0</span></div>
-        <div class="statlabel">Era <b>32,4</b> en 2005. Con una dependencia de 65,6, el envejecimiento avanza y obliga a planear el cuidado.</div>
+        <div class="captitle" style="color:var(--ink2)">Actividad del jefe · % de hogares</div>
+        <div class="ranked"><div class="rrow"><div class="rlab">Buscando trabajo</div><div class="rtrack"><div class="rfill grow-w" data-w="38.6"></div></div><div class="rval">38,6%</div></div><div class="rrow"><div class="rlab">Trabajando</div><div class="rtrack"><div class="rfill grow-w" data-w="21.5"></div></div><div class="rval">21,5%</div></div><div class="rrow"><div class="rlab">Oficios del hogar</div><div class="rtrack"><div class="rfill grow-w" data-w="19.3"></div></div><div class="rval">19,3%</div></div><div class="rrow"><div class="rlab">Otras</div><div class="rtrack"><div class="rfill grow-w" data-w="19"></div></div><div class="rval">19,0%</div></div><div class="rrow"><div class="rlab">Estudiando</div><div class="rtrack"><div class="rfill grow-w" data-w="1.7"></div></div><div class="rval">1,7%</div></div></div>
+      </div>
+    </div>
+    <p class="lead d3" data-anim style="margin-top:26px;max-width:42ch">Con uno de cada tres jefes buscando trabajo, <b>generar empleo e ingresos</b> es la intervención más urgente.</p>
+  </div>
+</section>
+<section class="scene" data-name="Ingreso del hogar">
+  <div class="bg"><svg class="bgart" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice"><g fill="none" stroke="var(--accent)" stroke-width="3"><path d="M-50 380 C250 330 450 430 700 380 S1100 340 1260 400"/></g></svg></div>
+  <div class="wrap">
+    <div class="kick" data-anim>El dinero que entra al hogar</div>
+    <h2 class="sectitle d1" data-anim style="max-width:22ch">El ingreso no alcanza, y menos entre más personas.</h2>
+    <div class="small d1" data-anim style="margin:2px 0 18px;font-size:clamp(14px,1.5vw,18px)">Ingreso promedio del hogar por tamaño · miles de pesos/mes · <b>SISBÉN IV 2026</b></div>
+    <div class="grid" style="margin-top:6px;align-items:center">
+      <div class="d1" data-anim>
+        <div class="captitle" style="color:var(--ink2)">Ingreso promedio del hogar</div>
+        <div class="stat" style="font-size:clamp(78px,13vw,190px)"><span style="font-size:.42em;vertical-align:.34em">$</span><span data-count="126"><span class="val">0</span></span><span class="suf"> mil</span></div>
+        <div class="statlabel">Con eso vive, en promedio, el hogar del SISBÉN: incluso las familias grandes no superan los $224 mil. La barrera es <b>económica</b>.</div>
+      </div>
+      <div class="d2" data-anim>
+        <div class="captitle" style="color:var(--ink2)">Por tamaño del hogar · personas</div>
+        <div class="dist" style="max-width:520px"><div class="dgroup"><div class="dbars"><div class="dbar now grow-h" data-h="49"><span>$110</span></div></div><div class="dlab">1</div></div><div class="dgroup"><div class="dbars"><div class="dbar now grow-h" data-h="57"><span>$127</span></div></div><div class="dlab">2</div></div><div class="dgroup"><div class="dbars"><div class="dbar now grow-h" data-h="49"><span>$110</span></div></div><div class="dlab">3</div></div><div class="dgroup"><div class="dbars"><div class="dbar now grow-h" data-h="82"><span>$184</span></div></div><div class="dlab">4</div></div><div class="dgroup"><div class="dbars"><div class="dbar now grow-h" data-h="91"><span>$204</span></div></div><div class="dlab">5</div></div><div class="dgroup"><div class="dbars"><div class="dbar now grow-h" data-h="100"><span>$224</span></div></div><div class="dlab">6+</div></div></div>
       </div>
     </div>
   </div>
 </section>
-
-<section class="scene" data-name="Jefatura femenina">
+<section class="scene tint" data-name="Jefatura femenina">
   <div class="bg"><svg class="bgart" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice"><g fill="none" stroke="var(--accent)" stroke-width="3"><path d="M-50 380 C250 330 450 430 700 380 S1100 340 1260 400"/></g></svg></div>
   <div class="wrap">
     <div class="kick" data-anim>Quién encabeza el hogar</div>
@@ -230,8 +228,7 @@ h1.hero{font-family:"Iowan Old Style",Georgia,serif;font-size:clamp(84px,17vw,29
     </div>
   </div>
 </section>
-
-<section class="scene tint" data-name="Contraste de fuentes">
+<section class="scene" data-name="Contraste de fuentes">
   <div class="bg"><svg class="bgart" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice"><g fill="none" stroke="var(--sis)" stroke-width="3"><path d="M-50 380 C250 330 450 430 700 380 S1100 340 1260 400"/></g></svg></div>
   <div class="wrap">
     <div class="kick" data-anim>Tres fuentes del mismo municipio</div>
@@ -241,29 +238,25 @@ h1.hero{font-family:"Iowan Old Style",Georgia,serif;font-size:clamp(84px,17vw,29
     <p class="lead d3" data-anim style="margin-top:30px;max-width:40ch">El censo (DANE) cuenta a <b>todos</b> los hogares; el <b style="color:var(--sis)">SISBÉN</b> solo a los registrados por vulnerabilidad. Entre los registrados, la soledad y la jefatura femenina pesan más; el SISBÉN muestra a quién priorizar.</p>
   </div>
 </section>
-
-<section class="scene" data-name="Situaciones que impiden">
+<section class="scene tint" data-name="Situaciones que impiden">
   <div class="bg"><svg class="bgart" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice"><g fill="none" stroke="var(--warn)" stroke-width="3"><path d="M-50 420 C250 370 450 470 700 420 S1100 380 1260 440"/></g></svg></div>
   <div class="wrap">
     <div class="kick" data-anim>Quiénes necesitan más ayuda</div>
     <h2 class="sectitle d1" data-anim style="max-width:22ch">Las situaciones que impiden a las familias salir adelante.</h2>
     <div class="small d1" data-anim style="margin:2px 0 20px;font-size:clamp(14px,1.5vw,18px)">Hogares registrados en el <b>SISBÉN IV 2026</b> · Samaná</div>
     <div class="grid" style="margin-top:6px;align-items:center">
-      <div class="d1" data-anim>
-        <div class="captitle" style="color:var(--ink2)">Ingreso promedio del hogar · al mes</div>
-        <div class="stat" style="font-size:clamp(78px,13vw,190px)"><span style="font-size:.42em;vertical-align:.34em">$</span><span data-count="126"><span class="val">0</span></span><span class="suf"> mil</span></div>
-        <div class="statlabel">Con eso viven, en promedio, los hogares del SISBÉN del municipio: el ingreso es la barrera central.</div>
-      </div>
       <div class="d2" data-anim>
         <div class="captitle" style="color:var(--ink2)">Poblaciones a priorizar · % de hogares</div>
         <div class="ranked"><div class="rrow"><div class="rlab">En zona rural</div><div class="rtrack"><div class="rfill grow-w" data-w="70.7"></div></div><div class="rval">70,7%</div></div><div class="rrow"><div class="rlab">Con discapacidad</div><div class="rtrack"><div class="rfill grow-w" data-w="13.7"></div></div><div class="rval">13,7%</div></div><div class="rrow"><div class="rlab">Con niñez (Familias en Acción)</div><div class="rtrack"><div class="rfill grow-w" data-w="5.7"></div></div><div class="rval">5,7%</div></div><div class="rrow"><div class="rlab">Con adulto mayor (Colombia Mayor)</div><div class="rtrack"><div class="rfill grow-w" data-w="4.9"></div></div><div class="rval">4,9%</div></div></div>
       </div>
+      <div class="d1" data-anim>
+        <div class="captitle" style="color:var(--ink2)">Dependencia de programas sociales</div>
+        <p class="lead" style="font-size:clamp(20px,2.4vw,32px);color:var(--ink);margin-top:6px"><b>70,7% de hogares rurales</b>: la ayuda debe llegar al campo. Colombia Mayor cubre 4,9% y Familias en Acción 5,7%.</p>
+      </div>
     </div>
-    <p class="lead d3" data-anim style="margin-top:26px;max-width:42ch"><b>70,7% de hogares rurales</b>: la prioridad es el campo y los ingresos.</p>
   </div>
 </section>
-
-<section class="scene tint" data-name="Campo y conectividad">
+<section class="scene" data-name="Campo y conectividad">
   <div class="bg"><svg class="bgart" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice"><g fill="none" stroke="var(--accent)" stroke-width="3"><path d="M-50 380 C250 330 450 430 700 380 S1100 340 1260 400"/></g></svg></div>
   <div class="wrap">
     <div class="kick" data-anim>Servicios y conectividad</div>
@@ -273,8 +266,7 @@ h1.hero{font-family:"Iowan Old Style",Georgia,serif;font-size:clamp(84px,17vw,29
     <p class="lead d3" data-anim style="margin-top:28px;max-width:38ch">Energía casi universal y avance del gas (0,0 → 1,2%), pero <b style="color:var(--warn)">el internet llega solo al 7,9%</b>. El acueducto rural sigue corto (60,5%).</p>
   </div>
 </section>
-
-<section class="scene" data-name="El municipio">
+<section class="scene tint" data-name="El municipio">
   <div class="bg"><svg class="bgart" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice"><g fill="none" stroke="var(--accent)" stroke-width="3"><path d="M-50 380 C250 330 450 430 700 380 S1100 340 1260 400"/></g></svg></div>
   <div class="wrap">
     <div class="kick" data-anim>De qué vive el municipio</div>
@@ -285,26 +277,20 @@ h1.hero{font-family:"Iowan Old Style",Georgia,serif;font-size:clamp(84px,17vw,29
     </div>
   </div>
 </section>
-
 <section class="scene" data-name="Qué hacer">
   <div class="bg"><svg class="bgart" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice"><g fill="none" stroke="var(--accent)" stroke-width="3"><path d="M-50 300 C250 250 450 350 700 300 S1100 260 1260 320"/><path d="M-50 470 C250 420 450 520 700 470 S1100 430 1260 490"/></g></svg></div>
   <div class="wrap">
     <div class="kick" data-anim>Hacia dónde dirigir la política pública</div>
     <h2 class="sectitle d1" data-anim style="max-width:20ch">A quién ayudar primero.</h2>
-    <div class="implies"><div data-anim><div class="serif">01</div><h3>El campo</h3><p>IPM rural 47,1% y 70,7% de hogares SISBÉN rurales: inversión social y servicios en la ruralidad.</p></div><div data-anim><div class="serif">02</div><h3>Empleo formal</h3><p>Trabajo informal 89,9%: formalización y generación de ingresos.</p></div><div data-anim><div class="serif">03</div><h3>Educación</h3><p>Bajo logro educativo 76,5%: permanencia escolar y educación de adultos.</p></div><div data-anim><div class="serif">04</div><h3>Conectividad</h3><p>Internet 7,9%: cerrar la brecha digital, sobre todo en el campo.</p></div><div data-anim><div class="serif">05</div><h3>Hogares con discapacidad</h3><p>SISBÉN 13,7%: cuidado, accesibilidad y apoyo a cuidadores.</p></div><div data-anim><div class="serif">06</div><h3>Hogares que viven solos</h3><p>Unipersonales SISBÉN 42,6%: redes de apoyo para adultos mayores solos.</p></div></div>
+    <div class="implies"><div data-anim><div class="serif">01</div><h3>Generar empleo</h3><p>El 38,6% de los jefes busca trabajo: empleo e ingresos son la prioridad.</p></div><div data-anim><div class="serif">02</div><h3>El campo</h3><p>IPM rural 47,1% y 70,7% de hogares SISBÉN rurales: inversión social y servicios en la ruralidad.</p></div><div data-anim><div class="serif">03</div><h3>Empleo formal</h3><p>Trabajo informal 89,9%: formalización y generación de ingresos.</p></div><div data-anim><div class="serif">04</div><h3>Educación</h3><p>Bajo logro educativo 76,5%: permanencia escolar y educación de adultos.</p></div><div data-anim><div class="serif">05</div><h3>Conectividad</h3><p>Internet 7,9%: cerrar la brecha digital, sobre todo en el campo.</p></div><div data-anim><div class="serif">06</div><h3>Hogares con discapacidad</h3><p>SISBÉN 13,7%: cuidado, accesibilidad y apoyo a cuidadores.</p></div></div>
   </div>
 </section>
-
 <footer class="footer">
   <svg class="bgart" style="opacity:.08" viewBox="0 0 1200 400" preserveAspectRatio="xMidYMid slice"><g fill="none" stroke="#fff" stroke-width="2"><path d="M-50 160 C250 120 450 200 700 160 S1100 130 1260 180"/><path d="M-50 280 C250 240 450 320 700 280 S1100 250 1260 300"/></g></svg>
   <h3 class="serif">Samaná, en una generación</h3>
-  <p class="srcs">Población <b>18.295 → 17.466</b> · Hogar promedio <b>3,5 → 2,7</b> · Unipersonales <b>13,1% → 23,1%</b> (SISBÉN 42,6%) · Jefatura femenina <b>21,5% → 30,6%</b> (urbana 45,7% · rural 23,6%) · Discapacidad <b>16,0% → 20,7%</b> (SISBÉN 13,7%) · Envejecimiento <b>32,4 → 73,4</b> · IPM <b>39,9%</b> (rural 47,1%) · Internet <b>7,9%</b>.</p>
-  <div class="metarow">
-    <span class="m">DANE · Censo 2005 / CNPV 2018 · Ficha 17662</span>
-    <span class="m">Tablero Dinámicas Familiares · SISBÉN IV 2026</span>
-    <span class="m">DANE · IPM municipal censal 2018</span>
-  </div>
-  <p class="srcs">Composición, jefatura por zona, unipersonales y discapacidad: microdato censal DANE 2005/2018 (tablero). Población, envejecimiento, dependencia y servicios: ficha CNPV 2018 DANE. SISBÉN IV 2026: tablero municipal. Marco: Observatorio de Familias del DNP. Dashboard: johanpina.github.io/proyecto_dinamicas_familiares · 2026.</p>
+  <p class="srcs">Población <b>18.295 → 17.466</b> · Hogar <b>3,5 → 2,7</b> · Unipersonales <b>13,1% → 23,1%</b> (SISBÉN 42,6%) · Jefatura femenina <b>21,5% → 30,6%</b> (SISBÉN 41,7%) · Jefe buscando trabajo <b>38,6%</b> · oficios del hogar <b>19,3%</b> · Ingreso hogar <b>$126 mil</b> · Discapacidad SISBÉN <b>13,7%</b> · Envejecimiento <b>32,4 → 73,4</b> · IPM <b>39,9%</b> (rural 47,1%) · Internet <b>7,9%</b>.</p>
+  <div class="metarow"><span class="m">DANE · Censo 2005 / CNPV 2018 · Ficha 17662</span><span class="m">Tablero Dinámicas Familiares · SISBÉN IV 2026</span><span class="m">DANE · IPM municipal censal 2018</span></div>
+  <p class="srcs">Composición, jefatura por zona y discapacidad: microdato censal DANE 2005/2018 (tablero). Actividad del jefe, estado civil, edad, ingreso por tamaño y programas: SISBÉN IV 2026 (tablero). Población, envejecimiento, dependencia y servicios: ficha CNPV 2018 DANE. IPM censal 2018 DANE. Dashboard: johanpina.github.io/proyecto_dinamicas_familiares · 2026.</p>
 </footer>
 <script>
 const fmt=(n,d)=>n.toLocaleString('es-CO',{minimumFractionDigits:d,maximumFractionDigits:d});
