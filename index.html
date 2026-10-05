@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dinámicas Familiares — Eje Cafetero</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', sans-serif; background: #0f1b2d; color: #e2e8f0; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2.5rem 1.5rem; }
+    .logo { font-size: 2rem; font-weight: 700; color: #4fc3f7; margin-bottom: 0.4rem; text-align: center; }
+    .subtitle { color: #94a3b8; font-size: 0.95rem; margin-bottom: 0.6rem; text-align: center; }
+    .authors { color: #475569; font-size: 0.82rem; margin-bottom: 2.8rem; text-align: center; }
+    .authors span { color: #64748b; }
+    .section-head { width: 100%; max-width: 1500px; text-align: center; margin-bottom: 1.4rem; }
+    .section-head .st { font-size: 1.2rem; font-weight: 700; color: #e2e8f0; }
+    .section-head .ss { font-size: 0.85rem; color: #94a3b8; margin-top: 0.25rem; }
+    .cards { display: flex; gap: 1.4rem; flex-wrap: wrap; justify-content: center; max-width: 1500px; }
+    .card { background: #1a2e45; border: 1px solid #2d4a6b; border-radius: 16px; padding: 1.6rem; width: 320px; text-decoration: none; color: inherit; display: flex; flex-direction: column; transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s; position: relative; }
+    .card:hover { transform: translateY(-5px); border-color: #4fc3f7; box-shadow: 0 10px 36px rgba(79,195,247,0.13); }
+    .version-pill { position: absolute; top: -11px; right: 16px; font-size: 0.68rem; font-weight: 800; letter-spacing: 0.1em; padding: 0.2rem 0.65rem; border-radius: 999px; border: 1.5px solid; }
+    .v1 { background: #1e40af18; color: #60a5fa; border-color: #1e40af; }
+    .v2 { background: #06514018; color: #34d399; border-color: #065f46; }
+    .v3 { background: #6d28d918; color: #c4b5fd; border-color: #6d28d9; }
+    .v4 { background: #92400e18; color: #fcd34d; border-color: #92400e; }
+    .v5 { background: #134e4a18; color: #2dd4bf; border-color: #134e4a; }
+    .card-badge { display: inline-block; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.06em; padding: 0.2rem 0.55rem; border-radius: 6px; margin-bottom: 0.85rem; width: fit-content; }
+    .badge-blue   { background: #1e40af22; color: #93c5fd; }
+    .badge-green  { background: #065f4622; color: #6ee7b7; }
+    .badge-purple { background: #6d28d922; color: #ddd6fe; }
+    .badge-amber  { background: #92400e22; color: #fcd34d; }
+    .badge-teal   { background: #134e4a22; color: #5eead4; }
+    .card-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.45rem; line-height: 1.3; }
+    .card-desc { font-size: 0.83rem; color: #94a3b8; line-height: 1.65; margin-bottom: 1rem; flex: 1; }
+    .modules { display: flex; flex-wrap: wrap; gap: 0.32rem; margin-bottom: 1rem; }
+    .mod { font-size: 0.68rem; padding: 0.16rem 0.45rem; border-radius: 5px; background: #0f1b2d; color: #64748b; border: 1px solid #2d4a6b; white-space: nowrap; }
+    .mod-new { color: #fbbf24; border-color: #92400e; background: #92400e1a; }
+    .card-meta { font-size: 0.76rem; color: #475569; }
+    .card-meta b { color: #4fc3f7; font-weight: 600; }
+    .btn { display: inline-block; margin-top: 1rem; padding: 0.48rem 1rem; border-radius: 8px; font-size: 0.86rem; font-weight: 600; color: #fff; transition: filter 0.2s; align-self: flex-start; }
+    .btn:hover { filter: brightness(1.15); }
+    .btn-blue   { background: #1e40af; }
+    .btn-green  { background: #065f46; }
+    .btn-purple { background: #5b21b6; }
+    .btn-amber  { background: #92400e; }
+    .btn-teal   { background: #0f766e; }
+    /* historias */
+    .hero-band { width: 100%; max-width: 1500px; background: linear-gradient(135deg, #12303a, #143b2f); border: 1px solid #1f5145; border-radius: 18px; padding: 1.8rem 2rem; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1.2rem; }
+    .hero-band .ht { font-size: 1.35rem; font-weight: 800; color: #eafaf4; }
+    .hero-band .hd { font-size: 0.9rem; color: #a7d8ca; margin-top: 0.35rem; max-width: 60ch; line-height: 1.6; }
+    .hero-band .hb { display: inline-block; padding: 0.6rem 1.3rem; border-radius: 10px; font-size: 0.9rem; font-weight: 700; color: #06231c; background: #46e0c1; text-decoration: none; white-space: nowrap; }
+    .hero-band .hb:hover { filter: brightness(1.08); }
+    .muni-row { width: 100%; max-width: 1500px; display: flex; flex-wrap: wrap; gap: 0.7rem; justify-content: center; margin-top: 1.2rem; }
+    .muni { text-decoration: none; font-size: 0.86rem; font-weight: 700; color: #e2e8f0; background: #16233a; border: 1px solid #2d4a6b; border-left-width: 4px; border-radius: 10px; padding: 0.6rem 1.1rem; transition: transform 0.15s, border-color 0.2s; }
+    .muni:hover { transform: translateY(-3px); }
+    .muni small { display: block; font-size: 0.68rem; font-weight: 600; color: #7c8aa0; margin-top: 0.1rem; }
+    .divider { width: 100%; max-width: 1500px; height: 1px; background: #1e3a55; margin: 2.6rem 0 2rem; }
+    footer { font-size: 0.76rem; color: #374151; text-align: center; margin-top: 2.6rem; }
+  </style>
+</head>
+<body>
+  <div class="logo">📊 Dinámicas Familiares · Eje Cafetero</div>
+  <p class="subtitle">Proyecto de caracterización demográfica multifuente</p>
+  <p class="authors"><span>Johan Piña</span> &amp; <span>Santiago Barrero</span> · 2026</p>
+
+  <!-- ====== HISTORIAS INTERACTIVAS (portada) ====== -->
+  <div class="hero-band">
+    <div>
+      <div class="ht">📖 Historias interactivas por municipio</div>
+      <div class="hd">Scrollytelling visual sobre cómo cambian las familias en Caldas: hogares que se encogen, jefatura femenina, envejecimiento, discapacidad y brechas del campo. Datos DANE 2005/2018 y SISBÉN IV 2026.</div>
+    </div>
+    <a class="hb" href="familias.html">Abrir portada de historias →</a>
+  </div>
+  <div class="muni-row">
+    <a class="muni" href="historia_aranzazu.html" style="border-left-color:#16887a">Aranzazu<small>Norte</small></a>
+    <a class="muni" href="historia_salamina.html" style="border-left-color:#a9741a">Salamina<small>Norte · Patrimonio</small></a>
+    <a class="muni" href="historia_riosucio.html" style="border-left-color:#b1542a">Riosucio<small>Embera-Chamí</small></a>
+    <a class="muni" href="historia_viterbo.html" style="border-left-color:#5d7a2e">Viterbo<small>Valle del Risaralda</small></a>
+    <a class="muni" href="historia_neira.html" style="border-left-color:#2f6690">Neira<small>Centro Sur</small></a>
+    <a class="muni" href="historia_pensilvania.html" style="border-left-color:#2e7d5b">Pensilvania<small>Oriente</small></a>
+    <a class="muni" href="historia_ladorada.html" style="border-left-color:#b23a48">La Dorada<small>Magdalena</small></a>
+    <a class="muni" href="historia_marulanda.html" style="border-left-color:#3f7d8c">Marulanda<small>Alto Oriente · Páramo</small></a>
+    <a class="muni" href="historia_aguadas.html" style="border-left-color:#9c7a1e">Aguadas<small>Norte · Patrimonio</small></a>
+    <a class="muni" href="historia_chinchina.html" style="border-left-color:#6f4a2f">Chinchiná<small>Centrosur · Cafetero</small></a>
+    <a class="muni" href="historia_manizales.html" style="border-left-color:#3b4ea0">Manizales<small>Capital</small></a>
+    <a class="muni" href="historia_anserma.html" style="border-left-color:#b5872a">Anserma<small>Bajo Occidente</small></a>
+    <a class="muni" href="historia_belalcazar.html" style="border-left-color:#7d9c3a">Belalcázar<small>Bajo Occidente · Cristo Rey</small></a>
+    <a class="muni" href="historia_filadelfia.html" style="border-left-color:#2f8f6f">Filadelfia<small>Alto Occidente</small></a>
+    <a class="muni" href="historia_lamerced.html" style="border-left-color:#8a6a4f">La Merced<small>Alto Occidente</small></a>
+    <a class="muni" href="historia_manzanares.html" style="border-left-color:#4a7a3a">Manzanares<small>Oriente</small></a>
+    <a class="muni" href="historia_marmato.html" style="border-left-color:#c98a1e">Marmato<small>Alto Occidente · Minero</small></a>
+    <a class="muni" href="historia_marquetalia.html" style="border-left-color:#6b8e23">Marquetalia<small>Oriente</small></a>
+    <a class="muni" href="historia_norcasia.html" style="border-left-color:#2d8ca0">Norcasia<small>Oriente · La Miel</small></a>
+    <a class="muni" href="historia_pacora.html" style="border-left-color:#9c5a3c">Pácora<small>Norte</small></a>
+    <a class="muni" href="historia_palestina.html" style="border-left-color:#55792e">Palestina<small>Centrosur · Aeropuerto</small></a>
+    <a class="muni" href="historia_risaralda.html" style="border-left-color:#a0712a">Risaralda<small>Centrosur</small></a>
+    <a class="muni" href="historia_samana.html" style="border-left-color:#3f8060">Samaná<small>Oriente</small></a>
+    <a class="muni" href="historia_sanjose.html" style="border-left-color:#8a6d2f">San José<small>Bajo Occidente</small></a>
+    <a class="muni" href="historia_supia.html" style="border-left-color:#b05a2e">Supía<small>Alto Occidente · Pluriétnico</small></a>
+    <a class="muni" href="historia_victoria.html" style="border-left-color:#c06a2f">Victoria<small>Oriente · Magdalena</small></a>
+    <a class="muni" href="historia_villamaria.html" style="border-left-color:#3b6ea0">Villamaría<small>Centrosur · Nevado</small></a>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section-head">
+    <div class="st">Tableros de datos interactivos</div>
+    <div class="ss">Microdato completo con filtros cruzados · Caldas, Quindío y Risaralda</div>
+  </div>
+
+  <div class="cards">
+
+    <a class="card" href="dashboard_hogares_sisben.html">
+      <span class="version-pill v1">V 1.0</span>
+      <span class="card-badge badge-blue">SISBEN IV · Caldas 2026</span>
+      <div class="card-title">Dashboard SISBEN</div>
+      <div class="card-desc">Caracterización completa de los hogares registrados en SISBEN IV Caldas. Cross-filter interactivo por municipio, género, zona, estado civil y tipología familiar.</div>
+      <div class="modules">
+        <span class="mod">Mapa municipal</span>
+        <span class="mod">Composición hogar</span>
+        <span class="mod">Tipología familiar</span>
+        <span class="mod">Jefatura</span>
+        <span class="mod">Discapacidad</span>
+      </div>
+      <div class="card-meta"><b>255,845</b> hogares · <b>605,843</b> personas · <b>27</b> municipios</div>
+      <span class="btn btn-blue">Abrir →</span>
+    </a>
+
+    <a class="card" href="dashboard_unificado.html">
+      <span class="version-pill v2">V 2.0</span>
+      <span class="card-badge badge-green">SISBEN · DANE · SIVIGILA</span>
+      <div class="card-title">Dashboard Unificado</div>
+      <div class="card-desc">Análisis longitudinal que integra los Censos DANE 2005 y 2018 con SISBEN IV 2026 y datos de Vigilancia en Salud Pública (SIVIGILA). Tres cortes temporales.</div>
+      <div class="modules">
+        <span class="mod">DANE 2005 · 2018</span>
+        <span class="mod">Tipologías históricas</span>
+        <span class="mod">Evolución demográfica</span>
+        <span class="mod mod-new">✦ SIVIGILA</span>
+      </div>
+      <div class="card-meta">Fuentes: <b>DANE</b> · <b>SISBEN IV</b> · <b>SIVIGILA</b> · 3 cortes temporales</div>
+      <span class="btn btn-green">Abrir →</span>
+    </a>
+
+    <a class="card" href="dashboard_ecv.html">
+      <span class="version-pill v3">V 3.0</span>
+      <span class="card-badge badge-purple">SISBEN · DANE · SIVIGILA · ECV 2025</span>
+      <div class="card-title">Dashboard ECV Integrado</div>
+      <div class="card-desc">Incorpora tres módulos de la Encuesta de Calidad de Vida 2025: Vivienda, Educación y Salud, con datos binarios por hogar (33 bytes/hogar).</div>
+      <div class="modules">
+        <span class="mod">Todo lo anterior</span>
+        <span class="mod mod-new">✦ ECV Vivienda</span>
+        <span class="mod mod-new">✦ ECV Educación</span>
+        <span class="mod mod-new">✦ ECV Salud</span>
+      </div>
+      <div class="card-meta">Fuentes: <b>DANE</b> · <b>SISBEN IV</b> · <b>SIVIGILA</b> · <b>ECV 2025</b></div>
+      <span class="btn btn-purple">Abrir →</span>
+    </a>
+
+    <a class="card" href="dashboard_v4.html">
+      <span class="version-pill v4">V 4.0</span>
+      <span class="card-badge badge-amber">Eje Cafetero · 3 Departamentos</span>
+      <div class="card-title">Dashboard Eje Cafetero</div>
+      <div class="card-desc">Expansión regional: cubre Caldas, Quindío y Risaralda con fuentes diferenciadas por departamento. La versión más completa y de mayor cobertura geográfica.</div>
+      <div class="modules">
+        <span class="mod">Todo lo anterior</span>
+        <span class="mod mod-new">✦ Quindío (DANE)</span>
+        <span class="mod mod-new">✦ Risaralda (DANE)</span>
+        <span class="mod">Caldas (SISBEN IV)</span>
+      </div>
+      <div class="card-meta">Cobertura: <b>Caldas</b> · <b>Quindío</b> · <b>Risaralda</b></div>
+      <span class="btn btn-amber">Abrir →</span>
+    </a>
+
+    <a class="card" href="dashboard_comparativa_hogares.html">
+      <span class="version-pill v5">V 5.0</span>
+      <span class="card-badge badge-teal">Eje Cafetero · Mejorado</span>
+      <div class="card-title">Dashboard Comparativa Hogares</div>
+      <div class="card-desc">Datos integrados de Caldas, Quindío y Risaralda con filtrado dinámico por departamento y comparativa interactiva entre regiones del Eje Cafetero.</div>
+      <div class="modules">
+        <span class="mod mod-new">✦ Caldas (SISBEN IV)</span>
+        <span class="mod mod-new">✦ Quindío (DANE)</span>
+        <span class="mod mod-new">✦ Risaralda (DANE)</span>
+        <span class="mod mod-new">✦ Filtrado dinámico</span>
+        <span class="mod mod-new">✦ Comparativa depto.</span>
+      </div>
+      <div class="card-meta">Cobertura: <b>Caldas</b> · <b>Quindío</b> · <b>Risaralda</b></div>
+      <span class="btn btn-teal">Abrir →</span>
+    </a>
+
+  </div>
+  <footer>Proyecto Dinámicas Familiares Eje Cafetero · Johan Piña &amp; Santiago Barrero · 2026</footer>
+</body>
+</html>
