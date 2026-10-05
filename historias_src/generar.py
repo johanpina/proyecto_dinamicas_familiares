@@ -324,7 +324,8 @@ def pagina(m):
 
     # ---- portada
     hero_bg = f"var(--ac-deep)"
-    ph = f'<div class="ph" style="background-image:url(&quot;{esc(foto)}&quot;)" role="img" aria-label="Paisaje de {esc(n)}"></div>' if foto else ""
+    pos = fx.get("pos", "center") if isinstance(fx, dict) else "center"
+    ph = f'<div class="ph" style="background-image:url(&quot;{esc(foto)}&quot;);background-position:{pos}" role="img" aria-label="Paisaje de {esc(n)}"></div>' if foto else ""
     portada = f'''
 <header class="hero" id="inicio">
   {ph}

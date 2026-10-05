@@ -42,7 +42,14 @@
   "desc": "Parque principal de Filadelfia"
  },
  "La Dorada": "keep",
- "La Merced": null,
+ "La Merced": {
+  "file": "File:LaMercedCaldas.jpg",
+  "url": "https://commons.wikimedia.org/wiki/Special:FilePath/LaMercedCaldas.jpg",
+  "author": "Androsoma",
+  "license": "dominio público",
+  "desc": "Vista del pueblo con las torres de la iglesia",
+  "pos": "center 45%"
+ },
  "Manizales": {
   "file": "File:Manizales from south.jpg",
   "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Manizales_from_south.jpg?width=1920",
@@ -57,7 +64,14 @@
   "license": "CC BY-SA 4.0",
   "desc": "Basílica Menor de San Antonio de Padua, frente al parque de Manzanares"
  },
- "Marmato": null,
+ "Marmato": {
+  "file": "File:Paisaje marmateño.jpg",
+  "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Paisaje_marmate%C3%B1o.jpg?width=1920",
+  "author": "Quinaya Qumir",
+  "license": "CC BY-SA 4.0",
+  "desc": "Calle de Marmato con las montañas al fondo",
+  "pos": "center 38%"
+ },
  "Marquetalia": {
   "file": "File:Panoramic view of Marquetalia 1.jpg",
   "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Panoramic_view_of_Marquetalia_1.jpg?width=1920",
