@@ -1,0 +1,800 @@
+{
+ "aguadas": {
+  "slug": "aguadas",
+  "name": "Aguadas",
+  "title": "Aguadas · Café, sombrero y patrimonio que envejece",
+  "accent": "#9c7a1e",
+  "accent2": "#665012",
+  "photo": "https://picsum.photos/seed/aguadas-pueblo-patrimonio/1920/1080",
+  "kick": "Aguadas · Norte · Caldas",
+  "tagline": "Café, sombrero de iraca y una población que envejece.",
+  "scenes": [
+   "Aguadas",
+   "La familia cambió",
+   "Cómo son los hogares",
+   "Solos y mayores",
+   "Jefatura femenina",
+   "Contraste de fuentes",
+   "Situaciones que impiden",
+   "Campo y conectividad",
+   "El municipio",
+   "Qué hacer"
+  ],
+  "contexto": [
+   "De qué vive el municipio Café, sombrero aguadeño y pueblo patrimonio. Economía y territorioAguadas vive del <b>café</b> y del cultivo y tejido de la <b>palma de iraca</b> (el famoso sombrero aguadeño), con un casco histórico patrimonial y un fuerte turismo cultural (Festival Nacional del Pasillo). Es un municipio que envejece.",
+   "La gestión debe <b>cuidar a una población mayor</b>, sostener la economía del café y la artesanía, y llevar <b>saneamiento y conexión</b> a un campo aún rezagado.",
+   "Hacia dónde dirigir la política pública A quién ayudar primero. 01Envejecimiento y cuidadoÍndice 91,7: salud geriátrica y redes de cuidado para los mayores."
+  ],
+  "econ": "Aguadas vive del <b>café</b> y del cultivo y tejido de la <b>palma de iraca</b> (el famoso sombrero aguadeño), con un casco histórico patrimonial y un fuerte turismo cultural (Festival Nacional del Pasillo). Es un municipio que envejece.",
+  "reto": "La gestión debe <b>cuidar a una población mayor</b>, sostener la economía del café y la artesanía, y llevar <b>saneamiento y conexión</b> a un campo aún rezagado."
+ },
+ "anserma": {
+  "slug": "anserma",
+  "name": "Anserma",
+  "title": "Anserma · Café y comercio en un occidente que envejece",
+  "accent": "#b5872a",
+  "accent2": "#6f5214",
+  "photo": "https://picsum.photos/seed/anserma-caldas/1920/1080",
+  "kick": "Anserma · Bajo Occidente · Caldas",
+  "tagline": "Café y comercio en una de las villas más antiguas del occidente.",
+  "scenes": [
+   "Anserma",
+   "La familia cambió",
+   "Cómo son los hogares",
+   "Trabajo del jefe",
+   "Jefatura femenina",
+   "Ingreso del hogar",
+   "Contraste de fuentes",
+   "Situaciones que impiden",
+   "Campo y conectividad",
+   "El municipio",
+   "Qué hacer"
+  ],
+  "contexto": [
+   "De qué vive el municipio De qué vive Anserma. Economía y territorioAnserma, una de las poblaciones más antiguas del occidente de Caldas, vive del <b>café</b>, el <b>comercio</b> y la agricultura de ladera. Es centro de servicios de su subregión.",
+   "El reto es <b>cuidar a una población que envejece</b>, sostener el empleo del café y el comercio, y cerrar las brechas de servicios y conexión en el campo.",
+   "Hacia dónde dirigir la política pública A quién ayudar primero. 01Envejecimiento y cuidadoÍndice 98,3: salud geriátrica y redes de cuidado para los mayores."
+  ],
+  "econ": "Anserma, una de las poblaciones más antiguas del occidente de Caldas, vive del <b>café</b>, el <b>comercio</b> y la agricultura de ladera. Es centro de servicios de su subregión.",
+  "reto": "El reto es <b>cuidar a una población que envejece</b>, sostener el empleo del café y el comercio, y cerrar las brechas de servicios y conexión en el campo."
+ },
+ "aranzazu": {
+  "slug": "aranzazu",
+  "name": "Aranzazu",
+  "title": "Aranzazu · La familia que se hizo pequeña",
+  "accent": "#16887a",
+  "accent2": "#0f5f55",
+  "photo": "https://picsum.photos/seed/aranzazu-caldas/1920/1080",
+  "kick": "Aranzazu · Subregión Norte · Caldas",
+  "tagline": "La familia que se hizo <em>pequeña</em>.",
+  "scenes": [
+   "Aranzazu",
+   "La familia se encogió",
+   "Cómo son los hogares",
+   "Solos y mayores",
+   "Jefatura femenina",
+   "Contraste de fuentes",
+   "Situaciones que impiden",
+   "Campo y conectividad",
+   "El municipio",
+   "Qué hacer"
+  ],
+  "contexto": [
+   "De qué vive el municipio Del café al aguacate, con el fique como herencia. Economía y territorio«El Faro del Norte» vivió siempre del café. Hoy el <b>aguacate Hass</b> supera al café en volumen y el <b>fique</b> guarda la memoria de la cultura de la cabuya, en un municipio de comercio y microempresas del que emigran los jóvenes.",
+   "El reto ya no es atender familias grandes con muchos niños, sino <b>cuidar a una población que envejece y vive en hogares pequeños</b>, mientras se cierra la brecha rural en pobreza, agua y conectividad.",
+   "Hacia dónde dirigir la política pública A quién ayudar primero. 01Personas mayores que viven solas60+ en 20,3% y muchos viviendo solos: Colombia Mayor, centro día y cuidado domiciliario."
+  ],
+  "econ": "«El Faro del Norte» vivió siempre del café. Hoy el <b>aguacate Hass</b> supera al café en volumen y el <b>fique</b> guarda la memoria de la cultura de la cabuya, en un municipio de comercio y microempresas del que emigran los jóvenes.",
+  "reto": "El reto ya no es atender familias grandes con muchos niños, sino <b>cuidar a una población que envejece y vive en hogares pequeños</b>, mientras se cierra la brecha rural en pobreza, agua y conectividad."
+ },
+ "belalcazar": {
+  "slug": "belalcazar",
+  "name": "Belalcázar",
+  "title": "Belalcázar · Café de ladera bajo el Cristo Rey",
+  "accent": "#7d9c3a",
+  "accent2": "#4e661f",
+  "photo": "https://picsum.photos/seed/belalcazar-caldas/1920/1080",
+  "kick": "Belalcázar · Bajo Occidente · Caldas",
+  "tagline": "Café de ladera, coronado por el Cristo Rey.",
+  "scenes": [
+   "Belalcázar",
+   "La familia cambió",
+   "Cómo son los hogares",
+   "Ingreso del hogar",
+   "Trabajo del jefe",
+   "Jefatura femenina",
+   "Contraste de fuentes",
+   "Situaciones que impiden",
+   "Campo y conectividad",
+   "El municipio",
+   "Qué hacer"
+  ],
+  "contexto": [
+   "De qué vive el municipio De qué vive Belalcázar. Economía y territorioBelalcázar vive del <b>café</b> y la agricultura de ladera, con su célebre monumento a <b>Cristo Rey</b> como emblema. Es un municipio campesino del bajo occidente.",
+   "La gestión debe <b>reducir la pobreza rural</b>, apoyar el empleo cafetero y llevar educación, agua y conexión a las veredas.",
+   "Hacia dónde dirigir la política pública A quién ayudar primero. 01Permanencia de la poblaciónLa población cae 14%: oportunidades para que los jóvenes se queden."
+  ],
+  "econ": "Belalcázar vive del <b>café</b> y la agricultura de ladera, con su célebre monumento a <b>Cristo Rey</b> como emblema. Es un municipio campesino del bajo occidente.",
+  "reto": "La gestión debe <b>reducir la pobreza rural</b>, apoyar el empleo cafetero y llevar educación, agua y conexión a las veredas."
+ },
+ "chinchina": {
+  "slug": "chinchina",
+  "name": "Chinchiná",
+  "title": "Chinchiná · Corazón cafetero, hogares más solos",
+  "accent": "#6f4a2f",
+  "accent2": "#47301d",
+  "photo": "https://picsum.photos/seed/chinchina-cafe-cultivo/1920/1080",
+  "kick": "Chinchiná · Centrosur · Caldas",
+  "tagline": "Corazón cafetero de hogares cada vez más pequeños.",
+  "scenes": [
+   "Chinchiná",
+   "La familia cambió",
+   "Cómo son los hogares",
+   "Solos y mayores",
+   "Jefatura femenina",
+   "Contraste de fuentes",
+   "Situaciones que impiden",
+   "Campo y conectividad",
+   "El municipio",
+   "Qué hacer"
+  ],
+  "contexto": [
+   "De qué vive el municipio Epicentro del café: Cenicafé y trilla. Economía y territorioChinchiná es <b>epicentro cafetero</b> nacional (sede de Cenicafé y de la trilla e industria del café) y está conurbada con Manizales. Su economía gira en torno al <b>café</b> y a la industria y los servicios asociados.",
+   "Sobre una base de buenos servicios, el reto es <b>cerrar la brecha digital</b>, atender la soledad y la discapacidad urbanas, y sostener el empleo cafetero e industrial.",
+   "Hacia dónde dirigir la política pública A quién ayudar primero. 01Envejecimiento y soledadÍndice 94,9 y unipersonales SISBÉN 40,3%: cuidado de mayores que viven solos."
+  ],
+  "econ": "Chinchiná es <b>epicentro cafetero</b> nacional (sede de Cenicafé y de la trilla e industria del café) y está conurbada con Manizales. Su economía gira en torno al <b>café</b> y a la industria y los servicios asociados.",
+  "reto": "Sobre una base de buenos servicios, el reto es <b>cerrar la brecha digital</b>, atender la soledad y la discapacidad urbanas, y sostener el empleo cafetero e industrial."
+ },
+ "filadelfia": {
+  "slug": "filadelfia",
+  "name": "Filadelfia",
+  "title": "Filadelfia · Montaña y café que se quedan sin jóvenes",
+  "accent": "#2f8f6f",
+  "accent2": "#185844",
+  "photo": "https://picsum.photos/seed/filadelfia-caldas/1920/1080",
+  "kick": "Filadelfia · Alto Occidente · Caldas",
+  "tagline": "Montaña y café que se quedan sin gente joven.",
+  "scenes": [
+   "Filadelfia",
+   "La familia cambió",
+   "Cómo son los hogares",
+   "Ingreso del hogar",
+   "Trabajo del jefe",
+   "Las edades",
+   "Solos y mayores",
+   "Jefatura femenina",
+   "Contraste de fuentes",
+   "Situaciones que impiden",
+   "Campo y conectividad",
+   "El municipio",
+   "Qué hacer"
+  ],
+  "contexto": [
+   "De qué vive el municipio De qué vive Filadelfia. Economía y territorioFiladelfia vive del <b>café</b>, la <b>caña</b> y la agricultura de montaña. Es un municipio rural del alto occidente con fuerte salida de población.",
+   "Debe <b>retener a los jóvenes</b> y, a la vez, prepararse para cuidar a una población que ya envejece con fuerza.",
+   "Hacia dónde dirigir la política pública A quién ayudar primero. 01Envejecimiento y cuidadoÍndice 113,0: salud geriátrica y redes de cuidado para los mayores."
+  ],
+  "econ": "Filadelfia vive del <b>café</b>, la <b>caña</b> y la agricultura de montaña. Es un municipio rural del alto occidente con fuerte salida de población.",
+  "reto": "Debe <b>retener a los jóvenes</b> y, a la vez, prepararse para cuidar a una población que ya envejece con fuerza."
+ },
+ "ladorada": {
+  "slug": "ladorada",
+  "name": "La Dorada",
+  "title": "La Dorada · Puerto y calor a orillas del Magdalena",
+  "accent": "#b23a48",
+  "accent2": "#6f222c",
+  "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Bridge_over_the_Magdalena_River,_Colombia.jpg?width=1920",
+  "kick": "La Dorada · Magdalena Caldense · Caldas",
+  "tagline": "Ganado, comercio y calor a orillas del río Magdalena.",
+  "scenes": [
+   "La Dorada",
+   "La familia cambió",
+   "Cómo son los hogares",
+   "Solos y mayores",
+   "Jefatura femenina",
+   "Contraste de fuentes",
+   "Situaciones que impiden",
+   "Campo y conectividad",
+   "El municipio",
+   "Qué hacer"
+  ],
+  "contexto": [
+   "De qué vive el municipio Puerto, ganadería y comercio del Magdalena Medio. Economía y territorioLa Dorada es el <b>centro urbano y logístico</b> del oriente caldense, a orillas del río Magdalena: vive de la <b>ganadería</b>, el <b>comercio</b>, el transporte y la pesca. Su cruce vial la convierte en puerta regional.",
+   "El reto es traducir su papel de <b>centro regional</b> en empleo formal, cerrar la brecha digital y atender una vulnerabilidad que es, sobre todo, <b>urbana</b>.",
+   "Hacia dónde dirigir la política pública A quién ayudar primero. 01Empleo urbano formalTrabajo informal 83,2% y pobreza urbana: formalización y generación de ingresos."
+  ],
+  "econ": "La Dorada es el <b>centro urbano y logístico</b> del oriente caldense, a orillas del río Magdalena: vive de la <b>ganadería</b>, el <b>comercio</b>, el transporte y la pesca. Su cruce vial la convierte en puerta regional.",
+  "reto": "El reto es traducir su papel de <b>centro regional</b> en empleo formal, cerrar la brecha digital y atender una vulnerabilidad que es, sobre todo, <b>urbana</b>."
+ },
+ "lamerced": {
+  "slug": "lamerced",
+  "name": "La Merced",
+  "title": "La Merced · Un pueblo pequeño que envejece",
+  "accent": "#8a6a4f",
+  "accent2": "#574130",
+  "photo": "https://picsum.photos/seed/lamerced-caldas/1920/1080",
+  "kick": "La Merced · Alto Occidente · Caldas",
+  "tagline": "Un pueblo pequeño y cafetero que envejece.",
+  "scenes": [
+   "La Merced",
+   "La familia cambió",
+   "Cómo son los hogares",
+   "Ingreso del hogar",
+   "Trabajo del jefe",
+   "Las edades",
+   "Solos y mayores",
+   "Jefatura femenina",
+   "Contraste de fuentes",
+   "Situaciones que impiden",
+   "Campo y conectividad",
+   "El municipio",
+   "Qué hacer"
+  ],
+  "contexto": [
+   "De qué vive el municipio De qué vive La Merced. Economía y territorioLa Merced es un pequeño municipio <b>cafetero y agrícola</b> del alto occidente, de economía campesina y población menguante.",
+   "Con pocos habitantes y muchos mayores, la prioridad es el <b>cuidado de la vejez</b> y servicios que lleguen al campo.",
+   "Hacia dónde dirigir la política pública A quién ayudar primero. 01Generar empleoEl 35,0% de los jefes busca trabajo: empleo e ingresos son la prioridad."
+  ],
+  "econ": "La Merced es un pequeño municipio <b>cafetero y agrícola</b> del alto occidente, de economía campesina y población menguante.",
+  "reto": "Con pocos habitantes y muchos mayores, la prioridad es el <b>cuidado de la vejez</b> y servicios que lleguen al campo."
+ },
+ "manizales": {
+  "slug": "manizales",
+  "name": "Manizales",
+  "title": "Manizales · La capital que crece y encanece",
+  "accent": "#3b4ea0",
+  "accent2": "#26326b",
+  "photo": "https://picsum.photos/seed/manizales-ciudad-montana/1920/1080",
+  "kick": "Manizales · Capital · Caldas",
+  "tagline": "La capital que crece en gente y encanece a la vez.",
+  "scenes": [
+   "Manizales",
+   "La familia cambió",
+   "Cómo son los hogares",
+   "Solos y mayores",
+   "Jefatura femenina",
+   "Contraste de fuentes",
+   "Situaciones que impiden",
+   "Campo y conectividad",
+   "El municipio",
+   "Qué hacer"
+  ],
+  "contexto": [
+   "De qué vive el municipio Capital universitaria, servicios e industria. Economía y territorioManizales es la <b>capital departamental</b>: concentra <b>educación superior</b> (ciudad universitaria), servicios, comercio, industria y el negocio del café. Es el polo administrativo y económico del centro-sur de Caldas.",
+   "Aun con la menor pobreza del departamento, la capital debe <b>prepararse para una población mayoritariamente mayor</b>, atender la soledad y sostener el empleo formal y educativo.",
+   "Hacia dónde dirigir la política pública A quién ayudar primero. 01EnvejecimientoÍndice 115,5 (más mayores que niños): sistema de cuidado y salud geriátrica."
+  ],
+  "econ": "Manizales es la <b>capital departamental</b>: concentra <b>educación superior</b> (ciudad universitaria), servicios, comercio, industria y el negocio del café. Es el polo administrativo y económico del centro-sur de Caldas.",
+  "reto": "Aun con la menor pobreza del departamento, la capital debe <b>prepararse para una población mayoritariamente mayor</b>, atender la soledad y sostener el empleo formal y educativo."
+ },
+ "manzanares": {
+  "slug": "manzanares",
+  "name": "Manzanares",
+  "title": "Manzanares · Café, panela y aguacate en el oriente",
+  "accent": "#4a7a3a",
+  "accent2": "#2c4b22",
+  "photo": "https://picsum.photos/seed/manzanares-caldas/1920/1080",
+  "kick": "Manzanares · Oriente · Caldas",
+  "tagline": "Café, caña panelera y aguacate en el oriente.",
+  "scenes": [
+   "Manzanares",
+   "La familia cambió",
+   "Cómo son los hogares",
+   "Trabajo del jefe",
+   "Jefatura femenina",
+   "Contraste de fuentes",
+   "Situaciones que impiden",
+   "Campo y conectividad",
+   "El municipio",
+   "Qué hacer"
+  ],
+  "contexto": [
+   "De qué vive el municipio De qué vive Manzanares. Economía y territorioManzanares vive del <b>café</b>, la <b>caña panelera</b> y el <b>aguacate</b>; es uno de los centros agrícolas del oriente caldense.",
+   "El reto es <b>diversificar ingresos</b> en el campo, cerrar la brecha de agua y conexión, y atender el envejecimiento.",
+   "Hacia dónde dirigir la política pública A quién ayudar primero. 01Generar empleoEl 36,2% de los jefes busca trabajo: empleo e ingresos son la prioridad."
+  ],
+  "econ": "Manzanares vive del <b>café</b>, la <b>caña panelera</b> y el <b>aguacate</b>; es uno de los centros agrícolas del oriente caldense.",
+  "reto": "El reto es <b>diversificar ingresos</b> en el campo, cerrar la brecha de agua y conexión, y atender el envejecimiento."
+ },
+ "marmato": {
+  "slug": "marmato",
+  "name": "Marmato",
+  "title": "Marmato · El pueblo del oro, todavía joven",
+  "accent": "#c98a1e",
+  "accent2": "#7e5509",
+  "photo": "https://picsum.photos/seed/marmato-caldas/1920/1080",
+  "kick": "Marmato · Alto Occidente · Caldas",
+  "tagline": "El pueblo del oro, aún con población joven.",
+  "scenes": [
+   "Marmato",
+   "La familia cambió",
+   "Cómo son los hogares",
+   "Trabajo del jefe",
+   "Las edades",
+   "Jefatura femenina",
+   "Contraste de fuentes",
+   "Situaciones que impiden",
+   "Campo y conectividad",
+   "El municipio",
+   "Qué hacer"
+  ],
+  "contexto": [
+   "De qué vive el municipio De qué vive Marmato. Economía y territorioMarmato es un histórico <b>pueblo minero</b> incrustado en la montaña: vive del <b>oro</b>, con una fuerte identidad pluriétnica. Su población es de las más jóvenes del departamento.",
+   "Debe <b>formalizar la minería</b> y los ingresos, mejorar saneamiento y aprovechar su población joven con empleo y educación.",
+   "Hacia dónde dirigir la política pública A quién ayudar primero. 01Bono demográficoDependencia 53,3: empleo joven mientras la ventana siga abierta."
+  ],
+  "econ": "Marmato es un histórico <b>pueblo minero</b> incrustado en la montaña: vive del <b>oro</b>, con una fuerte identidad pluriétnica. Su población es de las más jóvenes del departamento.",
+  "reto": "Debe <b>formalizar la minería</b> y los ingresos, mejorar saneamiento y aprovechar su población joven con empleo y educación."
+ },
+ "marquetalia": {
+  "slug": "marquetalia",
+  "name": "Marquetalia",
+  "title": "Marquetalia · Tierra de café y panela en el oriente",
+  "accent": "#6b8e23",
+  "accent2": "#415613",
+  "photo": "https://picsum.photos/seed/marquetalia-caldas/1920/1080",
+  "kick": "Marquetalia · Oriente · Caldas",
+  "tagline": "Tierra de café y panela en el oriente caldense.",
+  "scenes": [
+   "Marquetalia",
+   "La familia cambió",
+   "Cómo son los hogares",
+   "Trabajo del jefe",
+   "Jefatura femenina",
+   "Contraste de fuentes",
+   "Situaciones que impiden",
+   "Campo y conectividad",
+   "El municipio",
+   "Qué hacer"
+  ],
+  "contexto": [
+   "De qué vive el municipio De qué vive Marquetalia. Economía y territorioMarquetalia vive del <b>café</b>, la <b>panela</b> y el <b>aguacate</b>, con una economía campesina de ladera en el oriente.",
+   "La prioridad es <b>reducir la pobreza rural</b> y la informalidad, con agua, educación y conexión para el campo.",
+   "Hacia dónde dirigir la política pública A quién ayudar primero. 01Permanencia de la poblaciónLa población cae 12%: oportunidades para que los jóvenes se queden."
+  ],
+  "econ": "Marquetalia vive del <b>café</b>, la <b>panela</b> y el <b>aguacate</b>, con una economía campesina de ladera en el oriente.",
+  "reto": "La prioridad es <b>reducir la pobreza rural</b> y la informalidad, con agua, educación y conexión para el campo."
+ },
+ "marulanda": {
+  "slug": "marulanda",
+  "name": "Marulanda",
+  "title": "Marulanda · Un páramo que se está quedando solo",
+  "accent": "#3f7d8c",
+  "accent2": "#244f5a",
+  "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Karayaka_Sheep_Flock@Cekumbeli-1.JPG?width=1920",
+  "kick": "Marulanda · Alto Oriente · Caldas",
+  "tagline": "Un pequeño municipio de páramo que se está quedando solo.",
+  "scenes": [
+   "Marulanda",
+   "La familia cambió",
+   "Cómo son los hogares",
+   "Solos y mayores",
+   "Jefatura del hogar",
+   "Contraste de fuentes",
+   "Situaciones que impiden",
+   "Campo y conectividad",
+   "El municipio",
+   "Qué hacer"
+  ],
+  "contexto": [
+   "De qué vive el municipio Páramo, ganadería de altura y lana. Economía y territorioMarulanda es un municipio de <b>alta montaña y páramo</b>, frío y disperso: vive de la <b>ganadería</b> (incluida la cría de ovinos y la lana), la <b>papa</b> y la agricultura de altura. Su población lleva décadas disminuyendo.",
+   "Con tan pocos habitantes y tanta ruralidad, la gestión debe centrarse en <b>servicios que lleguen al campo</b>, cuidado de los mayores y razones para que la gente se quede.",
+   "Hacia dónde dirigir la política pública A quién ayudar primero. 01Arraigo y despoblamientoLa población cae 23%: servicios y oportunidades para la permanencia de la población."
+  ],
+  "econ": "Marulanda es un municipio de <b>alta montaña y páramo</b>, frío y disperso: vive de la <b>ganadería</b> (incluida la cría de ovinos y la lana), la <b>papa</b> y la agricultura de altura. Su población lleva décadas disminuyendo.",
+  "reto": "Con tan pocos habitantes y tanta ruralidad, la gestión debe centrarse en <b>servicios que lleguen al campo</b>, cuidado de los mayores y razones para que la gente se quede."
+ },
+ "neira": {
+  "slug": "neira",
+  "name": "Neira",
+  "title": "Neira · Uno de los pueblos más longevos de Colombia",
+  "accent": "#2f6690",
+  "accent2": "#1c3f5c",
+  "photo": "https://picsum.photos/seed/neira-andes/1920/1080",
+  "kick": "Neira · Subregión Centro Sur · Caldas",
+  "tagline": "Uno de los pueblos más <em>longevos</em> de Colombia.",
+  "scenes": [
+   "Neira",
+   "La familia se encogió",
+   "Cómo son los hogares",
+   "El pueblo longevo",
+   "Jefatura femenina",
+   "Contraste de fuentes",
+   "Situaciones que impiden",
+   "Campo y conectividad",
+   "El municipio",
+   "Qué hacer"
+  ],
+  "contexto": [
+   "De qué vive el municipio Cerca de Manizales: café, ganadería y longevidad. Economía y territorioA <b>21 km de Manizales</b> y parte del área metropolitana Centro Sur, Neira vive del <b>café</b>, la <b>ganadería</b> y la <b>panela</b>, con la «arepa de Neira» como sello. Es uno de los pueblos más <b>longevos</b> del país.",
+   "Neira debe <b>cuidar a una población que envejece</b> más que casi todo el país, cerrar la <b>brecha educativa y de conectividad rural</b>, y gestionar el <b>subregistro censal</b> para no perder recursos.",
+   "Hacia dónde dirigir la política pública A quién ayudar primero. 01El pueblo que envejeceUno de los más longevos del país: cuidado del adulto mayor y salud geriátrica."
+  ],
+  "econ": "A <b>21 km de Manizales</b> y parte del área metropolitana Centro Sur, Neira vive del <b>café</b>, la <b>ganadería</b> y la <b>panela</b>, con la «arepa de Neira» como sello. Es uno de los pueblos más <b>longevos</b> del país.",
+  "reto": "Neira debe <b>cuidar a una población que envejece</b> más que casi todo el país, cerrar la <b>brecha educativa y de conectividad rural</b>, y gestionar el <b>subregistro censal</b> para no perder recursos."
+ },
+ "norcasia": {
+  "slug": "norcasia",
+  "name": "Norcasia",
+  "title": "Norcasia · Agua, energía y una población joven",
+  "accent": "#2d8ca0",
+  "accent2": "#165462",
+  "photo": "https://picsum.photos/seed/norcasia-caldas/1920/1080",
+  "kick": "Norcasia · Oriente · Caldas",
+  "tagline": "Agua, energía y una población todavía joven.",
+  "scenes": [
+   "Norcasia",
+   "La familia cambió",
+   "Cómo son los hogares",
+   "Trabajo del jefe",
+   "Jefatura femenina",
+   "Contraste de fuentes",
+   "Situaciones que impiden",
+   "Campo y conectividad",
+   "El municipio",
+   "Qué hacer"
+  ],
+  "contexto": [
+   "De qué vive el municipio De qué vive Norcasia. Economía y territorioNorcasia vive junto al <b>embalse y la central hidroeléctrica La Miel</b>: energía, pesca y agricultura. Es un municipio joven y relativamente nuevo.",
+   "Debe <b>traducir la riqueza energética</b> en empleo e ingresos locales, reducir la alta dependencia y cuidar su niñez.",
+   "Hacia dónde dirigir la política pública A quién ayudar primero. 01Permanencia de la poblaciónLa población cae 9%: oportunidades para que los jóvenes se queden."
+  ],
+  "econ": "Norcasia vive junto al <b>embalse y la central hidroeléctrica La Miel</b>: energía, pesca y agricultura. Es un municipio joven y relativamente nuevo.",
+  "reto": "Debe <b>traducir la riqueza energética</b> en empleo e ingresos locales, reducir la alta dependencia y cuidar su niñez."
+ },
+ "pacora": {
+  "slug": "pacora",
+  "name": "Pácora",
+  "title": "Pácora · Café y ganadería en un norte que envejece",
+  "accent": "#9c5a3c",
+  "accent2": "#5f3421",
+  "photo": "https://picsum.photos/seed/pacora-caldas/1920/1080",
+  "kick": "Pácora · Norte · Caldas",
+  "tagline": "Café y ganadería en un norte que envejece.",
+  "scenes": [
+   "Pácora",
+   "La familia cambió",
+   "Cómo son los hogares",
+   "Trabajo del jefe",
+   "Las edades",
+   "Solos y mayores",
+   "Jefatura femenina",
+   "Contraste de fuentes",
+   "Situaciones que impiden",
+   "Campo y conectividad",
+   "El municipio",
+   "Qué hacer"
+  ],
+  "contexto": [
+   "De qué vive el municipio De qué vive Pácora. Economía y territorioPácora vive del <b>café</b> y la <b>ganadería</b> en el norte cafetero. Es uno de los municipios con población más envejecida.",
+   "El <b>cuidado de la vejez</b> es la agenda central, junto con sostener el café y frenar la salida de los jóvenes.",
+   "Hacia dónde dirigir la política pública A quién ayudar primero. 01Envejecimiento y cuidadoÍndice 122,7: salud geriátrica y redes de cuidado para los mayores."
+  ],
+  "econ": "Pácora vive del <b>café</b> y la <b>ganadería</b> en el norte cafetero. Es uno de los municipios con población más envejecida.",
+  "reto": "El <b>cuidado de la vejez</b> es la agenda central, junto con sostener el café y frenar la salida de los jóvenes."
+ },
+ "palestina": {
+  "slug": "palestina",
+  "name": "Palestina",
+  "title": "Palestina · Café y aeropuerto a las puertas de Manizales",
+  "accent": "#55792e",
+  "accent2": "#33491a",
+  "photo": "https://picsum.photos/seed/palestina-caldas/1920/1080",
+  "kick": "Palestina · Centrosur · Caldas",
+  "tagline": "Café y aeropuerto a las puertas de Manizales.",
+  "scenes": [
+   "Palestina",
+   "La familia cambió",
+   "Cómo son los hogares",
+   "Trabajo del jefe",
+   "Jefatura femenina",
+   "Ingreso del hogar",
+   "Contraste de fuentes",
+   "Situaciones que impiden",
+   "Campo y conectividad",
+   "El municipio",
+   "Qué hacer"
+  ],
+  "contexto": [
+   "De qué vive el municipio De qué vive Palestina. Economía y territorioPalestina es tierra <b>cafetera</b> y sede del <b>Aeropuerto del Café</b>; su cercanía a Manizales y Chinchiná le da un papel logístico y de servicios.",
+   "Debe <b>aprovechar el aeropuerto</b> para generar empleo, cerrar la brecha digital y reducir la pobreza rural.",
+   "Hacia dónde dirigir la política pública A quién ayudar primero. 01Generar empleoEl 35,6% de los jefes busca trabajo: empleo e ingresos son la prioridad."
+  ],
+  "econ": "Palestina es tierra <b>cafetera</b> y sede del <b>Aeropuerto del Café</b>; su cercanía a Manizales y Chinchiná le da un papel logístico y de servicios.",
+  "reto": "Debe <b>aprovechar el aeropuerto</b> para generar empleo, cerrar la brecha digital y reducir la pobreza rural."
+ },
+ "pensilvania": {
+  "slug": "pensilvania",
+  "name": "Pensilvania",
+  "title": "Pensilvania · El municipio que se quedó sin sus jóvenes",
+  "accent": "#2e7d5b",
+  "accent2": "#17503a",
+  "photo": "https://picsum.photos/seed/pensilvania-caldas/1920/1080",
+  "kick": "Pensilvania · Oriente · Caldas",
+  "tagline": "Se va la juventud, se queda la vejez.",
+  "scenes": [
+   "Pensilvania",
+   "La familia cambió",
+   "Cómo son los hogares",
+   "Solos y mayores",
+   "Jefatura femenina",
+   "Contraste de fuentes",
+   "Situaciones que impiden",
+   "Campo y conectividad",
+   "El municipio",
+   "Qué hacer"
+  ],
+  "contexto": [
+   "De qué vive el municipio Café, caña y una fuerte cultura de la madera. Economía y territorioPensilvania vive del <b>café</b>, la <b>caña panelera</b>, el frijol y el aguacate, con una reconocida tradición de <b>reforestación y madera</b> y de gestión comunitaria. Es un municipio de montaña con fuerte salida de población joven.",
+   "La política pública debe <b>retener a los jóvenes</b> con empleo y oportunidades, y a la vez <b>cuidar a una población que envejece</b> y que vive, sobre todo, en el campo.",
+   "Hacia dónde dirigir la política pública A quién ayudar primero. 01Arraigo juvenilLa población cae 26%: empleo, educación y oportunidades para que los jóvenes se queden."
+  ],
+  "econ": "Pensilvania vive del <b>café</b>, la <b>caña panelera</b>, el frijol y el aguacate, con una reconocida tradición de <b>reforestación y madera</b> y de gestión comunitaria. Es un municipio de montaña con fuerte salida de población joven.",
+  "reto": "La política pública debe <b>retener a los jóvenes</b> con empleo y oportunidades, y a la vez <b>cuidar a una población que envejece</b> y que vive, sobre todo, en el campo."
+ },
+ "riosucio": {
+  "slug": "riosucio",
+  "name": "Riosucio",
+  "title": "Riosucio · Una familia que cambia sin perder su raíz",
+  "accent": "#b1542a",
+  "accent2": "#732f12",
+  "photo": "https://picsum.photos/seed/riosucio-caldas/1920/1080",
+  "kick": "Riosucio · Bajo Occidente · Caldas",
+  "tagline": "Una familia que cambia sin perder su <em>raíz</em>.",
+  "scenes": [
+   "Riosucio",
+   "Las familias se dividen",
+   "Cómo son los hogares",
+   "Solos y mayores",
+   "Jefatura femenina",
+   "Contraste de fuentes",
+   "Situaciones que impiden",
+   "Campo y conectividad",
+   "El municipio",
+   "Qué hacer"
+  ],
+  "contexto": [
+   "De qué vive el municipio Oro, café y resguardos: identidad y economía. Economía y territorioTerritorio <b>Embera-Chamí</b> con cuatro resguardos y el Carnaval del Diablo, Riosucio vive de la <b>minería de oro</b> (mayormente informal), el <b>café</b> y la <b>panela</b>. La vida familiar se organiza dentro de los resguardos.",
+   "Riosucio necesita política familiar <b>concertada con los resguardos</b>, atención a la <b>doble carga de cuidado</b> (niñez amplia y mayores en aumento) y gestión del <b>subregistro censal</b> para no perder recursos.",
+   "Hacia dónde dirigir la política pública A quién ayudar primero. 01Familias de los resguardosPolítica de familia concertada con las autoridades indígenas y su noción comunitaria."
+  ],
+  "econ": "Territorio <b>Embera-Chamí</b> con cuatro resguardos y el Carnaval del Diablo, Riosucio vive de la <b>minería de oro</b> (mayormente informal), el <b>café</b> y la <b>panela</b>. La vida familiar se organiza dentro de los resguardos.",
+  "reto": "Riosucio necesita política familiar <b>concertada con los resguardos</b>, atención a la <b>doble carga de cuidado</b> (niñez amplia y mayores en aumento) y gestión del <b>subregistro censal</b> para no perder recursos."
+ },
+ "risaralda": {
+  "slug": "risaralda",
+  "name": "Risaralda",
+  "title": "Risaralda · Caña y café en el valle",
+  "accent": "#a0712a",
+  "accent2": "#634413",
+  "photo": "https://picsum.photos/seed/risaralda-caldas/1920/1080",
+  "kick": "Risaralda · Centrosur · Caldas",
+  "tagline": "Caña y café en el valle del río Risaralda.",
+  "scenes": [
+   "Risaralda",
+   "La familia cambió",
+   "Cómo son los hogares",
+   "Ingreso del hogar",
+   "Trabajo del jefe",
+   "Jefatura femenina",
+   "Contraste de fuentes",
+   "Situaciones que impiden",
+   "Campo y conectividad",
+   "El municipio",
+   "Qué hacer"
+  ],
+  "contexto": [
+   "De qué vive el municipio De qué vive Risaralda. Economía y territorioRisaralda vive de la <b>caña</b>, el <b>café</b> y la agricultura del valle; economía campesina cercana a Anserma.",
+   "La prioridad es <b>mejorar agua y saneamiento</b>, reducir la informalidad y la pobreza rural, y conectar el campo.",
+   "Hacia dónde dirigir la política pública A quién ayudar primero. 01El campoIPM rural 50,7% y 53,7% de hogares SISBÉN rurales: inversión social y servicios en la ruralidad."
+  ],
+  "econ": "Risaralda vive de la <b>caña</b>, el <b>café</b> y la agricultura del valle; economía campesina cercana a Anserma.",
+  "reto": "La prioridad es <b>mejorar agua y saneamiento</b>, reducir la informalidad y la pobreza rural, y conectar el campo."
+ },
+ "salamina": {
+  "slug": "salamina",
+  "name": "Salamina",
+  "title": "Salamina · El pueblo que envejeció primero",
+  "accent": "#a9741a",
+  "accent2": "#6e470c",
+  "photo": "https://picsum.photos/seed/salamina-caldas/1920/1080",
+  "kick": "Salamina · Subregión Norte · Caldas",
+  "tagline": "El pueblo de la luz que <em>envejeció</em> primero.",
+  "scenes": [
+   "Salamina",
+   "La familia se encogió",
+   "Cómo son los hogares",
+   "Solos y mayores",
+   "Jefatura femenina",
+   "Contraste de fuentes",
+   "Situaciones que impiden",
+   "Campo y conectividad",
+   "El municipio",
+   "Qué hacer"
+  ],
+  "contexto": [
+   "De qué vive el municipio Patrimonio, café y turismo para quedarse. Economía y territorio«La Ciudad Luz» y Pueblo Patrimonio del Paisaje Cultural Cafetero vive del <b>café</b>, la <b>ganadería Normando</b> (San Félix) y un <b>turismo cultural</b> en crecimiento, en un pueblo de arquitectura colonial del que emigran los jóvenes.",
+   "Salamina necesita un <b>sistema de cuidado para personas mayores</b> y una estrategia de <b>arraigo juvenil</b>, apoyada en el turismo patrimonial y el café, que frene el despoblamiento.",
+   "Hacia dónde dirigir la política pública A quién ayudar primero. 01Personas mayores que viven solasEl más envejecido (117,6): centro día, atención domiciliaria y compañía."
+  ],
+  "econ": "«La Ciudad Luz» y Pueblo Patrimonio del Paisaje Cultural Cafetero vive del <b>café</b>, la <b>ganadería Normando</b> (San Félix) y un <b>turismo cultural</b> en crecimiento, en un pueblo de arquitectura colonial del que emigran los jóvenes.",
+  "reto": "Salamina necesita un <b>sistema de cuidado para personas mayores</b> y una estrategia de <b>arraigo juvenil</b>, apoyada en el turismo patrimonial y el café, que frene el despoblamiento."
+ },
+ "samana": {
+  "slug": "samana",
+  "name": "Samaná",
+  "title": "Samaná · Café, cacao y bosque en el oriente profundo",
+  "accent": "#3f8060",
+  "accent2": "#214a37",
+  "photo": "https://picsum.photos/seed/samana-caldas/1920/1080",
+  "kick": "Samaná · Oriente · Caldas",
+  "tagline": "Café, cacao y bosque en el oriente profundo.",
+  "scenes": [
+   "Samaná",
+   "La familia cambió",
+   "Cómo son los hogares",
+   "Trabajo del jefe",
+   "Ingreso del hogar",
+   "Jefatura femenina",
+   "Contraste de fuentes",
+   "Situaciones que impiden",
+   "Campo y conectividad",
+   "El municipio",
+   "Qué hacer"
+  ],
+  "contexto": [
+   "De qué vive el municipio De qué vive Samaná. Economía y territorioSamaná vive del <b>café</b>, el <b>cacao</b> y el bosque en el oriente lejano. Es un territorio muy rural que se recompone tras años de conflicto.",
+   "El reto es <b>llevar el Estado al campo</b>: agua, educación, conexión e ingresos a una ruralidad dispersa y extensa.",
+   "Hacia dónde dirigir la política pública A quién ayudar primero. 01Generar empleoEl 38,6% de los jefes busca trabajo: empleo e ingresos son la prioridad."
+  ],
+  "econ": "Samaná vive del <b>café</b>, el <b>cacao</b> y el bosque en el oriente lejano. Es un territorio muy rural que se recompone tras años de conflicto.",
+  "reto": "El reto es <b>llevar el Estado al campo</b>: agua, educación, conexión e ingresos a una ruralidad dispersa y extensa."
+ },
+ "sanjose": {
+  "slug": "sanjose",
+  "name": "San José",
+  "title": "San José · Un municipio pequeño y rural del occidente",
+  "accent": "#8a6d2f",
+  "accent2": "#55421a",
+  "photo": "https://picsum.photos/seed/sanjose-caldas/1920/1080",
+  "kick": "San José · Bajo Occidente · Caldas",
+  "tagline": "Un municipio pequeño y muy rural del occidente.",
+  "scenes": [
+   "San José",
+   "La familia cambió",
+   "Cómo son los hogares",
+   "Trabajo del jefe",
+   "Jefatura femenina",
+   "Contraste de fuentes",
+   "Situaciones que impiden",
+   "Campo y conectividad",
+   "El municipio",
+   "Qué hacer"
+  ],
+  "contexto": [
+   "De qué vive el municipio De qué vive San José. Economía y territorioSan José es un pequeño municipio <b>cafetero y agrícola</b> del bajo occidente, de economía campesina y fuerte peso rural.",
+   "Con un registro pequeño y muy rural, la prioridad es <b>agua, saneamiento e ingresos</b> para el campo.",
+   "Hacia dónde dirigir la política pública A quién ayudar primero. 01Envejecimiento y cuidadoÍndice 90,9: salud geriátrica y redes de cuidado para los mayores."
+  ],
+  "econ": "San José es un pequeño municipio <b>cafetero y agrícola</b> del bajo occidente, de economía campesina y fuerte peso rural.",
+  "reto": "Con un registro pequeño y muy rural, la prioridad es <b>agua, saneamiento e ingresos</b> para el campo."
+ },
+ "supia": {
+  "slug": "supia",
+  "name": "Supía",
+  "title": "Supía · Minería, caña y mezcla de culturas",
+  "accent": "#b05a2e",
+  "accent2": "#6c3417",
+  "photo": "https://picsum.photos/seed/supia-caldas/1920/1080",
+  "kick": "Supía · Alto Occidente · Caldas",
+  "tagline": "Minería, caña y mezcla de culturas, que crece.",
+  "scenes": [
+   "Supía",
+   "La familia cambió",
+   "Cómo son los hogares",
+   "Trabajo del jefe",
+   "Jefatura femenina",
+   "Contraste de fuentes",
+   "Situaciones que impiden",
+   "Campo y conectividad",
+   "El municipio",
+   "Qué hacer"
+  ],
+  "contexto": [
+   "De qué vive el municipio De qué vive Supía. Economía y territorioSupía vive de la <b>minería</b>, la <b>caña panelera</b> y el <b>comercio</b>; municipio pluriétnico (comunidades afro e indígenas) y uno de los pocos que gana población.",
+   "Debe <b>aprovechar su dinamismo</b> con empleo formal e inclusión, mejorando saneamiento y conexión.",
+   "Hacia dónde dirigir la política pública A quién ayudar primero. 01El campoIPM rural 40,8% y 44,6% de hogares SISBÉN rurales: inversión social y servicios en la ruralidad."
+  ],
+  "econ": "Supía vive de la <b>minería</b>, la <b>caña panelera</b> y el <b>comercio</b>; municipio pluriétnico (comunidades afro e indígenas) y uno de los pocos que gana población.",
+  "reto": "Debe <b>aprovechar su dinamismo</b> con empleo formal e inclusión, mejorando saneamiento y conexión."
+ },
+ "victoria": {
+  "slug": "victoria",
+  "name": "Victoria",
+  "title": "Victoria · Ganado y pesca en el Magdalena caliente",
+  "accent": "#c06a2f",
+  "accent2": "#753a14",
+  "photo": "https://picsum.photos/seed/victoria-caldas/1920/1080",
+  "kick": "Victoria · Oriente · Caldas",
+  "tagline": "Ganado y pesca a orillas del Magdalena.",
+  "scenes": [
+   "Victoria",
+   "La familia cambió",
+   "Cómo son los hogares",
+   "Trabajo del jefe",
+   "Jefatura femenina",
+   "Contraste de fuentes",
+   "Situaciones que impiden",
+   "Campo y conectividad",
+   "El municipio",
+   "Qué hacer"
+  ],
+  "contexto": [
+   "De qué vive el municipio De qué vive Victoria. Economía y territorioVictoria vive de la <b>ganadería</b>, la <b>pesca</b> y la agricultura a orillas del Magdalena, en tierra caliente del oriente.",
+   "La prioridad es <b>reducir la pobreza rural</b>, diversificar ingresos y mejorar servicios y conexión.",
+   "Hacia dónde dirigir la política pública A quién ayudar primero. 01El campoIPM rural 43,6% y 51,2% de hogares SISBÉN rurales: inversión social y servicios en la ruralidad."
+  ],
+  "econ": "Victoria vive de la <b>ganadería</b>, la <b>pesca</b> y la agricultura a orillas del Magdalena, en tierra caliente del oriente.",
+  "reto": "La prioridad es <b>reducir la pobreza rural</b>, diversificar ingresos y mejorar servicios y conexión."
+ },
+ "villamaria": {
+  "slug": "villamaria",
+  "name": "Villamaría",
+  "title": "Villamaría · A los pies del Nevado, creciendo con Manizales",
+  "accent": "#3b6ea0",
+  "accent2": "#244667",
+  "photo": "https://picsum.photos/seed/villamaria-caldas/1920/1080",
+  "kick": "Villamaría · Centrosur · Caldas",
+  "tagline": "A los pies del Nevado, creciendo junto a Manizales.",
+  "scenes": [
+   "Villamaría",
+   "La familia cambió",
+   "Cómo son los hogares",
+   "Trabajo del jefe",
+   "Ingreso del hogar",
+   "Jefatura femenina",
+   "Contraste de fuentes",
+   "Situaciones que impiden",
+   "Campo y conectividad",
+   "El municipio",
+   "Qué hacer"
+  ],
+  "contexto": [
+   "De qué vive el municipio De qué vive Villamaría. Economía y territorioVillamaría, conurbada con <b>Manizales</b> y a los pies del <b>Nevado del Ruiz</b>, vive del agro, la floricultura, los servicios y el turismo. Es de los pocos que crecen con fuerza.",
+   "Debe <b>ordenar su crecimiento</b>, atender la soledad y la pobreza rural, y sostener empleo y servicios para su población nueva.",
+   "Hacia dónde dirigir la política pública A quién ayudar primero. 01Generar empleoEl 40,6% de los jefes busca trabajo: empleo e ingresos son la prioridad."
+  ],
+  "econ": "Villamaría, conurbada con <b>Manizales</b> y a los pies del <b>Nevado del Ruiz</b>, vive del agro, la floricultura, los servicios y el turismo. Es de los pocos que crecen con fuerza.",
+  "reto": "Debe <b>ordenar su crecimiento</b>, atender la soledad y la pobreza rural, y sostener empleo y servicios para su población nueva."
+ },
+ "viterbo": {
+  "slug": "viterbo",
+  "name": "Viterbo",
+  "title": "Viterbo · Crece en gente, envejece a gran velocidad",
+  "accent": "#5d7a2e",
+  "accent2": "#39500f",
+  "photo": "https://picsum.photos/seed/viterbo-caldas/1920/1080",
+  "kick": "Viterbo · Bajo Occidente · Caldas",
+  "tagline": "Crece en gente… y <em>envejece</em> a gran velocidad.",
+  "scenes": [
+   "Viterbo",
+   "Crece y se encoge",
+   "Cómo son los hogares",
+   "Solos y mayores",
+   "Jefatura femenina",
+   "Contraste de fuentes",
+   "Situaciones que impiden",
+   "Campo y conectividad",
+   "El municipio",
+   "Qué hacer"
+  ],
+  "contexto": [
+   "De qué vive el municipio Valle estratégico: caña, ganadería y logística. Economía y territorioEn el valle del río Risaralda y en el triángulo <b>Pereira-Manizales-Medellín</b>, Viterbo vive de la <b>caña</b>, la <b>ganadería</b> y algo de café. Su ubicación estratégica le da potencial logístico y agroindustrial, y explica que siga ganando población.",
+   "Viterbo debe <b>aprovechar su bono demográfico</b> generando empleo formal joven, apoyado en su ubicación, y <b>anticipar el cuidado</b> de una población que envejece a gran velocidad.",
+   "Hacia dónde dirigir la política pública A quién ayudar primero. 01Jóvenes y bono demográficoUna dependencia de solo 60,7: empleo formal y emprendimiento antes de que la ventana se cierre."
+  ],
+  "econ": "En el valle del río Risaralda y en el triángulo <b>Pereira-Manizales-Medellín</b>, Viterbo vive de la <b>caña</b>, la <b>ganadería</b> y algo de café. Su ubicación estratégica le da potencial logístico y agroindustrial, y explica que siga ganando población.",
+  "reto": "Viterbo debe <b>aprovechar su bono demográfico</b> generando empleo formal joven, apoyado en su ubicación, y <b>anticipar el cuidado</b> de una población que envejece a gran velocidad."
+ }
+}

@@ -2,369 +2,479 @@
 <html lang="es">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Salamina · El pueblo que envejeció primero</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Salamina · Dinámicas familiares en Caldas</title>
+<meta name="description" content="Salamina: cómo han cambiado las familias entre 2005 y 2026. La Ciudad Luz, patrimonio cafetero que envejece.">
+<meta property="og:title" content="Salamina · Dinámicas familiares en Caldas">
+<meta property="og:description" content="La Ciudad Luz, patrimonio cafetero que envejece.">
+<meta property="og:image" content="https://commons.wikimedia.org/wiki/Special:FilePath/Parque_Principal_de_Salamina%2C_Caldas.jpg?width=1920">
+<meta name="theme-color" content="#58421c">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="preload" as="image" href="https://commons.wikimedia.org/wiki/Special:FilePath/Parque_Principal_de_Salamina%2C_Caldas.jpg?width=1920">
 <style>
+/* Historias de dinámicas familiares · sistema visual
+   Tema claro fijo (decisión del proyecto). Un acento por municipio (--ac).
+   Series de datos: Censo 2005 = gris, Censo 2018 = acento, SISBÉN 2026 = tinta. */
 :root{
-  --accent:#a9741a; --accent2:#6e470c; --accent-soft:#f1e6cf;
-  --ink:#211d18; --ink2:#655c4e; --paper:#f6f1e6; --paper2:#e9e1ce; --card:#fffdf7;
-  --warn:#c0512f; --gold:#caa23a; --sis:#8a5cc0;
-  --hero-photo:url("https://picsum.photos/seed/salamina-caldas/1920/1080");
+  --bg:#f6f7f8; --surface:#ffffff; --ink:#15191e; --ink-2:#434b56; --ink-3:#5f6874;
+  --line:#dde1e6; --line-2:#c9ced5; --past:#a3abb5; --sis:#15191e;
+  --radius:14px; --gutter:clamp(16px,4vw,48px); --maxw:1180px;
+  --ease:cubic-bezier(.16,1,.3,1);
 }
 *{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--paper);color:var(--ink);overflow-x:hidden;-webkit-font-smoothing:antialiased}
-.serif{font-family:"Iowan Old Style",Georgia,"Times New Roman",serif}
-.progress{position:fixed;top:0;left:0;height:4px;width:0;background:var(--accent);z-index:100;transition:width .1s linear}
-.dots{position:fixed;right:24px;top:50%;transform:translateY(-50%);z-index:90;display:flex;flex-direction:column;gap:15px}
-.dots a{width:10px;height:10px;border-radius:50%;background:#cbc0a8;display:block;transition:.3s;position:relative}
-.dots a.on{background:var(--accent);transform:scale(1.6)}
-.dots a span{position:absolute;right:20px;top:50%;transform:translateY(-50%);white-space:nowrap;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink2);opacity:0;transition:.25s;pointer-events:none;font-weight:700}
-.dots a:hover span{opacity:1}
-.printbtn{position:fixed;right:22px;bottom:20px;z-index:95;background:var(--accent);color:#fff;border:0;border-radius:30px;padding:11px 18px;font-size:12px;font-weight:700;cursor:pointer;box-shadow:0 6px 20px rgba(0,0,0,.18)}
-.scene{min-height:100vh;display:flex;align-items:center;position:relative;overflow:hidden;padding:10vh 7vw}
-.scene.tint{background:var(--paper2)}
-.wrap{width:100%;max-width:1180px;margin:0 auto;position:relative;z-index:3}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:5vw;align-items:center}
-@media(max-width:820px){.grid{grid-template-columns:1fr;gap:34px}.scene{padding:8vh 8vw}.dots{display:none}.implies{grid-template-columns:1fr!important}}
-.bg{position:absolute;inset:0;z-index:0;overflow:hidden;pointer-events:none}
-.bg svg{position:absolute;width:100%;height:100%}
-.bgart{opacity:.08}
-.photo{position:absolute;inset:0;background-image:var(--hero-photo);background-size:cover;background-position:center;background-color:var(--paper2)}
-.scrim{position:absolute;inset:0}
-.hero-scrim{background:linear-gradient(100deg,rgba(246,241,230,.94) 0%,rgba(246,241,230,.66) 42%,rgba(246,241,230,.12) 100%)}
-[data-anim]{opacity:0;transform:translateY(40px);transition:opacity 1s cubic-bezier(.2,.7,.2,1),transform 1s cubic-bezier(.2,.7,.2,1)}
-[data-anim].in{opacity:1;transform:none}
-.d1{transition-delay:.12s}.d2{transition-delay:.24s}.d3{transition-delay:.36s}
-.kick{font-size:clamp(14px,1.5vw,18px);letter-spacing:.24em;text-transform:uppercase;font-weight:800;color:var(--accent);margin-bottom:22px}
-h1.hero{font-family:"Iowan Old Style",Georgia,serif;font-size:clamp(84px,17vw,290px);line-height:.82;letter-spacing:-4px;font-weight:700}
-.sectitle{font-family:"Iowan Old Style",Georgia,serif;font-size:clamp(44px,7vw,112px);line-height:.96;letter-spacing:-2px;font-weight:700}
-.lead{font-family:"Iowan Old Style",Georgia,serif;font-size:clamp(24px,3.4vw,46px);line-height:1.18;color:var(--ink2);font-weight:400}
-.stat{font-family:"Iowan Old Style",Georgia,serif;font-weight:700;line-height:.82;letter-spacing:-3px;font-size:clamp(120px,22vw,320px);color:var(--accent)}
-.stat .suf{font-size:.36em;letter-spacing:0}
-.statlabel{font-size:clamp(17px,2vw,26px);color:var(--ink2);max-width:24ch;margin-top:16px;line-height:1.4}
-.small{font-size:clamp(14px,1.4vw,17px);color:var(--ink2);line-height:1.5}
-.chips{display:flex;gap:14px;flex-wrap:wrap;margin-top:40px}
-.chip{display:flex;flex-direction:column;background:rgba(255,255,255,.78);backdrop-filter:blur(4px);border:1px solid rgba(0,0,0,.06);border-left:5px solid var(--accent);border-radius:14px;padding:16px 22px;box-shadow:0 8px 24px rgba(0,0,0,.08)}
-.chip b{font-family:Georgia,serif;font-size:clamp(36px,4.2vw,56px);line-height:1;color:var(--ink)}
-.chip span{font-size:clamp(10px,1vw,13px);letter-spacing:.05em;text-transform:uppercase;color:var(--ink2);font-weight:700;margin-top:6px}
-.scrollcue{position:absolute;bottom:28px;left:50%;transform:translateX(-50%);z-index:4;font-size:11px;letter-spacing:.25em;text-transform:uppercase;color:var(--ink2);display:flex;flex-direction:column;align-items:center;gap:8px}
-.scrollcue .ln{width:2px;height:40px;background:var(--ink2);opacity:.5;animation:cue 1.8s ease-in-out infinite}
-@keyframes cue{0%,100%{transform:scaleY(.4);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}}
-.draw{fill:none;stroke-linecap:round;stroke-linejoin:round}
-.draw.path{stroke-dasharray:1;stroke-dashoffset:1;transition:stroke-dashoffset 2s cubic-bezier(.3,.6,.2,1)}
-.in .draw.path{stroke-dashoffset:0}
-.donutfg{transition:stroke-dashoffset 1.8s cubic-bezier(.3,.6,.2,1)}
-.pop{opacity:0;transform:scale(.55);transform-origin:center;transition:opacity .8s ease,transform .8s cubic-bezier(.2,1.4,.4,1)}
-.in .pop{opacity:1;transform:scale(1)}.in .pop.p2{transition-delay:.5s}.in .pop.p3{transition-delay:.85s}
-.areafill{opacity:0;transition:opacity 1.5s ease .5s}.in .areafill{opacity:1}
-.grow-h{height:0;transition:height 1.5s cubic-bezier(.2,.7,.2,1)}
-.grow-w{width:0;transition:width 1.5s cubic-bezier(.2,.7,.2,1)}
-.dist{display:flex;gap:clamp(8px,1.8vw,26px);align-items:flex-end}
-.dgroup{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end}
-.dbars{display:flex;gap:6px;align-items:flex-end;height:clamp(230px,42vh,360px);justify-content:center;width:100%}
-.dbar{width:clamp(16px,2.8vw,44px);border-radius:9px 9px 0 0;position:relative;display:flex;justify-content:center}
-.dbar span{position:absolute;top:-26px;font-size:clamp(11px,1.3vw,16px);font-weight:800;font-family:Georgia,serif;white-space:nowrap}
-.dbar.ghost{background:#cfc3a8}.dbar.ghost span{color:#9a8b6c}
-.dbar.now{background:var(--accent)}.dbar.now span{color:var(--accent2)}
-.dbar.sis{background:var(--sis)}.dbar.sis span{color:var(--sis)}
-.dlab{margin-top:14px;font-size:clamp(13px,1.5vw,20px);font-weight:800;color:var(--ink);text-align:center}
-.dsub{font-size:12px;color:var(--ink2)}
-.ranked{display:flex;flex-direction:column;gap:clamp(10px,1.6vw,18px)}
-.rrow{display:grid;grid-template-columns:minmax(160px,1.1fr) 3fr auto;gap:16px;align-items:center}
-.rlab{font-size:clamp(15px,1.7vw,22px);font-weight:600;text-align:right;color:var(--ink)}
-.rtrack{background:var(--paper2);border-radius:10px;height:clamp(24px,3.2vw,40px);overflow:hidden}
-.rfill{height:100%;border-radius:10px;background:linear-gradient(90deg,var(--warn),var(--gold))}
-.rval{font-family:Georgia,serif;font-size:clamp(22px,2.6vw,36px);font-weight:700;color:var(--ink);min-width:88px;text-align:right}
-.svc{display:flex;flex-direction:column;gap:clamp(10px,1.5vw,16px)}
-.svcrow{display:grid;grid-template-columns:minmax(120px,1fr) 3.4fr auto;gap:14px;align-items:center}
-.svcrow .sl{font-size:clamp(14px,1.6vw,20px);font-weight:600;text-align:right}
-.svctrack{position:relative;height:clamp(24px,3.2vw,38px);background:var(--paper2);border-radius:9px;overflow:hidden}
-.svc05{position:absolute;left:0;top:0;height:100%;background:#cfc3a8;border-radius:9px}
-.svc18{position:absolute;left:0;top:0;height:100%;background:var(--accent);border-radius:9px}
-.svcval{font-family:Georgia,serif;font-size:clamp(19px,2.3vw,32px);font-weight:700;min-width:74px;text-align:right}
-.agewrap{display:flex;flex-direction:column;gap:clamp(16px,2.4vw,30px)}
-.agerow .albl{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:9px}
-.agerow .albl b{font-family:Georgia,serif;font-size:clamp(18px,2.1vw,27px)}
-.agerow .albl .chg{font-size:clamp(14px,1.6vw,20px);font-weight:800}
-.atrack{height:clamp(26px,3.6vw,44px);background:var(--paper2);border-radius:11px;position:relative;overflow:hidden}
-.af05{position:absolute;left:0;top:0;height:100%;background:#cfc3a8;border-radius:11px}
-.af18{position:absolute;left:0;top:0;height:100%;border-radius:11px}
-.up .af18{background:var(--warn)}.down .af18{background:var(--accent)}
-.split{display:flex;gap:14px;align-items:flex-end;height:min(48vh,400px)}
-.splitcol{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:100%}
-.splitbar{width:100%;border-radius:16px 16px 0 0;display:flex;align-items:flex-start;justify-content:center;padding-top:18px;min-height:0}
-.splitbar b{font-family:Georgia,serif;font-size:clamp(34px,5vw,68px);font-weight:700;color:#fff}
-.splitcol .cap{font-size:clamp(12px,1.4vw,17px);font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-top:12px;text-align:center;color:var(--ink2)}
-.ratiobadge{display:inline-block;color:#fff;font-weight:800;font-size:clamp(14px,1.6vw,19px);border-radius:30px;padding:9px 20px;margin-top:18px;background:var(--warn)}
-.card{background:var(--card);border:1px solid rgba(0,0,0,.06);border-radius:20px;padding:clamp(18px,2.4vw,32px);box-shadow:0 18px 50px rgba(0,0,0,.08)}
-.captitle{font-size:clamp(12px,1.3vw,15px);letter-spacing:.1em;text-transform:uppercase;font-weight:800;color:var(--ink2);margin-bottom:8px}
-.legend{display:flex;gap:22px;flex-wrap:wrap;font-size:clamp(12px,1.4vw,16px);color:var(--ink2);margin:6px 0 20px;font-weight:600}
-.legend i{width:15px;height:15px;border-radius:4px;display:inline-block;margin-right:7px;vertical-align:-2px}
-.footer{background:var(--accent2);color:#f4e9d5;padding:80px 7vw 60px;position:relative;overflow:hidden}
-.footer h3{font-family:Georgia,serif;color:#fff;font-size:clamp(28px,4vw,48px);margin-bottom:20px;position:relative;z-index:2}
-.srcs{font-size:clamp(12px,1.3vw,15px);line-height:1.8;color:#e2cfa8;max-width:900px;position:relative;z-index:2}.srcs b{color:#fff}
-.metarow{display:flex;flex-wrap:wrap;gap:12px;margin:24px 0;position:relative;z-index:2}
-.metarow .m{border:1px solid rgba(255,255,255,.28);border-radius:30px;padding:8px 16px;font-size:12px;color:#f4e9d5}
-.implies{display:grid;grid-template-columns:repeat(3,1fr);gap:30px;margin-top:24px}
-.implies .serif{font-size:clamp(56px,7vw,96px);color:var(--accent);line-height:1}
-.implies h3{font-family:Georgia,serif;font-size:clamp(23px,2.7vw,34px);margin:6px 0 10px;color:var(--ink)}
-.implies p{font-size:clamp(15px,1.6vw,19px);color:var(--ink2);line-height:1.5}
-@media print{.dots.printbtn.progress.scrollcue{display:none}.scene{min-height:auto;page-break-inside:avoid;padding:30px}[data-anim]{opacity:1;transform:none}.photo{display:none}.footer{background:#fff;color:#333}.footer h3{color:#111}.srcs{color:#333}.metarow .m{color:#333;border-color:#ccc}}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--ink);font-family:"Public Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  font-size:18px;line-height:1.6;font-feature-settings:"tnum" 1,"lnum" 1;-webkit-font-smoothing:antialiased}
+img,svg{display:block;max-width:100%}
+a{color:var(--ac-ink)}
+a:focus-visible,button:focus-visible,select:focus-visible,summary:focus-visible{outline:3px solid var(--ac);outline-offset:3px;border-radius:6px}
+b,strong{font-weight:700}
+.skip{position:absolute;left:-999px;top:8px;background:var(--ink);color:#fff;padding:10px 16px;border-radius:8px;z-index:30}
+.skip:focus{left:8px}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 var(--gutter)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* Barra superior */
+.top{position:sticky;top:0;z-index:20;background:rgba(246,247,248,.92);backdrop-filter:saturate(160%) blur(10px);
+  -webkit-backdrop-filter:saturate(160%) blur(10px);border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;align-items:center;gap:16px;height:60px}
+.top .home{font-weight:700;font-size:15px;color:var(--ink);text-decoration:none;white-space:nowrap;letter-spacing:-.01em}
+.top .home span{color:var(--ink-3);font-weight:500}
+.top .sp{flex:1}
+.top label{font-size:14px;color:var(--ink-3)}
+.top select{font:inherit;font-size:15px;color:var(--ink);background:var(--surface);border:1px solid var(--line-2);
+  border-radius:999px;padding:8px 34px 8px 14px;min-height:40px;appearance:none;cursor:pointer;
+  background-image:linear-gradient(45deg,transparent 50%,var(--ink-2) 50%),linear-gradient(135deg,var(--ink-2) 50%,transparent 50%);
+  background-position:calc(100% - 18px) 52%,calc(100% - 13px) 52%;background-size:5px 5px;background-repeat:no-repeat}
+.btn{display:inline-flex;align-items:center;gap:8px;font:inherit;font-size:15px;font-weight:600;border-radius:999px;
+  padding:10px 18px;min-height:44px;cursor:pointer;text-decoration:none;border:1px solid transparent;
+  transition:transform .2s var(--ease),background-color .2s var(--ease)}
+.btn:active{transform:scale(.98)}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--line-2)}
+.btn.ghost:hover{background:var(--surface)}
+.btn.solid{background:#fff;color:var(--ink)}
+.btn.solid:hover{background:#eef0f2}
+.progress{position:absolute;left:0;bottom:-1px;height:2px;width:100%;background:var(--ac);transform-origin:0 50%;transform:scaleX(0)}
+@supports (animation-timeline:scroll()){
+  .progress{animation:prog linear both;animation-timeline:scroll(root)}
+  @keyframes prog{to{transform:scaleX(1)}}
+}
+@media (max-width:640px){.top label,.top .pdf{display:none}.top .home span{display:none}}
+
+/* Portada */
+.hero{position:relative;min-height:min(88dvh,860px);display:flex;align-items:flex-end;color:#fff;overflow:hidden;background:var(--hero-bg)}
+.hero .ph{position:absolute;inset:0;background-size:cover;background-position:center}
+.hero .ph::after{content:"";position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(10,12,15,.15) 0%,rgba(10,12,15,.25) 45%,rgba(10,12,15,.78) 100%)}
+.hero .wrap{position:relative;width:100%;padding-bottom:clamp(40px,8vh,88px)}
+.hero .eyebrow{font-size:14px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;opacity:.92}
+.hero h1{font-size:clamp(52px,9vw,116px);line-height:.95;font-weight:800;letter-spacing:-.035em;margin:14px 0 18px}
+.hero p{font-size:clamp(20px,2.3vw,26px);line-height:1.35;max-width:30ch;font-weight:500}
+.hero .btn{margin-top:28px}
+
+/* Secciones */
+section.s{padding:clamp(72px,11vw,136px) 0;border-top:1px solid var(--line)}
+section.s.tint{background:var(--surface)}
+h2{font-size:clamp(30px,4.2vw,50px);line-height:1.08;font-weight:800;letter-spacing:-.028em;max-width:22ch}
+.lead{font-size:clamp(19px,1.9vw,22px);line-height:1.55;color:var(--ink-2);max-width:62ch;margin-top:18px}
+.lead b{color:var(--ink)}
+.note{font-size:14px;line-height:1.5;color:var(--ink-3);margin-top:16px;max-width:72ch}
+.src{font-size:13px;color:var(--ink-3);margin-top:14px}
+.hl{color:var(--ac-ink)}
+.mt{margin-top:clamp(36px,5vw,64px)}
+
+/* En cifras */
+.cifras{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:0;border-top:2px solid var(--ink);margin-top:40px}
+.cifra{padding:28px 28px 30px 0}
+.cifra+.cifra{padding-left:28px;border-left:1px solid var(--line)}
+.cifra .n{font-size:clamp(44px,5.6vw,76px);font-weight:800;letter-spacing:-.035em;line-height:1}
+.cifra.big .n{font-size:clamp(56px,7.4vw,104px);color:var(--ac-ink)}
+.cifra .k{font-weight:700;font-size:17px;margin-top:14px}
+.cifra .d{font-size:15.5px;color:var(--ink-2);margin-top:6px;max-width:34ch}
+.cifras .row2{grid-column:1/-1;display:grid;grid-template-columns:1.4fr 2fr;border-top:1px solid var(--line)}
+@media (max-width:860px){
+  .cifras,.cifras .row2{grid-template-columns:1fr}
+  .cifra,.cifra+.cifra{padding:24px 0;border-left:0;border-top:1px solid var(--line)}
+}
+
+/* Dato destacado */
+.destacado{background:var(--ac-deep);color:#fff;border-top:0}
+.destacado .big{font-size:clamp(84px,15vw,200px);font-weight:800;letter-spacing:-.05em;line-height:.9}
+.destacado .big small{font-size:.42em;letter-spacing:-.02em}
+.destacado h2{color:#fff;max-width:20ch;margin-top:22px}
+.destacado .lead{color:rgba(255,255,255,.86)}
+.destacado .lead b{color:#fff}
+.destacado .src{color:rgba(255,255,255,.72)}
+
+/* Rejillas */
+.split{display:grid;grid-template-columns:1.25fr 1fr;gap:clamp(32px,6vw,88px);align-items:start}
+.split.rev{grid-template-columns:1fr 1.25fr}
+@media (max-width:900px){.split,.split.rev{grid-template-columns:1fr}}
+
+/* Gráficas SVG */
+.chart{width:100%;height:auto;overflow:visible}
+.cn{display:none}
+@media (max-width:640px){.cw{display:none}.cn{display:block}}
+.chart text{font-family:inherit;font-feature-settings:"tnum" 1}
+.legend{display:flex;flex-wrap:wrap;gap:18px;font-size:14.5px;color:var(--ink-2);margin-top:18px}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:50%;margin-right:7px;vertical-align:-1px}
+.legend i.sq{border-radius:3px}
+
+/* Comparación urbano / rural */
+.versus{display:grid;grid-template-columns:1fr 1fr;gap:clamp(20px,4vw,48px)}
+.vs{border-top:2px solid var(--ink);padding-top:20px}
+.vs h3{font-size:20px;font-weight:700}
+.vs .pair{display:flex;align-items:baseline;gap:14px;margin-top:12px;flex-wrap:wrap}
+.vs .from{font-size:clamp(28px,3.4vw,40px);font-weight:700;color:var(--ink-3)}
+.vs .arrow{color:var(--ink-3);font-size:24px}
+.vs .to{font-size:clamp(48px,6vw,76px);font-weight:800;letter-spacing:-.035em;color:var(--ac-ink);line-height:1}
+.vs .bars{margin-top:18px;display:grid;gap:8px}
+.bar{height:14px;border-radius:7px;transform-origin:0 50%}
+.bar.past{background:var(--past)}
+.bar.now{background:var(--ac)}
+.vs .cap{font-size:14px;color:var(--ink-3);margin-top:10px}
+@media (max-width:700px){.versus{grid-template-columns:1fr}}
+
+/* Barras ordenadas */
+.ranked{display:grid;gap:16px;margin-top:8px}
+.rk .lab{display:flex;justify-content:space-between;gap:12px;font-size:16.5px}
+.rk .lab b{font-size:18px}
+.rk .bar{height:12px;margin-top:6px;background:var(--line-2)}
+.rk.top .bar{background:var(--ac)}
+.rk.top .lab b{color:var(--ac-ink)}
+
+/* Bento de vulnerabilidad */
+.bento{display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:minmax(170px,auto);gap:14px;margin-top:44px}
+.cell{border-radius:var(--radius);padding:24px;background:var(--bg);border:1px solid var(--line);display:flex;flex-direction:column;justify-content:space-between}
+.cell .n{font-size:clamp(40px,4.4vw,58px);font-weight:800;letter-spacing:-.035em;line-height:1}
+.cell .k{font-size:15.5px;color:var(--ink-2);margin-top:10px;line-height:1.4}
+.cell.a{grid-column:span 2;grid-row:span 2;background:var(--ac-tint);border-color:transparent}
+.cell.a .n{font-size:clamp(72px,9vw,128px);color:var(--ac-ink)}
+.cell.a .k{font-size:18px;color:var(--ink);max-width:28ch}
+.cell.dark{background:var(--ink);color:#fff;border-color:var(--ink)}
+.cell.dark .k{color:rgba(255,255,255,.8)}
+.cell.photo{background-size:cover;background-position:center;position:relative;color:#fff;border:0;overflow:hidden}
+.cell.photo::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,12,15,.1),rgba(10,12,15,.72))}
+.cell.photo>*{position:relative}
+.cell.photo .k{color:rgba(255,255,255,.9)}
+.cell.wide{grid-column:span 2}
+@media (max-width:900px){.bento{grid-template-columns:1fr 1fr}.cell.a{grid-column:1/-1;grid-row:auto}}
+@media (max-width:520px){.bento{grid-template-columns:1fr}.cell.wide{grid-column:auto}}
+
+/* Waffles ECV */
+.waffles{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(20px,3vw,40px);margin-top:44px}
+.wf .n{font-size:clamp(40px,4.6vw,60px);font-weight:800;letter-spacing:-.035em;line-height:1;margin-top:16px}
+.wf .k{font-size:15.5px;color:var(--ink-2);margin-top:8px;max-width:26ch}
+.grid10{display:grid;grid-template-columns:repeat(10,1fr);gap:3px;max-width:200px}
+.grid10 i{aspect-ratio:1;border-radius:2px;background:var(--line)}
+.grid10 i.on{background:var(--ac)}
+@media (max-width:900px){.waffles{grid-template-columns:1fr 1fr}}
+@media (max-width:480px){.waffles{grid-template-columns:1fr}}
+.caveat{display:inline-block;margin-top:22px;font-size:14.5px;color:var(--ink-2);background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:8px 16px}
+
+/* Contexto económico */
+.ctx{display:grid;grid-template-columns:1fr 1fr;gap:0;border-radius:var(--radius);overflow:hidden;background:var(--surface);border:1px solid var(--line)}
+.ctx .img{min-height:380px;background-size:cover;background-position:center;background-color:var(--ac-tint)}
+.ctx .txt{padding:clamp(28px,5vw,56px)}
+.ctx .txt p{font-size:clamp(19px,1.8vw,21px);line-height:1.6;color:var(--ink-2);margin-top:18px}
+.ctx .txt p b{color:var(--ink)}
+@media (max-width:860px){.ctx{grid-template-columns:1fr}.ctx .img{min-height:240px}}
+
+/* Agenda */
+.agenda{list-style:none;counter-reset:a;display:grid;grid-template-columns:1fr 1fr;gap:0 clamp(28px,5vw,72px);margin-top:40px}
+.agenda li{counter-increment:a;padding:26px 0 28px;border-top:1px solid var(--line);display:grid;grid-template-columns:44px 1fr;gap:4px 14px}
+.agenda li::before{content:counter(a);grid-row:span 3;font-size:28px;font-weight:800;color:var(--ac-ink);line-height:1.1}
+.agenda h3{font-size:21px;font-weight:700;letter-spacing:-.01em;line-height:1.3}
+.agenda .ev{font-size:15.5px;color:var(--ink-3)}
+.agenda .ac{font-size:17px;color:var(--ink-2)}
+@media (max-width:860px){.agenda{grid-template-columns:1fr}}
+
+/* Fuentes */
+.fuentes{display:grid;grid-template-columns:1fr 1fr;gap:12px 48px;margin-top:28px}
+.fuentes details{border-top:1px solid var(--line);padding:14px 0}
+.fuentes summary{cursor:pointer;font-weight:600;font-size:16.5px;list-style:none;display:flex;justify-content:space-between;gap:12px;min-height:28px}
+.fuentes summary::after{content:"+";color:var(--ink-3);font-weight:400}
+.fuentes details[open] summary::after{content:"−"}
+.fuentes details p{font-size:15px;color:var(--ink-2);margin-top:8px;line-height:1.55}
+@media (max-width:760px){.fuentes{grid-template-columns:1fr}}
+
+/* Pie */
+footer{background:var(--ink);color:#fff;padding:56px 0 64px}
+footer h2{color:#fff;font-size:24px;max-width:none}
+footer .mpios{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+footer .mpios a{color:#fff;text-decoration:none;font-size:15px;border:1px solid rgba(255,255,255,.28);border-radius:999px;padding:8px 14px;min-height:40px;display:inline-flex;align-items:center}
+footer .mpios a:hover{background:rgba(255,255,255,.1)}
+footer .mpios a[aria-current]{background:#fff;color:var(--ink)}
+footer .fin{margin-top:36px;font-size:14px;color:rgba(255,255,255,.72);display:flex;flex-wrap:wrap;gap:8px 24px}
+footer .fin a{color:#fff}
+
+/* Movimiento: aparece al entrar en pantalla (solo si el usuario lo permite) */
+@media (prefers-reduced-motion:no-preference){
+  .js [data-r]{opacity:0;transform:translateY(22px);transition:opacity .8s var(--ease),transform .8s var(--ease)}
+  .js [data-r].in{opacity:1;transform:none}
+  .js [data-r="2"]{transition-delay:.12s}.js [data-r="3"]{transition-delay:.24s}
+  .js .grow{transform:scaleX(0);transition:transform 1.1s var(--ease) .15s}
+  .js .in .grow,.js .grow.in{transform:scaleX(1)}
+  .js .dot{opacity:0;transition:opacity .5s var(--ease) .5s}
+  .js .in .dot{opacity:1}
+  .js .grid10 i.on{transform:scale(.4);opacity:0;transition:transform .4s var(--ease),opacity .4s var(--ease)}
+  .js .in .grid10 i.on{transform:none;opacity:1}
+}
+
+@media print{
+  .top,.hero .btn,footer .mpios{display:none}
+  .hero{min-height:auto;color:var(--ink);background:none}
+  .hero .ph{display:none}
+  section.s{padding:28px 0;break-inside:avoid}
+  .destacado{background:none;color:var(--ink)}.destacado h2,.destacado .lead,.destacado .src{color:var(--ink)}
+  [data-r]{opacity:1!important;transform:none!important}
+}
+
+/* Portada del proyecto (familias.html) */
+.intro{padding:clamp(56px,9vw,112px) 0 clamp(40px,6vw,72px)}
+.intro .eyebrow{font-size:14px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)}
+.intro h1{font-size:clamp(44px,7vw,92px);line-height:1;font-weight:800;letter-spacing:-.035em;max-width:14ch;margin-top:16px}
+.intro .lead{font-size:clamp(20px,2.2vw,25px);max-width:44ch}
+.mosaico{display:grid;grid-template-columns:2fr 1fr 1fr;grid-template-rows:200px 200px;gap:12px;margin-top:48px}
+.mosaico div{border-radius:var(--radius);background-size:cover;background-position:center;background-color:var(--line)}
+.mosaico div:first-child{grid-row:span 2}
+@media (max-width:760px){.mosaico{grid-template-columns:1fr 1fr;grid-template-rows:180px 140px}.mosaico div:first-child{grid-column:span 2;grid-row:auto}.mosaico div:nth-child(n+4){display:none}}
+.filtros{display:flex;flex-wrap:wrap;gap:8px;margin-top:28px}
+.filtros button{font:inherit;font-size:15px;border:1px solid var(--line-2);background:var(--surface);color:var(--ink);border-radius:999px;padding:8px 16px;min-height:42px;cursor:pointer;transition:background-color .2s var(--ease),color .2s var(--ease)}
+.filtros button[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.tarjetas{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:32px}
+@media (max-width:960px){.tarjetas{grid-template-columns:1fr 1fr}}
+@media (max-width:600px){.tarjetas{grid-template-columns:1fr}}
+.tj{display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;text-decoration:none;color:var(--ink);transition:transform .3s var(--ease),box-shadow .3s var(--ease)}
+.tj:hover{transform:translateY(-3px);box-shadow:0 14px 34px -18px rgba(21,25,30,.35)}
+.tj:active{transform:translateY(-1px)}
+.tj .im{height:150px;background-size:cover;background-position:center}
+.tj .bd{padding:20px 22px 22px;display:flex;flex-direction:column;flex:1}
+.tj .sb{font-size:13.5px;color:var(--ink-3);font-weight:600}
+.tj h3{font-size:24px;font-weight:800;letter-spacing:-.02em;margin-top:4px}
+.tj p{font-size:15.5px;color:var(--ink-2);margin-top:6px;line-height:1.45;flex:1}
+.tj dl{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
+.tj dt{font-size:12.5px;color:var(--ink-3);line-height:1.3}
+.tj dd{font-size:19px;font-weight:800;letter-spacing:-.02em}
+.tj[hidden]{display:none}
+.tableros{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:32px}
+.tableros a{display:block;padding:26px;border-radius:var(--radius);background:var(--bg);border:1px solid var(--line);text-decoration:none;color:var(--ink)}
+.tableros a:hover{background:#eef0f2}
+.tableros b{font-size:20px;display:block}
+.tableros span{font-size:15.5px;color:var(--ink-2);display:block;margin-top:6px}
+@media (max-width:700px){.tableros{grid-template-columns:1fr}}
+
+:root{--ac:#a9741a;--ac-ink:#91651b;--ac-tint:#f3ecdf;--ac-deep:#58421c;--hero-bg:#58421c}
 </style>
 </head>
 <body>
-<div class="progress" id="prog"></div>
-<nav class="dots" id="dots"></nav>
-<button class="printbtn" onclick="window.print()">Guardar PDF</button>
-
-<section class="scene" data-name="Salamina">
-  <div class="bg"><div class="photo"></div><div class="scrim hero-scrim"></div></div>
+<a class="skip" href="#cifras">Saltar al contenido</a>
+<div class="top">
   <div class="wrap">
-    <div class="kick" data-anim>Salamina · Subregión Norte · Caldas</div>
-    <h1 class="hero d1" data-anim>Salamina</h1>
-    <p class="lead d2" data-anim style="margin-top:24px;max-width:22ch;color:var(--ink)">El pueblo de la luz que <em>envejeció</em> primero.</p>
-    <div class="chips d3" data-anim>
-      <div class="chip"><b>2,8</b><span>Personas por hogar</span></div>
-      <div class="chip"><b>38,2%</b><span>Jefatura femenina</span></div>
-      <div class="chip"><b>21,3%</b><span>Tiene 60 años o más</span></div>
-      <div class="chip"><b>28,7%</b><span>Pobreza multidimensional</span></div>
-    </div>
+    <a class="home" href="familias.html">Dinámicas familiares <span>· Caldas</span></a>
+    <div class="sp"></div>
+    <label for="mpio">Municipio</label>
+    <select id="mpio" onchange="location.href=this.value"><option value="historia_aguadas.html">Aguadas</option><option value="historia_anserma.html">Anserma</option><option value="historia_aranzazu.html">Aranzazu</option><option value="historia_belalcazar.html">Belalcázar</option><option value="historia_chinchina.html">Chinchiná</option><option value="historia_filadelfia.html">Filadelfia</option><option value="historia_ladorada.html">La Dorada</option><option value="historia_lamerced.html">La Merced</option><option value="historia_manizales.html">Manizales</option><option value="historia_manzanares.html">Manzanares</option><option value="historia_marmato.html">Marmato</option><option value="historia_marquetalia.html">Marquetalia</option><option value="historia_marulanda.html">Marulanda</option><option value="historia_neira.html">Neira</option><option value="historia_norcasia.html">Norcasia</option><option value="historia_pacora.html">Pácora</option><option value="historia_palestina.html">Palestina</option><option value="historia_pensilvania.html">Pensilvania</option><option value="historia_riosucio.html">Riosucio</option><option value="historia_risaralda.html">Risaralda</option><option value="historia_salamina.html" selected>Salamina</option><option value="historia_samana.html">Samaná</option><option value="historia_sanjose.html">San José</option><option value="historia_supia.html">Supía</option><option value="historia_victoria.html">Victoria</option><option value="historia_villamaria.html">Villamaría</option><option value="historia_viterbo.html">Viterbo</option></select>
+    <button class="btn ghost pdf" type="button" onclick="window.print()">Guardar PDF</button>
   </div>
-  <div class="scrollcue">Desliza<div class="ln"></div></div>
-</section>
+  <div class="progress" aria-hidden="true"></div>
+</div>
+<main>
 
-<section class="scene tint" data-name="La familia se encogió">
-  <div class="bg"><svg class="bgart" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice"><g fill="none" stroke="var(--accent)" stroke-width="3"><path d="M-50 300 C250 250 450 350 700 300 S1100 260 1260 320"/><path d="M-50 460 C250 410 450 510 700 460 S1100 420 1260 480"/></g></svg></div>
+<header class="hero" id="inicio">
+  <div class="ph" style="background-image:url(&quot;https://commons.wikimedia.org/wiki/Special:FilePath/Parque_Principal_de_Salamina%2C_Caldas.jpg?width=1920&quot;)" role="img" aria-label="Paisaje de Salamina"></div>
   <div class="wrap">
-    <div class="kick" data-anim>En una sola generación</div>
-    <h2 class="sectitle d1" data-anim style="max-width:16ch">La familia se encogió.</h2>
-    <div class="grid" style="margin-top:48px">
-      <div class="d1" data-anim>
-        <div class="captitle">Población · personas censadas</div>
-        <svg viewBox="0 0 460 200" width="100%">
-          <defs><linearGradient id="sa_g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--warn)" stop-opacity=".30"/><stop offset="1" stop-color="var(--warn)" stop-opacity="0"/></linearGradient></defs>
-          <path class="areafill" fill="url(#sa_g)" d="M30 62 C170 72 320 108 440 130 L440 185 L30 185 Z"/>
-          <path class="draw path" d="M30 62 C170 72 320 108 440 130" stroke="var(--warn)" stroke-width="6" pathLength="1"/>
-          <circle class="pop" cx="30" cy="62" r="9" fill="#c9c0ac"/><circle class="pop p2" cx="440" cy="130" r="11" fill="var(--warn)"/>
-          <text x="24" y="46" class="serif" font-size="30" font-weight="700" fill="#655c4e">18.281</text>
-          <text x="322" y="170" class="serif" font-size="30" font-weight="700" fill="var(--warn)">16.759</text>
-        </svg>
-      </div>
-      <div class="d2" data-anim>
-        <div class="captitle">Tamaño promedio del hogar</div>
-        <svg viewBox="0 0 460 200" width="100%">
-          <line class="draw path" x1="110" y1="105" x2="360" y2="105" stroke="var(--ink2)" stroke-width="4" pathLength="1"/>
-          <circle class="pop" cx="110" cy="105" r="60" fill="#cfc3a8"/>
-          <text class="pop serif" x="110" y="118" text-anchor="middle" font-size="46" font-weight="700" fill="#fff">3,6</text>
-          <text x="110" y="193" text-anchor="middle" font-size="17" fill="#655c4e">2005</text>
-          <circle class="pop p3" cx="360" cy="105" r="47" fill="var(--accent)"/>
-          <text class="pop p3 serif" x="360" y="116" text-anchor="middle" font-size="38" font-weight="700" fill="#fff">2,8</text>
-          <text x="360" y="193" text-anchor="middle" font-size="17" fill="#655c4e">2018</text>
-        </svg>
+    <div class="eyebrow" data-r>Norte · Caldas</div>
+    <h1 data-r="2">Salamina</h1>
+    <p data-r="3">La Ciudad Luz, patrimonio cafetero que envejece.</p>
+    <a class="btn solid" href="#cifras" data-r="3">Leer el informe</a>
+  </div>
+</header>
+
+<section class="s" id="cifras" aria-labelledby="t-cifras">
+  <div class="wrap">
+    <h2 id="t-cifras" data-r>Salamina en cinco cifras</h2>
+    <p class="lead" data-r="2">Entre 2005 y 2018 pasó de 18.281 a 16.759 habitantes, una caída de 8,3%. Los hogares son más pequeños (3,5 a 2,8 personas), más hogares tienen a una mujer como jefa (38,2%) y la población envejece: el índice de envejecimiento pasó de 49,9 a 117,6.</p>
+    <div class="cifras" data-r="2">
+      <div class="cifra big"><div class="n" data-count="16759">16.759</div><div class="k">Habitantes en 2018</div><div class="d">Menos que en 2005, cuando eran 18.281 (-8,3%).</div></div>
+      <div class="cifra"><div class="n">2,8</div><div class="k">Personas por hogar</div><div class="d">Eran 3,5 en 2005.</div></div>
+      <div class="cifra"><div class="n">38,2<small style="font-size:.5em">%</small></div><div class="k">Hogares con jefa</div><div class="d">Eran 30,2% en 2005.</div></div>
+      <div class="row2">
+        <div class="cifra"><div class="n">117,6</div><div class="k">Índice de envejecimiento</div><div class="d">Personas de 65 años o más por cada 100 menores de 15. En 2005 era 49,9.</div></div>
+        <div class="cifra"><div class="n">$334 <small style="font-size:.42em;font-weight:700">mil</small></div><div class="k">Ingreso promedio del hogar al mes</div><div class="d">Entre los 4.638 hogares registrados en el SISBÉN IV.</div></div>
       </div>
     </div>
-    <p class="lead d3" data-anim style="margin-top:30px;max-width:30ch">Salamina perdió <b style="color:var(--warn)">1.522 habitantes</b>: el relevo generacional está en riesgo.</p>
+    <p class="src">Fuentes: fichas CNPV 2018 DANE (población y envejecimiento), censos DANE 2005 y 2018 y SISBÉN IV 2026 (tablero del proyecto).</p>
   </div>
 </section>
 
-<section class="scene" data-name="Cómo son los hogares">
-  <div class="bg"><svg class="bgart" style="opacity:.05" viewBox="0 0 1200 300" preserveAspectRatio="xMidYMax slice"><g fill="var(--accent)" id="crowd"></g></svg></div>
+<section class="s destacado" aria-labelledby="t-dest">
   <div class="wrap">
-    <div class="kick" data-anim>La composición de los hogares</div>
-    <h2 class="sectitle d1" data-anim style="max-width:20ch">El fin de la familia numerosa.</h2>
-    <div class="legend d2" data-anim><span><i style="background:#cfc3a8"></i>2005</span><span><i style="background:var(--accent)"></i>2018</span></div>
-    <div class="dist d2" data-anim>
-      <div class="dgroup"><div class="dbars"><div class="dbar ghost grow-h" data-h="49"><span>13,8</span></div><div class="dbar now grow-h" data-h="77"><span>21,7</span></div></div><div class="dlab">1</div><div class="dsub">persona</div></div>
-      <div class="dgroup"><div class="dbars"><div class="dbar ghost grow-h" data-h="63"><span>17,8</span></div><div class="dbar now grow-h" data-h="92"><span>25,9</span></div></div><div class="dlab">2</div></div>
-      <div class="dgroup"><div class="dbars"><div class="dbar ghost grow-h" data-h="75"><span>21,0</span></div><div class="dbar now grow-h" data-h="83"><span>23,4</span></div></div><div class="dlab">3</div></div>
-      <div class="dgroup"><div class="dbars"><div class="dbar ghost grow-h" data-h="65"><span>18,3</span></div><div class="dbar now grow-h" data-h="57"><span>16,0</span></div></div><div class="dlab">4</div></div>
-      <div class="dgroup"><div class="dbars"><div class="dbar ghost grow-h" data-h="50"><span>14,1</span></div><div class="dbar now grow-h" data-h="29"><span>8,1</span></div></div><div class="dlab">5</div></div>
-      <div class="dgroup"><div class="dbars"><div class="dbar ghost grow-h" data-h="53"><span>15,0</span></div><div class="dbar now grow-h" data-h="17"><span>4,9</span></div></div><div class="dlab">6+</div></div>
+    <div class="big" data-r>117,6<small></small></div>
+    <h2 id="t-dest" data-r="2">personas de 65 años o más por cada 100 menores de 15.</h2>
+    <p class="lead" data-r="3">En 2005 el índice era 49,9. Ya hay más personas mayores que niños: el cuidado se vuelve una tarea central de las familias.</p>
+    <p class="src">Fichas CNPV 2018, DANE</p>
+  </div>
+</section>
+
+<section class="s tint" id="hogares" aria-labelledby="t-hog">
+  <div class="wrap">
+    <h2 id="t-hog" data-r>Hogares más pequeños</h2>
+    <p class="lead" data-r="2">Los hogares de 5 o más personas pasaron de <b>29,1%</b> a <b>13,0%</b>, mientras los de una y dos personas ganaron espacio. El hogar promedio bajó de 3,5 a 2,8 personas.</p>
+    <div class="mt" data-r="2"><div class="cw"><svg class="chart" viewBox="0 0 720 316" role="img" aria-label="Porcentaje de hogares según número de personas, 2005 y 2018"><line x1="132.0" x2="132.0" y1="8" y2="288" stroke="var(--line)" /><text x="132.0" y="308" font-size="13" fill="var(--ink-3)" text-anchor="middle">0%</text><line x1="320.9" x2="320.9" y1="8" y2="288" stroke="var(--line)" /><text x="320.9" y="308" font-size="13" fill="var(--ink-3)" text-anchor="middle">10%</text><line x1="509.8" x2="509.8" y1="8" y2="288" stroke="var(--line)" /><text x="509.8" y="308" font-size="13" fill="var(--ink-3)" text-anchor="middle">20%</text><text x="0" y="31" font-size="16" fill="var(--ink)">1 persona</text><line class="grow" x1="392.7" x2="543.8" y1="26" y2="26" stroke="#d0b381" stroke-width="6" stroke-linecap="round" style="transform-origin:392.7px 26px"/><circle cx="392.7" cy="26" r="8" fill="var(--past)"/><circle class="dot" cx="543.8" cy="26" r="10" fill="var(--ac)"/><text x="378.7" y="31" font-size="14" fill="var(--ink-3)" text-anchor="end">13,8</text><text class="dot" x="557.8" y="31" font-size="15" font-weight="700" fill="var(--ac-ink)" text-anchor="start">21,8</text><text x="0" y="77" font-size="16" fill="var(--ink)">2 personas</text><line class="grow" x1="468.3" x2="621.3" y1="72" y2="72" stroke="#d0b381" stroke-width="6" stroke-linecap="round" style="transform-origin:468.3px 72px"/><circle cx="468.3" cy="72" r="8" fill="var(--past)"/><circle class="dot" cx="621.3" cy="72" r="10" fill="var(--ac)"/><text x="454.3" y="77" font-size="14" fill="var(--ink-3)" text-anchor="end">17,8</text><text class="dot" x="635.3" y="77" font-size="15" font-weight="700" fill="var(--ac-ink)" text-anchor="start">25,9</text><text x="0" y="123" font-size="16" fill="var(--ink)">3 personas</text><line class="grow" x1="528.7" x2="574.1" y1="118" y2="118" stroke="#d0b381" stroke-width="6" stroke-linecap="round" style="transform-origin:528.7px 118px"/><circle cx="528.7" cy="118" r="8" fill="var(--past)"/><circle class="dot" cx="574.1" cy="118" r="10" fill="var(--ac)"/><text x="514.7" y="123" font-size="14" fill="var(--ink-3)" text-anchor="end">21,0</text><text class="dot" x="588.1" y="123" font-size="15" font-weight="700" fill="var(--ac-ink)" text-anchor="start">23,4</text><text x="0" y="169" font-size="16" fill="var(--ink)">4 personas</text><line class="grow" x1="434.3" x2="477.7" y1="164" y2="164" stroke="#d0b381" stroke-width="6" stroke-linecap="round" style="transform-origin:434.3px 164px"/><circle cx="477.7" cy="164" r="8" fill="var(--past)"/><circle class="dot" cx="434.3" cy="164" r="10" fill="var(--ac)"/><text x="491.7" y="169" font-size="14" fill="var(--ink-3)" text-anchor="start">18,3</text><text class="dot" x="420.3" y="169" font-size="15" font-weight="700" fill="var(--ac-ink)" text-anchor="end">16,0</text><text x="0" y="215" font-size="16" fill="var(--ink)">5 personas</text><line class="grow" x1="285.0" x2="398.4" y1="210" y2="210" stroke="#d0b381" stroke-width="6" stroke-linecap="round" style="transform-origin:285.0px 210px"/><circle cx="398.4" cy="210" r="8" fill="var(--past)"/><circle class="dot" cx="285.0" cy="210" r="10" fill="var(--ac)"/><text x="412.4" y="215" font-size="14" fill="var(--ink-3)" text-anchor="start">14,1</text><text class="dot" x="271.0" y="215" font-size="15" font-weight="700" fill="var(--ac-ink)" text-anchor="end">8,1</text><text x="0" y="261" font-size="16" fill="var(--ink)">6 o más</text><line class="grow" x1="224.6" x2="415.4" y1="256" y2="256" stroke="#d0b381" stroke-width="6" stroke-linecap="round" style="transform-origin:224.6px 256px"/><circle cx="415.4" cy="256" r="8" fill="var(--past)"/><circle class="dot" cx="224.6" cy="256" r="10" fill="var(--ac)"/><text x="429.4" y="261" font-size="14" fill="var(--ink-3)" text-anchor="start">15,0</text><text class="dot" x="210.6" y="261" font-size="15" font-weight="700" fill="var(--ac-ink)" text-anchor="end">4,9</text></svg></div><div class="cn"><svg class="chart" viewBox="0 0 360 304" role="img" aria-label="Porcentaje de hogares según número de personas, 2005 y 2018"><line x1="100.0" x2="100.0" y1="8" y2="276" stroke="var(--line)" /><text x="100.0" y="296" font-size="13" fill="var(--ink-3)" text-anchor="middle">0%</text><line x1="177.9" x2="177.9" y1="8" y2="276" stroke="var(--line)" /><text x="177.9" y="296" font-size="13" fill="var(--ink-3)" text-anchor="middle">10%</text><line x1="255.8" x2="255.8" y1="8" y2="276" stroke="var(--line)" /><text x="255.8" y="296" font-size="13" fill="var(--ink-3)" text-anchor="middle">20%</text><text x="0" y="31" font-size="16" fill="var(--ink)">1 persona</text><line class="grow" x1="207.5" x2="269.8" y1="26" y2="26" stroke="#d0b381" stroke-width="6" stroke-linecap="round" style="transform-origin:207.5px 26px"/><circle cx="207.5" cy="26" r="8" fill="var(--past)"/><circle class="dot" cx="269.8" cy="26" r="10" fill="var(--ac)"/><text x="193.5" y="31" font-size="14" fill="var(--ink-3)" text-anchor="end">13,8</text><text class="dot" x="283.8" y="31" font-size="15" font-weight="700" fill="var(--ac-ink)" text-anchor="start">21,8</text><text x="0" y="75" font-size="16" fill="var(--ink)">2 personas</text><line class="grow" x1="238.7" x2="301.8" y1="70" y2="70" stroke="#d0b381" stroke-width="6" stroke-linecap="round" style="transform-origin:238.7px 70px"/><circle cx="238.7" cy="70" r="8" fill="var(--past)"/><circle class="dot" cx="301.8" cy="70" r="10" fill="var(--ac)"/><text x="224.7" y="75" font-size="14" fill="var(--ink-3)" text-anchor="end">17,8</text><text class="dot" x="315.8" y="75" font-size="15" font-weight="700" fill="var(--ac-ink)" text-anchor="start">25,9</text><text x="0" y="119" font-size="16" fill="var(--ink)">3 personas</text><line class="grow" x1="263.6" x2="282.3" y1="114" y2="114" stroke="#d0b381" stroke-width="6" stroke-linecap="round" style="transform-origin:263.6px 114px"/><circle cx="263.6" cy="114" r="8" fill="var(--past)"/><circle class="dot" cx="282.3" cy="114" r="10" fill="var(--ac)"/><text x="249.6" y="119" font-size="14" fill="var(--ink-3)" text-anchor="end">21,0</text><text class="dot" x="296.3" y="119" font-size="15" font-weight="700" fill="var(--ac-ink)" text-anchor="start">23,4</text><text x="0" y="163" font-size="16" fill="var(--ink)">4 personas</text><line class="grow" x1="224.7" x2="242.6" y1="158" y2="158" stroke="#d0b381" stroke-width="6" stroke-linecap="round" style="transform-origin:224.7px 158px"/><circle cx="242.6" cy="158" r="8" fill="var(--past)"/><circle class="dot" cx="224.7" cy="158" r="10" fill="var(--ac)"/><text x="256.6" y="163" font-size="14" fill="var(--ink-3)" text-anchor="start">18,3</text><text class="dot" x="210.7" y="163" font-size="15" font-weight="700" fill="var(--ac-ink)" text-anchor="end">16,0</text><text x="0" y="207" font-size="16" fill="var(--ink)">5 personas</text><line class="grow" x1="163.1" x2="209.9" y1="202" y2="202" stroke="#d0b381" stroke-width="6" stroke-linecap="round" style="transform-origin:163.1px 202px"/><circle cx="209.9" cy="202" r="8" fill="var(--past)"/><circle class="dot" cx="163.1" cy="202" r="10" fill="var(--ac)"/><text x="223.9" y="207" font-size="14" fill="var(--ink-3)" text-anchor="start">14,1</text><text class="dot" x="149.1" y="207" font-size="15" font-weight="700" fill="var(--ac-ink)" text-anchor="end">8,1</text><text x="0" y="251" font-size="16" fill="var(--ink)">6 o más</text><line class="grow" x1="138.2" x2="216.9" y1="246" y2="246" stroke="#d0b381" stroke-width="6" stroke-linecap="round" style="transform-origin:138.2px 246px"/><circle cx="216.9" cy="246" r="8" fill="var(--past)"/><circle class="dot" cx="138.2" cy="246" r="10" fill="var(--ac)"/><text x="230.9" y="251" font-size="14" fill="var(--ink-3)" text-anchor="start">15,0</text><text class="dot" x="124.2" y="251" font-size="15" font-weight="700" fill="var(--ac-ink)" text-anchor="end">4,9</text></svg></div></div>
+    <div class="legend"><span><i style="background:var(--past)"></i>Censo 2005</span><span><i style="background:var(--ac)"></i>Censo 2018</span></div>
+    <p class="src">Porcentaje de hogares según número de personas. Microdato censal DANE 2005 y 2018, tablero del proyecto.</p>
+  </div>
+</section>
+
+<section class="s" id="solos" aria-labelledby="t-solos">
+  <div class="wrap split">
+    <div>
+      <h2 id="t-solos" data-r>Cada vez más personas viven solas</h2>
+      <p class="lead" data-r="2">Los hogares de una sola persona pasaron de <b>13,8%</b> en 2005 a <b>21,8%</b> en 2018. Entre los hogares del SISBÉN, que son los más vulnerables, llegan a <b>24,0%</b>.</p>
+      <p class="note" data-r="3">El SISBÉN no cubre a toda la población: registra a los hogares que buscan acceder a programas sociales. Por eso su cifra se lee aparte del censo y se dibuja con línea punteada.</p>
     </div>
-    <p class="lead d3" data-anim style="margin-top:34px;max-width:32ch">Los hogares de <b>1 y 2 personas</b> ya son casi la <b style="color:var(--accent)">mitad</b>. Los de 6+ se redujeron a un tercio.</p>
-  </div>
-</section>
-
-<section class="scene tint" data-name="Solos y mayores">
-  <div class="bg"><svg class="bgart" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice"><g fill="none" stroke="var(--accent)" stroke-width="3"><path d="M-50 360 C250 310 450 410 700 360 S1100 320 1260 380"/></g></svg></div>
-  <div class="wrap">
-    <div class="kick" data-anim>El nuevo perfil de la población</div>
-    <h2 class="sectitle d1" data-anim style="max-width:16ch">Más mayores que niños.</h2>
-    <div class="grid" style="margin-top:44px;align-items:center">
-      <div class="d1" data-anim style="display:grid;grid-template-columns:1fr 1fr;gap:24px;text-align:center">
-        <div>
-          <div class="captitle">Hogares de 1 persona</div>
-          <svg viewBox="0 0 200 200" width="100%" style="max-width:270px">
-            <circle cx="100" cy="100" r="76" fill="none" stroke="#e4dcc6" stroke-width="26"/>
-            <circle class="donutfg" cx="100" cy="100" r="76" fill="none" stroke="var(--accent)" stroke-width="26" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100" data-donut="21.7" transform="rotate(-90 100 100)" stroke-linecap="round"/>
-            <text x="100" y="94" text-anchor="middle" class="serif" font-size="44" font-weight="700" fill="var(--ink)">21,7</text>
-            <text x="100" y="120" text-anchor="middle" font-size="15" font-weight="700" fill="var(--ink2)">% · 1 de 5</text>
-          </svg>
-          <div class="small">en 2005 era 13,8%</div>
-        </div>
-        <div>
-          <div class="captitle">Envejecimiento</div>
-          <svg viewBox="0 0 220 150" width="100%" style="max-width:290px">
-            <path d="M20 132 A90 90 0 0 1 200 132" fill="none" stroke="#e4dcc6" stroke-width="22"/>
-            <path class="donutfg" d="M20 132 A90 90 0 0 1 200 132" fill="none" stroke="var(--warn)" stroke-width="22" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100" data-donut="90.5" stroke-linecap="round"/>
-            <text x="110" y="120" text-anchor="middle" class="serif" font-size="46" font-weight="700" fill="var(--warn)">117,6</text>
-          </svg>
-          <div class="small">era 49,9 en 2005</div>
-        </div>
-      </div>
-      <div class="d2" data-anim>
-        <div class="captitle">Estructura por edad · 2005 → 2018</div>
-        <div class="agewrap">
-          <div class="agerow down"><div class="albl"><b>Niñez · 0–14</b><span class="chg" style="color:var(--accent)">28,1% → 18,1%</span></div><div class="atrack"><div class="af05 grow-w" data-w="100"></div><div class="af18 grow-w" data-w="64"></div></div></div>
-          <div class="agerow up"><div class="albl"><b>Mayores · 60+</b><span class="chg" style="color:var(--warn)">14,0% → 21,3%</span></div><div class="atrack"><div class="af05 grow-w" data-w="50"></div><div class="af18 grow-w" data-w="76"></div></div></div>
-        </div>
-        <p class="lead" style="margin-top:24px;font-size:clamp(19px,2.2vw,30px)">Salamina cruzó el punto en que hay más adultos mayores que niños.</p>
-      </div>
+    <div data-r="2"><svg class="chart" viewBox="0 0 440 280" role="img" aria-label="Hogares de una persona: censo 2005 13,8%, censo 2018 21,8%, SISBÉN 2026 24,0%"><line x1="56" y1="139.4" x2="220" y2="86.8" stroke="var(--ac)" stroke-width="5" stroke-linecap="round"/><line x1="220" y1="86.8" x2="384" y2="72.4" stroke="var(--sis)" stroke-width="3" stroke-dasharray="2 9" stroke-linecap="round"/><circle class="dot" cx="56" cy="139.4" r="11" fill="var(--past)"/><text x="56" y="117.4" font-size="26" font-weight="800" fill="var(--ink)" text-anchor="middle">13,8%</text><text x="56" y="266" font-size="14.5" fill="var(--ink-3)" text-anchor="middle">Censo 2005</text><circle class="dot" cx="220" cy="86.8" r="11" fill="var(--ac)"/><text x="220" y="64.8" font-size="26" font-weight="800" fill="var(--ink)" text-anchor="middle">21,8%</text><text x="220" y="266" font-size="14.5" fill="var(--ink-3)" text-anchor="middle">Censo 2018</text><circle class="dot" cx="384" cy="72.4" r="11" fill="var(--sis)"/><text x="384" y="50.4" font-size="26" font-weight="800" fill="var(--ink)" text-anchor="middle">24,0%</text><text x="384" y="266" font-size="14.5" fill="var(--ink-3)" text-anchor="middle">SISBÉN 2026</text></svg>
+      <p class="src">Porcentaje de hogares de una persona. Censos DANE 2005 y 2018; SISBÉN IV 2026.</p>
     </div>
   </div>
 </section>
 
-<section class="scene" data-name="Jefatura femenina">
-  <div class="bg"><svg class="bgart" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice"><g fill="none" stroke="var(--accent)" stroke-width="3"><path d="M-50 340 C250 290 450 390 700 340 S1100 300 1260 360"/></g></svg></div>
+<section class="s tint" id="jefatura" aria-labelledby="t-jef">
   <div class="wrap">
-    <div class="kick" data-anim>Quién encabeza el hogar</div>
-    <h2 class="sectitle d1" data-anim style="max-width:18ch">La mujer, cada vez más al frente.</h2>
-    <div class="grid" style="margin-top:40px;align-items:center">
-      <div class="d1" data-anim>
-        <div class="stat" data-count="38.2" data-decimals="1" style="font-size:clamp(96px,17vw,240px)"><span class="val">0</span><span class="suf">%</span></div>
-        <div class="statlabel">de los hogares tiene <b>jefatura femenina</b>, desde 30,2% en 2005.</div>
-      </div>
-      <div class="d2" data-anim>
-        <div class="captitle">Jefatura femenina · ciudad vs campo</div>
-        <div class="legend"><span><i style="background:#cfc3a8"></i>2005</span><span><i style="background:var(--accent)"></i>2018</span></div>
-        <div class="dist" style="max-width:420px">
-          <div class="dgroup"><div class="dbars" style="height:clamp(180px,30vh,260px)"><div class="dbar ghost grow-h" data-h="82"><span>39,2</span></div><div class="dbar now grow-h" data-h="94"><span>45,1</span></div></div><div class="dlab">Ciudad</div></div>
-          <div class="dgroup"><div class="dbars" style="height:clamp(180px,30vh,260px)"><div class="dbar ghost grow-h" data-h="31"><span>14,9</span></div><div class="dbar now grow-h" data-h="54"><span>25,8</span></div></div><div class="dlab">Campo</div></div>
-        </div>
-        <p class="lead" style="margin-top:18px;font-size:clamp(18px,2.1vw,28px)">En la ciudad casi <b>la mitad</b> de los hogares los encabeza una mujer; en el campo, <b>1 de cada 4</b>.</p>
-      </div>
+    <h2 id="t-jef" data-r>Más hogares encabezados por mujeres</h2>
+    <p class="lead" data-r="2">En 2018, 38,2% de los hogares tenía a una mujer como jefa (en 2005 eran 30,2%), y 61,8% a un hombre. En la cabecera la jefatura femenina es mucho más común que en el campo (45,1% frente a 25,8%). En el SISBÉN, las jefas son <b>41,8%</b>.</p>
+    <div class="versus mt">
+      <div class="vs" data-r="2"><h3>Cabecera</h3>
+        <div class="pair"><span class="from">39,2%</span><span class="arrow" aria-hidden="true">→</span><span class="to">45,1%</span></div>
+        <div class="bars"><div class="bar past grow" style="width:86.9%"></div><div class="bar now grow" style="width:100.0%"></div></div>
+        <p class="cap">Hogares con jefa, 2005 y 2018</p></div>
+      <div class="vs" data-r="3"><h3>Zona rural</h3>
+        <div class="pair"><span class="from">14,9%</span><span class="arrow" aria-hidden="true">→</span><span class="to">25,8%</span></div>
+        <div class="bars"><div class="bar past grow" style="width:33.0%"></div><div class="bar now grow" style="width:57.2%"></div></div>
+        <p class="cap">Hogares con jefa, 2005 y 2018</p></div>
+    </div>
+    <div class="legend"><span><i class="sq" style="background:var(--past)"></i>Censo 2005</span><span><i class="sq" style="background:var(--ac)"></i>Censo 2018</span></div>
+    <p class="src">Microdato censal DANE 2005 y 2018; SISBÉN IV 2026. Tablero del proyecto.</p>
+  </div>
+</section>
+
+<section class="s" id="edades" aria-labelledby="t-edad">
+  <div class="wrap">
+    <h2 id="t-edad" data-r>Menos niños, más personas mayores</h2>
+    <p class="lead" data-r="2">Las personas de 60 años o más pasaron de <b>14,5%</b> a <b>21,6%</b> de quienes viven en los hogares, y los niños de 0 a 11 años, de 26,2% a 18,2%.</p>
+    <div class="mt" data-r="2"><div class="cw"><svg class="chart" viewBox="0 0 720 142" role="img" aria-label="Distribución de la población por edad, 2005 y 2018"><text x="0" y="45.0" font-size="17" font-weight="700" fill="var(--ink)">2005</text><rect class="grow" x="64.0" y="10" width="169.7" height="58" rx="4" fill="#f0e6d6" style="transform-origin:64px 10px"/><text class="dot" x="149.9" y="45.0" font-size="15" font-weight="700" fill="#15191e" text-anchor="middle">26,2%</text><rect class="grow" x="235.7" y="10" width="60.3" height="58" rx="4" fill="#e0cdad" style="transform-origin:64px 10px"/><text class="dot" x="266.8" y="45.0" font-size="15" font-weight="700" fill="#15191e" text-anchor="middle">9,5%</text><rect class="grow" x="298.0" y="10" width="78.0" height="58" rx="4" fill="#cfb17f" style="transform-origin:64px 10px"/><text class="dot" x="337.9" y="45.0" font-size="15" font-weight="700" fill="#15191e" text-anchor="middle">12,2%</text><rect class="grow" x="377.9" y="10" width="245.1" height="58" rx="4" fill="#bc934c" style="transform-origin:64px 10px"/><text class="dot" x="501.4" y="45.0" font-size="15" font-weight="700" fill="#15191e" text-anchor="middle">37,7%</text><rect class="grow" x="625.0" y="10" width="93.0" height="58" rx="4" fill="#a9741a" style="transform-origin:64px 10px"/><text class="dot" x="672.5" y="45.0" font-size="15" font-weight="700" fill="#15191e" text-anchor="middle">14,5%</text><text x="0" y="117.0" font-size="17" font-weight="700" fill="var(--ink)">2018</text><rect class="grow" x="64.0" y="82" width="117.3" height="58" rx="4" fill="#f0e6d6" style="transform-origin:64px 82px"/><text class="dot" x="123.6" y="117.0" font-size="15" font-weight="700" fill="#15191e" text-anchor="middle">18,2%</text><rect class="grow" x="183.3" y="82" width="48.5" height="58" rx="4" fill="#e0cdad" style="transform-origin:64px 82px"/><text class="dot" x="208.5" y="117.0" font-size="15" font-weight="700" fill="#15191e" text-anchor="middle">7,7%</text><rect class="grow" x="233.7" y="82" width="78.6" height="58" rx="4" fill="#cfb17f" style="transform-origin:64px 82px"/><text class="dot" x="274.0" y="117.0" font-size="15" font-weight="700" fill="#15191e" text-anchor="middle">12,3%</text><rect class="grow" x="314.3" y="82" width="262.1" height="58" rx="4" fill="#bc934c" style="transform-origin:64px 82px"/><text class="dot" x="446.4" y="117.0" font-size="15" font-weight="700" fill="#15191e" text-anchor="middle">40,3%</text><rect class="grow" x="578.4" y="82" width="139.6" height="58" rx="4" fill="#a9741a" style="transform-origin:64px 82px"/><text class="dot" x="649.2" y="117.0" font-size="15" font-weight="700" fill="#15191e" text-anchor="middle">21,6%</text></svg></div><div class="cn"><svg class="chart" viewBox="0 0 360 154" role="img" aria-label="Distribución de la población por edad, 2005 y 2018"><text x="0" y="48.0" font-size="17" font-weight="700" fill="var(--ink)">2005</text><rect class="grow" x="52.0" y="10" width="78.6" height="64" rx="4" fill="#f0e6d6" style="transform-origin:52px 10px"/><text class="dot" x="92.3" y="48.0" font-size="15" font-weight="700" fill="#15191e" text-anchor="middle">26,2%</text><rect class="grow" x="132.6" y="10" width="27.2" height="64" rx="4" fill="#e0cdad" style="transform-origin:52px 10px"/><rect class="grow" x="161.8" y="10" width="35.5" height="64" rx="4" fill="#cfb17f" style="transform-origin:52px 10px"/><rect class="grow" x="199.4" y="10" width="114.0" height="64" rx="4" fill="#bc934c" style="transform-origin:52px 10px"/><text class="dot" x="257.4" y="48.0" font-size="15" font-weight="700" fill="#15191e" text-anchor="middle">37,7%</text><rect class="grow" x="315.4" y="10" width="42.6" height="64" rx="4" fill="#a9741a" style="transform-origin:52px 10px"/><text class="dot" x="337.7" y="48.0" font-size="15" font-weight="700" fill="#15191e" text-anchor="middle">14,5%</text><text x="0" y="126.0" font-size="17" font-weight="700" fill="var(--ink)">2018</text><rect class="grow" x="52.0" y="88" width="54.0" height="64" rx="4" fill="#f0e6d6" style="transform-origin:52px 88px"/><text class="dot" x="80.0" y="126.0" font-size="15" font-weight="700" fill="#15191e" text-anchor="middle">18,2%</text><rect class="grow" x="108.0" y="88" width="21.7" height="64" rx="4" fill="#e0cdad" style="transform-origin:52px 88px"/><rect class="grow" x="131.7" y="88" width="35.8" height="64" rx="4" fill="#cfb17f" style="transform-origin:52px 88px"/><rect class="grow" x="169.5" y="88" width="122.0" height="64" rx="4" fill="#bc934c" style="transform-origin:52px 88px"/><text class="dot" x="231.5" y="126.0" font-size="15" font-weight="700" fill="#15191e" text-anchor="middle">40,3%</text><rect class="grow" x="293.5" y="88" width="64.5" height="64" rx="4" fill="#a9741a" style="transform-origin:52px 88px"/><text class="dot" x="326.8" y="126.0" font-size="15" font-weight="700" fill="#15191e" text-anchor="middle">21,6%</text></svg></div></div>
+    <div class="legend"><span><i class="sq" style="background:#f0e6d6"></i>0 a 11</span><span><i class="sq" style="background:#e0cdad"></i>12 a 17</span><span><i class="sq" style="background:#cfb17f"></i>18 a 27</span><span><i class="sq" style="background:#bc934c"></i>28 a 59</span><span><i class="sq" style="background:#a9741a"></i>60 y más</span></div>
+    <p class="src">Personas en los hogares censados según grupo de edad. Microdato censal DANE 2005 y 2018 (tablero); dependencia: ficha CNPV 2018.</p>
+  </div>
+</section>
+
+<section class="s tint" id="trabajo" aria-labelledby="t-trab">
+  <div class="wrap">
+    <h2 id="t-trab" data-r>El trabajo y el ingreso del hogar</h2>
+    <p class="lead" data-r="2">En los hogares del SISBÉN, la actividad más común de jefes y jefas es trabajar (47,5%). Aun así, el ingreso promedio del hogar es de <b>$334 mil al mes</b>.</p>
+    <div class="split mt">
+      <div data-r="2"><h3 style="font-size:19px;margin-bottom:18px">Actividad principal del jefe o jefa de hogar</h3><div class="ranked"><div class="rk top"><div class="lab"><span>Trabajando</span><b>47,5%</b></div><div class="bar  grow" style="width:100.0%"></div></div><div class="rk"><div class="lab"><span>Otra actividad</span><b>21,7%</b></div><div class="bar  grow" style="width:45.7%"></div></div><div class="rk"><div class="lab"><span>Oficios del hogar</span><b>19,8%</b></div><div class="bar  grow" style="width:41.7%"></div></div><div class="rk"><div class="lab"><span>Buscando trabajo</span><b>10,5%</b></div><div class="bar  grow" style="width:22.1%"></div></div><div class="rk"><div class="lab"><span>Estudiando</span><b>0,5%</b></div><div class="bar  grow" style="width:2.0%"></div></div></div></div>
+      <div data-r="3"><h3 style="font-size:19px;margin-bottom:6px">Ingreso promedio según tamaño del hogar</h3><p class="note" style="margin:0 0 10px">Miles de pesos al mes, por número de personas.</p><svg class="chart" viewBox="0 0 440 250" role="img" aria-label="Ingreso promedio mensual del hogar según número de personas, en miles de pesos"><rect class="grow" x="12.7" y="138.9" width="48" height="71.1" rx="5" fill="var(--ac)" style="transform-origin:12.7px 210px;transform-box:fill-box"/><text x="36.7" y="128.9" font-size="15" font-weight="700" fill="var(--ink)" text-anchor="middle">$211</text><text x="36.7" y="234" font-size="14" fill="var(--ink-3)" text-anchor="middle">1</text><rect class="grow" x="86.0" y="94.0" width="48" height="116.0" rx="5" fill="var(--line-2)" style="transform-origin:86.0px 210px;transform-box:fill-box"/><text x="110.0" y="84.0" font-size="15" font-weight="700" fill="var(--ink)" text-anchor="middle">$344</text><text x="110.0" y="234" font-size="14" fill="var(--ink-3)" text-anchor="middle">2</text><rect class="grow" x="159.3" y="91.7" width="48" height="118.3" rx="5" fill="var(--line-2)" style="transform-origin:159.3px 210px;transform-box:fill-box"/><text x="183.3" y="81.7" font-size="15" font-weight="700" fill="var(--ink)" text-anchor="middle">$351</text><text x="183.3" y="234" font-size="14" fill="var(--ink-3)" text-anchor="middle">3</text><rect class="grow" x="232.7" y="57.0" width="48" height="153.0" rx="5" fill="var(--line-2)" style="transform-origin:232.7px 210px;transform-box:fill-box"/><text x="256.7" y="47.0" font-size="15" font-weight="700" fill="var(--ink)" text-anchor="middle">$454</text><text x="256.7" y="234" font-size="14" fill="var(--ink-3)" text-anchor="middle">4</text><rect class="grow" x="306.0" y="78.9" width="48" height="131.1" rx="5" fill="var(--line-2)" style="transform-origin:306.0px 210px;transform-box:fill-box"/><text x="330.0" y="68.9" font-size="15" font-weight="700" fill="var(--ink)" text-anchor="middle">$389</text><text x="330.0" y="234" font-size="14" fill="var(--ink-3)" text-anchor="middle">5</text><rect class="grow" x="379.3" y="90.3" width="48" height="119.7" rx="5" fill="var(--line-2)" style="transform-origin:379.3px 210px;transform-box:fill-box"/><text x="403.3" y="80.3" font-size="15" font-weight="700" fill="var(--ink)" text-anchor="middle">$355</text><text x="403.3" y="234" font-size="14" fill="var(--ink-3)" text-anchor="middle">6+</text></svg><p class="note">Los hogares de una persona son los de menor ingreso: $211 mil al mes en promedio.</p></div>
+    </div>
+    <p class="src">SISBÉN IV 2026, 4.638 hogares registrados. Tablero del proyecto.</p>
+  </div>
+</section>
+
+<section class="s" id="vulnerabilidad" aria-labelledby="t-vul">
+  <div class="wrap">
+    <h2 id="t-vul" data-r>A quién llegar primero</h2>
+    <p class="lead" data-r="2">El SISBÉN muestra qué carencias se concentran en los hogares más vulnerables del municipio y cuántos reciben hoy algún apoyo.</p>
+    <div class="bento" data-r="2">
+      <div class="cell a"><div class="n">19,4%</div><div class="k">de los hogares del SISBÉN vive en <b>pobreza multidimensional</b>: varias carencias a la vez en educación, salud, trabajo o vivienda.</div></div>
+      <div class="cell"><div class="n">10,6%</div><div class="k">tiene al menos una persona con discapacidad</div></div>
+      <div class="cell"><div class="n">10,5%</div><div class="k">tiene personas que no saben leer ni escribir</div></div>
+      <div class="cell photo wide" style="background-image:url(&quot;https://commons.wikimedia.org/wiki/Special:FilePath/Parque_Principal_de_Salamina%2C_Caldas.jpg?width=1920&quot;)"><div class="n">42,9%</div><div class="k">de los hogares del SISBÉN vive en la zona rural</div></div>
+      <div class="cell"><div class="n">5,9%</div><div class="k">vive en hacinamiento crítico</div></div>
+      <div class="cell"><div class="n">9,6%</div><div class="k">recibe Colombia Mayor</div></div>
+      <div class="cell"><div class="n">2,4%</div><div class="k">recibe Familias en Acción</div></div>
+      <div class="cell"><div class="n">41,8%</div><div class="k">tiene a una mujer como jefa</div></div>
+    </div>
+    <p class="src">Porcentaje de hogares registrados en el SISBÉN IV 2026. Tablero del proyecto.</p>
+  </div>
+</section>
+
+<section class="s tint" id="voz" aria-labelledby="t-ecv">
+  <div class="wrap">
+    <h2 id="t-ecv" data-r>Lo que dicen los propios hogares</h2>
+    <p class="lead" data-r="2">La Encuesta de Calidad de Vida pregunta a las familias cómo perciben su situación. Sus respuestas complementan los registros administrativos.</p>
+    <span class="caveat">163 hogares encuestados en el municipio.</span>
+    <div class="waffles"><div class="wf" data-r="2"><div class="grid10" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="n">43,6%</div><div class="k">de los hogares se considera pobre</div></div><div class="wf" data-r="3"><div class="grid10" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="n">13,5%</div><div class="k">dice que sus ingresos no alcanzan para los gastos mínimos</div></div><div class="wf" data-r="2"><div class="grid10" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="n">36,2%</div><div class="k">reporta al menos una dificultad para alimentarse</div></div><div class="wf" data-r="3"><div class="grid10" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="n">77,9%</div><div class="k">está muy satisfecho con su vida (8 a 10 de 10)</div></div></div>
+    <p class="src">Encuesta de Calidad de Vida (módulo del tablero del proyecto). Cada cuadrícula representa 100 hogares.</p>
+  </div>
+</section>
+
+<section class="s" id="territorio" aria-labelledby="t-ter">
+  <div class="wrap">
+    <h2 id="t-ter" data-r>Servicios y pobreza en el territorio</h2>
+    <p class="lead" data-r="2">La pobreza multidimensional censal fue de <b>28,7%</b> en 2018: 21,6% en la cabecera y <b>40,8%</b> en la zona rural, 1,9 veces más. Entre 2005 y 2018 aumentó la cobertura de gas natural. La de alcantarillado bajó entre los dos censos. En 2018, 17,7% de los hogares tenía internet.</p>
+    <div class="split mt">
+      <div data-r="2"><h3 style="font-size:19px;margin-bottom:12px">Servicios en la vivienda</h3><svg class="chart" viewBox="0 0 480 266" role="img" aria-label="Cobertura de servicios públicos en la vivienda, 2005 y 2018"><line x1="118.0" x2="118.0" y1="6" y2="240" stroke="var(--line)"/><text x="118.0" y="260" font-size="13" fill="var(--ink-3)" text-anchor="middle">0%</text><line x1="203.0" x2="203.0" y1="6" y2="240" stroke="var(--line)"/><text x="203.0" y="260" font-size="13" fill="var(--ink-3)" text-anchor="middle">25%</text><line x1="288.0" x2="288.0" y1="6" y2="240" stroke="var(--line)"/><text x="288.0" y="260" font-size="13" fill="var(--ink-3)" text-anchor="middle">50%</text><line x1="373.0" x2="373.0" y1="6" y2="240" stroke="var(--line)"/><text x="373.0" y="260" font-size="13" fill="var(--ink-3)" text-anchor="middle">75%</text><line x1="458.0" x2="458.0" y1="6" y2="240" stroke="var(--line)"/><text x="458.0" y="260" font-size="13" fill="var(--ink-3)" text-anchor="middle">100%</text><text x="0" y="31" font-size="16" fill="var(--ink)">Energía</text><line x1="449.2" x2="453.2" y1="26" y2="26" stroke="var(--line-2)" stroke-width="5" stroke-linecap="round"/><circle cx="449.2" cy="26" r="7" fill="var(--past)"/><circle class="dot" cx="453.2" cy="26" r="9" fill="var(--ac)"/><text class="dot" x="437.2" y="14" font-size="14.5" font-weight="700" fill="var(--ac-ink)" text-anchor="end">98,6%</text><text x="0" y="77" font-size="16" fill="var(--ink)">Acueducto</text><line x1="395.1" x2="397.5" y1="72" y2="72" stroke="var(--line-2)" stroke-width="5" stroke-linecap="round"/><circle cx="395.1" cy="72" r="7" fill="var(--past)"/><circle class="dot" cx="397.5" cy="72" r="9" fill="var(--ac)"/><text class="dot" x="413.5" y="60" font-size="14.5" font-weight="700" fill="var(--ac-ink)" text-anchor="start">82,2%</text><text x="0" y="123" font-size="16" fill="var(--ink)">Alcantarillado</text><line x1="352.6" x2="386.3" y1="118" y2="118" stroke="var(--line-2)" stroke-width="5" stroke-linecap="round"/><circle cx="386.3" cy="118" r="7" fill="var(--past)"/><circle class="dot" cx="352.6" cy="118" r="9" fill="var(--ac)"/><text class="dot" x="336.6" y="106" font-size="14.5" font-weight="700" fill="var(--ac-ink)" text-anchor="end">69,0%</text><text x="0" y="169" font-size="16" fill="var(--ink)">Gas natural</text><line x1="118.0" x2="174.1" y1="164" y2="164" stroke="var(--line-2)" stroke-width="5" stroke-linecap="round"/><circle cx="118.0" cy="164" r="7" fill="var(--past)"/><circle class="dot" cx="174.1" cy="164" r="9" fill="var(--ac)"/><text class="dot" x="190.1" y="152" font-size="14.5" font-weight="700" fill="var(--ac-ink)" text-anchor="start">16,5%</text><text x="0" y="215" font-size="16" fill="var(--ink)">Internet</text><circle class="dot" cx="178.2" cy="210" r="9" fill="var(--ac)"/><text class="dot" x="194.2" y="198" font-size="14.5" font-weight="700" fill="var(--ac-ink)" text-anchor="start">17,7%</text></svg>
+        <div class="legend"><span><i style="background:var(--past)"></i>2005</span><span><i style="background:var(--ac)"></i>2018</span></div></div>
+      <div data-r="3"><h3 style="font-size:19px;margin:0 0 18px">Privaciones más extendidas (IPM 2018)</h3><div class="ranked"><div class="rk top"><div class="lab"><span>Trabajo informal</span><b>83,3%</b></div><div class="bar  grow" style="width:100.0%"></div></div><div class="rk"><div class="lab"><span>Bajo logro educativo</span><b>66,8%</b></div><div class="bar  grow" style="width:80.2%"></div></div><div class="rk"><div class="lab"><span>Inadecuada eliminación de excretas</span><b>18,1%</b></div><div class="bar  grow" style="width:21.7%"></div></div><div class="rk"><div class="lab"><span>Sin agua mejorada</span><b>18,1%</b></div><div class="bar  grow" style="width:21.7%"></div></div><div class="rk"><div class="lab"><span>Analfabetismo</span><b>15,9%</b></div><div class="bar  grow" style="width:19.1%"></div></div></div></div>
+    </div>
+    <p class="src">Fichas CNPV 2018 DANE (servicios) e Índice de Pobreza Multidimensional censal 2018, DANE. El censo de 2005 no midió internet.</p>
+  </div>
+</section>
+
+<section class="s tint" id="contexto" aria-labelledby="t-ctx">
+  <div class="wrap">
+    <div class="ctx" data-r>
+      <div class="img" style="background-image:url(&quot;https://commons.wikimedia.org/wiki/Special:FilePath/Parque_Principal_de_Salamina%2C_Caldas.jpg?width=1920&quot;)" role="img" aria-label="Paisaje de Salamina"></div>
+      <div class="txt"><h2 id="t-ctx" style="font-size:clamp(28px,3.4vw,40px)">De qué vive Salamina</h2><p>«La Ciudad Luz», Pueblo Patrimonio del Paisaje Cultural Cafetero, vive del <b>café</b>, la <b>ganadería</b> de San Félix y un <b>turismo cultural</b> en crecimiento.</p></div>
     </div>
   </div>
 </section>
 
-<section class="scene tint" data-name="Contraste de fuentes">
-  <div class="bg"><svg class="bgart" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice"><g fill="none" stroke="var(--sis)" stroke-width="3"><path d="M-50 380 C250 330 450 430 700 380 S1100 340 1260 400"/></g></svg></div>
+<section class="s" id="agenda" aria-labelledby="t-ag">
   <div class="wrap">
-    <div class="kick" data-anim>Tres fuentes del mismo municipio</div>
-    <h2 class="sectitle d1" data-anim style="max-width:22ch">Del censo a los hogares más vulnerables.</h2>
-    <div class="legend d2" data-anim><span><i style="background:#cfc3a8"></i>DANE 2005</span><span><i style="background:var(--accent)"></i>DANE 2018</span><span><i style="background:var(--sis)"></i>SISBÉN 2026 · Salamina</span></div>
-    <div class="dist d2" data-anim style="max-width:820px">
-      <div class="dgroup"><div class="dbars"><div class="dbar ghost grow-h" data-h="50"><span>30,2</span></div><div class="dbar now grow-h" data-h="64"><span>38,2</span></div><div class="dbar sis grow-h" data-h="70"><span>41,8</span></div></div><div class="dlab">Jefatura femenina</div></div>
-      <div class="dgroup"><div class="dbars"><div class="dbar ghost grow-h" data-h="23"><span>13,8</span></div><div class="dbar now grow-h" data-h="36"><span>21,8</span></div><div class="dbar sis grow-h" data-h="40"><span>24,0</span></div></div><div class="dlab">Hogares unipersonales</div></div>
-      <div class="dgroup"><div class="dbars"><div class="dbar ghost grow-h" data-h="28"><span>16,8</span></div><div class="dbar now grow-h" data-h="22"><span>13,4</span></div><div class="dbar sis grow-h" data-h="37"><span>22,3</span></div></div><div class="dlab">Hogares con discapacidad</div></div>
-    </div>
-    <p class="lead d3" data-anim style="margin-top:30px;max-width:40ch">El censo (DANE) cuenta a <b>todos</b> los hogares; el <b style="color:var(--sis)">SISBÉN</b> solo a los registrados por vulnerabilidad. Entre estos, la <b>soledad</b> y sobre todo la <b>discapacidad</b> son bastante mayores.</p>
+    <h2 id="t-ag" data-r>Prioridades para la política pública</h2>
+    <p class="lead" data-r="2">Ordenadas según el peso que tiene cada tema en los datos de Salamina. Cada una indica la evidencia y una línea de acción.</p>
+    <ol class="agenda"><li data-r="2"><h3>Cuidado de las personas mayores</h3><p class="ev">Índice de envejecimiento de 117,6 en 2018 (era 49,9 en 2005).</p><p class="ac">Centros día, cuidado en casa y apoyo a quienes cuidan, con prioridad para quienes viven solos.</p></li><li data-r="3"><h3>Alimentación</h3><p class="ev">36,2% de los hogares encuestados reporta dificultades para alimentarse (ECV, 163 hogares).</p><p class="ac">Huertas, mercados campesinos y apoyo alimentario focalizado.</p></li><li data-r="2"><h3>Jefas de hogar</h3><p class="ev">38,2% de los hogares tenía jefatura femenina en 2018; en el SISBÉN es 41,8%.</p><p class="ac">Prioridad para las jefas de hogar en programas de ingreso, cuidado y vivienda.</p></li><li data-r="3"><h3>Conectividad</h3><p class="ev">Solo 17,7% de los hogares tenía internet en 2018.</p><p class="ac">Puntos de conexión en veredas y formación digital para jóvenes y personas mayores.</p></li><li data-r="2"><h3>El campo</h3><p class="ev">Pobreza multidimensional de 40,8% en la zona rural y 21,6% en la cabecera; 42,9% de los hogares del SISBÉN es rural.</p><p class="ac">Llevar servicios, transporte y programas sociales a las veredas.</p></li></ol>
   </div>
 </section>
 
-<section class="scene" data-name="Situaciones que impiden">
-  <div class="bg"><svg class="bgart" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice"><g fill="none" stroke="var(--warn)" stroke-width="3"><path d="M-50 420 C250 370 450 470 700 420 S1100 380 1260 440"/></g></svg></div>
+<section class="s tint" id="fuentes" aria-labelledby="t-fu">
   <div class="wrap">
-    <div class="kick" data-anim>Quiénes necesitan más ayuda</div>
-    <h2 class="sectitle d1" data-anim style="max-width:22ch">Las situaciones que impiden a las familias salir adelante.</h2>
-    <div class="small d1" data-anim style="margin:2px 0 20px;font-size:clamp(14px,1.5vw,18px)">Hogares registrados en el <b>SISBÉN IV 2026</b> · Salamina</div>
-    <div class="grid" style="margin-top:6px;align-items:center">
-      <div class="d1" data-anim>
-        <div class="captitle" style="color:var(--ink2)">Ingreso promedio del hogar · al mes</div>
-        <div class="stat" style="font-size:clamp(78px,13vw,190px)"><span style="font-size:.42em;vertical-align:.34em">$</span><span data-count="436"><span class="val">0</span></span><span class="suf"> mil</span></div>
-        <div class="statlabel">Con eso viven, en promedio, los hogares del SISBÉN del municipio: la barrera es, ante todo, <b>económica</b>.</div>
-      </div>
-      <div class="d2" data-anim>
-        <div class="captitle" style="color:var(--ink2)">Poblaciones a priorizar · % de hogares</div>
-        <div class="ranked">
-          <div class="rrow"><div class="rlab">En zona rural</div><div class="rtrack"><div class="rfill grow-w" data-w="42.9"></div></div><div class="rval">42,9%</div></div>
-          <div class="rrow"><div class="rlab">Con discapacidad</div><div class="rtrack"><div class="rfill grow-w" data-w="22.3"></div></div><div class="rval">22,3%</div></div>
-          <div class="rrow"><div class="rlab">Con adulto mayor (Colombia Mayor)</div><div class="rtrack"><div class="rfill grow-w" data-w="12.9"></div></div><div class="rval">12,9%</div></div>
-          <div class="rrow"><div class="rlab">Con niñez (Familias en Acción)</div><div class="rtrack"><div class="rfill grow-w" data-w="7.1"></div></div><div class="rval">7,1%</div></div>
-        </div>
-      </div>
+    <h2 id="t-fu" style="font-size:clamp(26px,3vw,34px)">Fuentes y notas</h2>
+    <div class="fuentes">
+      <details><summary>Censos DANE 2005 y 2018</summary><p>Microdato censal integrado en el tablero del proyecto. Tamaño y tipo de hogar, jefatura por zona, discapacidad y edades de las personas en los hogares. El tablero registra hasta seis integrantes por hogar.</p></details>
+      <details><summary>Fichas CNPV 2018 e IPM 2018</summary><p>Población censada 2005 y 2018, índice de envejecimiento, razón de dependencia y servicios de la vivienda (DANE). Índice de Pobreza Multidimensional censal 2018 por cabecera y zona rural.</p></details>
+      <details><summary>SISBÉN IV 2026</summary><p>Hogares registrados en el SISBÉN IV del municipio, según el tablero publicado del proyecto. No representa a toda la población: reúne a los hogares que buscan acceder a programas sociales.</p></details>
+      <details><summary>Encuesta de Calidad de Vida</summary><p>Módulo ECV del tablero del proyecto. Para este municipio la muestra es de 163 hogares. Con menos de 40 hogares no se presentan resultados municipales; entre 40 y 99 se presentan como indicativos.</p></details>
+      <details><summary>Fotografía</summary><p>XalD, CC BY-SA 4.0, Wikimedia Commons.</p></details>
+      <details><summary>Cómo citar</summary><p>Proyecto Dinámicas Familiares, Universidad de Caldas (2026). Historia municipal de Salamina. johanpina.github.io/proyecto_dinamicas_familiares</p></details>
     </div>
-    <p class="lead d3" data-anim style="margin-top:26px;max-width:42ch">43% de hogares rurales y una <b>alta dependencia de Colombia Mayor</b> (12,9%): vejez y campo, primero.</p>
+    <p class="note" style="margin-top:28px"><a href="dashboard_comparativa_hogares.html">Explorar los datos en el tablero interactivo</a></p>
   </div>
 </section>
-
-<section class="scene tint" data-name="Campo y conectividad">
-  <div class="bg"><svg class="bgart" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice"><g fill="none" stroke="var(--accent)" stroke-width="3"><path d="M-50 360 C250 310 450 410 700 360 S1100 320 1260 380"/></g></svg></div>
+</main>
+<footer>
   <div class="wrap">
-    <div class="kick" data-anim>Brechas del campo y conectividad</div>
-    <h2 class="sectitle d1" data-anim style="max-width:18ch">El alcantarillado retrocedió.</h2>
-    <div class="legend d1" data-anim><span><i style="background:#cfc3a8"></i>2005</span><span><i style="background:var(--accent)"></i>2018</span></div>
-    <div class="svc d2" data-anim>
-      <div class="svcrow"><div class="sl">Energía</div><div class="svctrack"><div class="svc05 grow-w" data-w="97.4"></div><div class="svc18 grow-w" data-w="98.6"></div></div><div class="svcval">98,6%</div></div>
-      <div class="svcrow"><div class="sl">Acueducto</div><div class="svctrack"><div class="svc05 grow-w" data-w="81.5"></div><div class="svc18 grow-w" data-w="82.2"></div></div><div class="svcval">82,2%</div></div>
-      <div class="svcrow"><div class="sl">Alcantarillado</div><div class="svctrack"><div class="svc05 grow-w" data-w="78.9"></div><div class="svc18 grow-w" data-w="69.0" style="background:var(--warn)"></div></div><div class="svcval" style="color:var(--warn)">69,0%</div></div>
-      <div class="svcrow"><div class="sl">Gas natural</div><div class="svctrack"><div class="svc05 grow-w" data-w="0"></div><div class="svc18 grow-w" data-w="16.5"></div></div><div class="svcval">16,5%</div></div>
-      <div class="svcrow"><div class="sl">Internet</div><div class="svctrack"><div class="svc05 grow-w" data-w="0"></div><div class="svc18 grow-w" data-w="17.7" style="background:var(--warn)"></div></div><div class="svcval" style="color:var(--warn)">17,7%</div></div>
-    </div>
-    <p class="lead d3" data-anim style="margin-top:28px;max-width:34ch">El alcantarillado <b style="color:var(--warn)">cayó de 79% a 69%</b> e internet llega a solo 18 de cada 100 hogares: la conectividad rural es la deuda pendiente.</p>
+    <h2>Otras historias de Caldas</h2>
+    <nav class="mpios" aria-label="Historias por municipio"><a href="historia_aguadas.html">Aguadas</a><a href="historia_anserma.html">Anserma</a><a href="historia_aranzazu.html">Aranzazu</a><a href="historia_belalcazar.html">Belalcázar</a><a href="historia_chinchina.html">Chinchiná</a><a href="historia_filadelfia.html">Filadelfia</a><a href="historia_ladorada.html">La Dorada</a><a href="historia_lamerced.html">La Merced</a><a href="historia_manizales.html">Manizales</a><a href="historia_manzanares.html">Manzanares</a><a href="historia_marmato.html">Marmato</a><a href="historia_marquetalia.html">Marquetalia</a><a href="historia_marulanda.html">Marulanda</a><a href="historia_neira.html">Neira</a><a href="historia_norcasia.html">Norcasia</a><a href="historia_pacora.html">Pácora</a><a href="historia_palestina.html">Palestina</a><a href="historia_pensilvania.html">Pensilvania</a><a href="historia_riosucio.html">Riosucio</a><a href="historia_risaralda.html">Risaralda</a><a href="historia_salamina.html" aria-current="page">Salamina</a><a href="historia_samana.html">Samaná</a><a href="historia_sanjose.html">San José</a><a href="historia_supia.html">Supía</a><a href="historia_victoria.html">Victoria</a><a href="historia_villamaria.html">Villamaría</a><a href="historia_viterbo.html">Viterbo</a></nav>
+    <div class="fin"><span>Proyecto Dinámicas Familiares · Universidad de Caldas · 2026</span><a href="familias.html">Volver a la portada</a><a href="index.html">Tableros</a></div>
   </div>
-</section>
-
-<section class="scene" data-name="El municipio">
-  <div class="bg"><svg class="bgart" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice"><g fill="none" stroke="var(--accent)" stroke-width="3"><path d="M-50 320 C250 270 450 370 700 320 S1100 280 1260 340"/></g></svg></div>
-  <div class="wrap">
-    <div class="kick" data-anim>De qué vive el municipio</div>
-    <h2 class="sectitle d1" data-anim style="max-width:18ch">Patrimonio, café y turismo para quedarse.</h2>
-    <div class="grid" style="margin-top:36px;align-items:stretch">
-      <div class="d1" data-anim><div class="card" style="height:100%"><div class="captitle">Economía y territorio</div><p class="lead" style="font-size:clamp(18px,2.1vw,27px);color:var(--ink);margin-top:6px">«La Ciudad Luz» y Pueblo Patrimonio del Paisaje Cultural Cafetero vive del <b>café</b>, la <b>ganadería Normando</b> (San Félix) y un <b>turismo cultural</b> en crecimiento, en un pueblo de arquitectura colonial del que emigran los jóvenes.</p></div></div>
-      <div class="d2" data-anim><div class="card" style="height:100%;background:var(--accent-soft);border-color:transparent"><div class="captitle" style="color:var(--accent2)">Mensaje clave para la gestión</div><p class="lead" style="font-size:clamp(18px,2.1vw,27px);color:var(--ink);margin-top:6px">Salamina necesita un <b>sistema de cuidado para personas mayores</b> y una estrategia de <b>arraigo juvenil</b>, apoyada en el turismo patrimonial y el café, que frene el despoblamiento.</p></div></div>
-    </div>
-  </div>
-</section>
-
-<section class="scene" data-name="Qué hacer">
-  <div class="bg"><svg class="bgart" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice"><g fill="none" stroke="var(--accent)" stroke-width="3"><path d="M-50 300 C250 250 450 350 700 300 S1100 260 1260 320"/><path d="M-50 470 C250 420 450 520 700 470 S1100 430 1260 490"/></g></svg></div>
-  <div class="wrap">
-    <div class="kick" data-anim>Hacia dónde dirigir la política pública</div>
-    <h2 class="sectitle d1" data-anim style="max-width:20ch">A quién ayudar primero.</h2>
-    <div class="implies">
-      <div data-anim><div class="serif">01</div><h3>Personas mayores que viven solas</h3><p>El más envejecido (117,6): centro día, atención domiciliaria y compañía.</p></div>
-      <div data-anim><div class="serif">02</div><h3>Mujeres jefas de hogar</h3><p>Jefatura femenina 38,2%: generación de ingresos y apoyo al cuidado.</p></div>
-      <div data-anim><div class="serif">03</div><h3>Arraigo juvenil</h3><p>Turismo patrimonial y café especial como empleo digno para frenar el despoblamiento.</p></div>
-      <div data-anim><div class="serif">04</div><h3>Saneamiento rural</h3><p>Recuperar alcantarillado (69%) y cerrar brechas de agua (18,1%) donde el IPM llega a 40,8%.</p></div>
-      <div data-anim><div class="serif">05</div><h3>Educación de adultos y conectividad</h3><p>Analfabetismo 15,9%, bajo logro 66,8% e internet 17,7%: educación y red rural.</p></div>
-      <div data-anim><div class="serif">06</div><h3>Hogares con discapacidad</h3><p>Entre los vulnerables (SISBÉN) la discapacidad llega a 21,3%: cuidado y accesibilidad.</p></div>
-    </div>
-  </div>
-</section>
-
-<footer class="footer">
-  <svg class="bgart" style="opacity:.08" viewBox="0 0 1200 400" preserveAspectRatio="xMidYMid slice"><g fill="none" stroke="#fff" stroke-width="2"><path d="M-50 160 C250 120 450 200 700 160 S1100 130 1260 180"/><path d="M-50 280 C250 240 450 320 700 280 S1100 250 1260 300"/></g></svg>
-  <h3 class="serif">Salamina, en una generación</h3>
-  <p class="srcs">Hogar promedio <b>3,6 → 2,8</b> · Unipersonales <b>13,8% → 21,7%</b> (SISBÉN Salamina 24,0%) · Jefatura femenina <b>30,2% → 38,2%</b> (urbana 45,1% · rural 25,8%) · Discapacidad <b>16,8% → 13,4%</b> (SISBÉN Salamina 22,3%) · Envejecimiento <b>49,9 → 117,6</b> · IPM <b>28,7%</b> (rural 40,8%) · Internet <b>17,7%</b>.</p>
-  <div class="metarow">
-    <span class="m">DANE · Censo 2005 / CNPV 2018 · Ficha 17653</span>
-    <span class="m">Tablero Dinámicas Familiares · SISBÉN IV 2026 Caldas</span>
-    <span class="m">DANE · IPM municipal censal 2018</span>
-  </div>
-  <p class="srcs">Jefatura femenina, unipersonales y discapacidad extraídos del tablero (microdato censal DANE 2005/2018); SISBÉN IV 2026 a nivel Caldas. Marco: Observatorio de Familias del DNP. Dashboard: johanpina.github.io/proyecto_dinamicas_familiares · Junio 2026.</p>
 </footer>
-
 <script>
-const fmt=(n,d)=>n.toLocaleString('es-CO',{minimumFractionDigits:d,maximumFractionDigits:d});
-function countUp(host){host.querySelectorAll('[data-count]').forEach(el=>{if(el.dataset.done)return;el.dataset.done=1;
-  const target=parseFloat(el.dataset.count),dec=parseInt(el.dataset.decimals||'0',10);const valEl=el.querySelector('.val')||el;const dur=1600;let t0=null;
-  function step(ts){if(!t0)t0=ts;const p=Math.min((ts-t0)/dur,1);const e=1-Math.pow(1-p,3);valEl.textContent=fmt(target*e,dec);if(p<1)requestAnimationFrame(step);}requestAnimationFrame(step);});}
-function activateGraphics(sc){sc.querySelectorAll('[data-donut]').forEach(c=>{c.style.strokeDashoffset=(100-parseFloat(c.dataset.donut));});
-  sc.querySelectorAll('.grow-h[data-h]').forEach(b=>{b.style.height=b.dataset.h+'%';});
-  sc.querySelectorAll('.grow-w[data-w]').forEach(b=>{b.style.width=b.dataset.w+'%';});}
-(function(){const g=document.getElementById('crowd');if(!g)return;let s='';for(let i=0;i<46;i++){const x=20+i*26,y=200+(i%3)*8;s+=`<g transform="translate(${x},${y})"><circle cx="0" cy="0" r="7" fill="currentColor"/><path d="M-10 60 C-10 30 -6 18 0 18 C6 18 10 30 10 60 Z" fill="currentColor"/></g>`;}g.innerHTML=s;})();
-const io=new IntersectionObserver((es)=>{es.forEach(en=>{if(en.isIntersecting){
-  en.target.querySelectorAll('[data-anim]').forEach((el,i)=>setTimeout(()=>el.classList.add('in'),i*80));
-  en.target.classList.add('in');countUp(en.target);activateGraphics(en.target);}});},{threshold:.18});
-document.querySelectorAll('.scene').forEach(s=>io.observe(s));
-const scenes=[...document.querySelectorAll('.scene')];const dots=document.getElementById('dots');
-scenes.forEach((s)=>{const a=document.createElement('a');a.href='#';a.innerHTML='<span>'+(s.dataset.name||'')+'</span>';a.onclick=e=>{e.preventDefault();s.scrollIntoView();};dots.appendChild(a);});
-const dotEls=[...dots.children];
-function onScroll(){const h=document.documentElement;const sc=h.scrollTop/(h.scrollHeight-h.clientHeight);document.getElementById('prog').style.width=(sc*100)+'%';
-  let idx=0;scenes.forEach((s,i)=>{if(s.getBoundingClientRect().top<=window.innerHeight*.5)idx=i;});dotEls.forEach((d,i)=>d.classList.toggle('on',i===idx));}
-window.addEventListener('scroll',onScroll,{passive:true});onScroll();
+document.documentElement.classList.add("js");
+(function(){
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var els = document.querySelectorAll("[data-r], section.s");
+  if (reduce || !("IntersectionObserver" in window)) { els.forEach(function(e){ e.classList.add("in"); }); return; }
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(en){ if (en.isIntersecting) { en.target.classList.add("in"); io.unobserve(en.target); } });
+  }, { rootMargin: "0px 0px -12% 0px", threshold: 0.12 });
+  els.forEach(function(e){ io.observe(e); });
+  requestAnimationFrame(function(){ document.querySelectorAll(".hero [data-r]").forEach(function(e){ e.classList.add("in"); }); });
+  window.addEventListener("beforeprint", function(){ els.forEach(function(e){ e.classList.add("in"); }); });
+})();
 </script>
 </body>
 </html>

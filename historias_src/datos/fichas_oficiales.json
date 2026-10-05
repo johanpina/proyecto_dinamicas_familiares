@@ -1,0 +1,1392 @@
+{
+ "_fuente": "Fichas CNPV 2018 DANE (población, envejecimiento, dependencia, servicios) e IPM censal 2018 DANE (anexo municipal).",
+ "_faltantes": [
+  "Aranzazu.dep2018",
+  "Neira.pob2005",
+  "Neira.dep2018",
+  "Riosucio.dep2018",
+  "Salamina.dep2018",
+  "*.serv2005.internet (todos): no medido en Censo 2005 (null)"
+ ],
+ "_notas": [
+  "Riosucio pob2018=48329 y Neira pob2018=20495 son conteo censal CNPV 2018; las proyecciones DANE 2018 (63.822 y 31.180) reflejan subregistro.",
+  "Aranzazu, Salamina, Riosucio, Viterbo, Neira: valores copiados de historia_*.html y folleto_*.html publicados; IPM cabecera y privaciones de Neira de una versión previa de historia_neira.html."
+ ],
+ "Aguadas": {
+  "divipola": 17013,
+  "pob2005": 22307,
+  "pob2018": 20712,
+  "envej2005": 43.2,
+  "envej2018": 91.7,
+  "dep2018": 61.7,
+  "p014": 19.9,
+  "p60": 18.3,
+  "ipm": {
+   "total": 30.0,
+   "cab": 18.8,
+   "rural": 41.2,
+   "priv": [
+    [
+     "Trabajo informal",
+     86.0
+    ],
+    [
+     "Bajo logro educativo",
+     74.9
+    ],
+    [
+     "Dependencia económica",
+     26.0
+    ],
+    [
+     "Sin agua mejorada",
+     23.2
+    ],
+    [
+     "Analfabetismo",
+     15.7
+    ]
+   ]
+  },
+  "serv2018": {
+   "energia": 99.2,
+   "acueducto": 78.8,
+   "alcantarillado": 58.8,
+   "gas": 2.2,
+   "internet": 14.9
+  },
+  "serv2005": {
+   "energia": 96.6,
+   "acueducto": 76.5,
+   "alcantarillado": 64.7,
+   "gas": 0.0,
+   "internet": null
+  }
+ },
+ "Anserma": {
+  "divipola": 17042,
+  "pob2005": 33674,
+  "pob2018": 31811,
+  "envej2005": 39.4,
+  "envej2018": 98.3,
+  "dep2018": 61.9,
+  "p014": 19.3,
+  "p60": 18.9,
+  "ipm": {
+   "total": 32.5,
+   "cab": 21.2,
+   "rural": 48.1,
+   "priv": [
+    [
+     "Trabajo informal",
+     86.5
+    ],
+    [
+     "Bajo logro educativo",
+     68.2
+    ],
+    [
+     "Dependencia económica",
+     29.5
+    ],
+    [
+     "Sin agua mejorada",
+     21.8
+    ],
+    [
+     "Inadecuada eliminación de excretas",
+     15.2
+    ]
+   ]
+  },
+  "serv2018": {
+   "energia": 99.1,
+   "acueducto": 72.7,
+   "alcantarillado": 65.4,
+   "gas": 46.7,
+   "internet": 18.4
+  },
+  "serv2005": {
+   "energia": 98.4,
+   "acueducto": 77.7,
+   "alcantarillado": 72.3,
+   "gas": 0.0,
+   "internet": null
+  }
+ },
+ "Aranzazu": {
+  "divipola": 17050,
+  "pob2005": 12181,
+  "pob2018": 9854,
+  "envej2005": 43.5,
+  "envej2018": 96.8,
+  "dep2018": null,
+  "p014": 21.0,
+  "p60": 20.3,
+  "ipm": {
+   "total": 32.1,
+   "cab": 21.9,
+   "rural": 50.4,
+   "priv": [
+    [
+     "Trabajo informal",
+     84.9
+    ],
+    [
+     "Bajo logro educativo",
+     74.3
+    ],
+    [
+     "Dependencia económica",
+     32.5
+    ],
+    [
+     "Sin agua mejorada (rural)",
+     16.1
+    ],
+    [
+     "Analfabetismo",
+     14.8
+    ]
+   ]
+  },
+  "serv2018": {
+   "energia": 99.6,
+   "acueducto": 88.0,
+   "alcantarillado": 71.3,
+   "gas": 24.8,
+   "internet": 18.3
+  },
+  "serv2005": {
+   "energia": 98.9,
+   "acueducto": 83.4,
+   "alcantarillado": 66.6,
+   "gas": 0.0,
+   "internet": null
+  }
+ },
+ "Belalcázar": {
+  "divipola": 17088,
+  "pob2005": 11327,
+  "pob2018": 9690,
+  "envej2005": 34.5,
+  "envej2018": 76.9,
+  "dep2018": 68.5,
+  "p014": 23.0,
+  "p60": 17.7,
+  "ipm": {
+   "total": 41.2,
+   "cab": 26.2,
+   "rural": 53.1,
+   "priv": [
+    [
+     "Trabajo informal",
+     87.3
+    ],
+    [
+     "Bajo logro educativo",
+     76.9
+    ],
+    [
+     "Dependencia económica",
+     31.0
+    ],
+    [
+     "Analfabetismo",
+     20.5
+    ],
+    [
+     "Sin agua mejorada",
+     20.1
+    ]
+   ]
+  },
+  "serv2018": {
+   "energia": 97.3,
+   "acueducto": 70.6,
+   "alcantarillado": 54.4,
+   "gas": 39.3,
+   "internet": 7.0
+  },
+  "serv2005": {
+   "energia": 97.4,
+   "acueducto": 77.1,
+   "alcantarillado": 69.9,
+   "gas": 0.0,
+   "internet": null
+  }
+ },
+ "Chinchiná": {
+  "divipola": 17174,
+  "pob2005": 51301,
+  "pob2018": 48484,
+  "envej2005": 39.2,
+  "envej2018": 94.9,
+  "dep2018": 57.6,
+  "p014": 18.7,
+  "p60": 17.8,
+  "ipm": {
+   "total": 21.8,
+   "cab": 19.1,
+   "rural": 44.1,
+   "priv": [
+    [
+     "Trabajo informal",
+     77.0
+    ],
+    [
+     "Bajo logro educativo",
+     56.9
+    ],
+    [
+     "Dependencia económica",
+     26.3
+    ],
+    [
+     "Sin aseguramiento en salud",
+     18.7
+    ],
+    [
+     "Rezago escolar",
+     13.8
+    ]
+   ]
+  },
+  "serv2018": {
+   "energia": 99.6,
+   "acueducto": 96.2,
+   "alcantarillado": 93.7,
+   "gas": 79.2,
+   "internet": 38.9
+  },
+  "serv2005": {
+   "energia": 99.3,
+   "acueducto": 95.5,
+   "alcantarillado": 93.6,
+   "gas": 31.7,
+   "internet": null
+  }
+ },
+ "Filadelfia": {
+  "divipola": 17272,
+  "pob2005": 12235,
+  "pob2018": 9630,
+  "envej2005": 37.5,
+  "envej2018": 113.0,
+  "dep2018": 67.5,
+  "p014": 18.9,
+  "p60": 21.4,
+  "ipm": {
+   "total": 36.2,
+   "cab": 22.2,
+   "rural": 44.1,
+   "priv": [
+    [
+     "Trabajo informal",
+     87.0
+    ],
+    [
+     "Bajo logro educativo",
+     77.5
+    ],
+    [
+     "Dependencia económica",
+     30.2
+    ],
+    [
+     "Sin agua mejorada",
+     25.4
+    ],
+    [
+     "Analfabetismo",
+     16.9
+    ]
+   ]
+  },
+  "serv2018": {
+   "energia": 99.2,
+   "acueducto": 78.5,
+   "alcantarillado": 64.7,
+   "gas": 20.0,
+   "internet": 10.2
+  },
+  "serv2005": {
+   "energia": 97.0,
+   "acueducto": 75.0,
+   "alcantarillado": 72.6,
+   "gas": 0.0,
+   "internet": null
+  }
+ },
+ "La Dorada": {
+  "divipola": 17380,
+  "pob2005": 70486,
+  "pob2018": 70802,
+  "envej2005": 32.8,
+  "envej2018": 67.5,
+  "dep2018": 60.7,
+  "p014": 22.6,
+  "p60": 15.2,
+  "ipm": {
+   "total": 26.8,
+   "cab": 25.1,
+   "rural": 41.3,
+   "priv": [
+    [
+     "Trabajo informal",
+     83.2
+    ],
+    [
+     "Bajo logro educativo",
+     55.7
+    ],
+    [
+     "Dependencia económica",
+     30.7
+    ],
+    [
+     "Sin aseguramiento en salud",
+     18.4
+    ],
+    [
+     "Rezago escolar",
+     15.0
+    ]
+   ]
+  },
+  "serv2018": {
+   "energia": 96.3,
+   "acueducto": 94.2,
+   "alcantarillado": 87.8,
+   "gas": 77.3,
+   "internet": 30.1
+  },
+  "serv2005": {
+   "energia": 98.1,
+   "acueducto": 95.2,
+   "alcantarillado": 93.7,
+   "gas": 33.8,
+   "internet": null
+  }
+ },
+ "La Merced": {
+  "divipola": 17388,
+  "pob2005": 6324,
+  "pob2018": 5325,
+  "envej2005": 46.1,
+  "envej2018": 116.3,
+  "dep2018": 63.6,
+  "p014": 18.0,
+  "p60": 20.9,
+  "ipm": {
+   "total": 34.5,
+   "cab": 18.3,
+   "rural": 43.2,
+   "priv": [
+    [
+     "Trabajo informal",
+     84.2
+    ],
+    [
+     "Bajo logro educativo",
+     73.4
+    ],
+    [
+     "Dependencia económica",
+     26.8
+    ],
+    [
+     "Sin agua mejorada",
+     24.5
+    ],
+    [
+     "Analfabetismo",
+     19.9
+    ]
+   ]
+  },
+  "serv2018": {
+   "energia": 99.1,
+   "acueducto": 75.5,
+   "alcantarillado": 55.0,
+   "gas": 27.6,
+   "internet": 5.8
+  },
+  "serv2005": {
+   "energia": 97.0,
+   "acueducto": 68.5,
+   "alcantarillado": 46.9,
+   "gas": 0.0,
+   "internet": null
+  }
+ },
+ "Manizales": {
+  "divipola": 17001,
+  "pob2005": 368433,
+  "pob2018": 400436,
+  "envej2005": 47.8,
+  "envej2018": 115.5,
+  "dep2018": 53.2,
+  "p014": 16.1,
+  "p60": 18.6,
+  "ipm": {
+   "total": 13.9,
+   "cab": 12.7,
+   "rural": 31.2,
+   "priv": [
+    [
+     "Trabajo informal",
+     70.4
+    ],
+    [
+     "Bajo logro educativo",
+     35.8
+    ],
+    [
+     "Dependencia económica",
+     22.9
+    ],
+    [
+     "Sin aseguramiento en salud",
+     17.4
+    ],
+    [
+     "Rezago escolar",
+     11.3
+    ]
+   ]
+  },
+  "serv2018": {
+   "energia": 99.0,
+   "acueducto": 96.3,
+   "alcantarillado": 94.0,
+   "gas": 80.6,
+   "internet": 66.2
+  },
+  "serv2005": {
+   "energia": 99.4,
+   "acueducto": 97.3,
+   "alcantarillado": 96.4,
+   "gas": 0.0,
+   "internet": null
+  }
+ },
+ "Manzanares": {
+  "divipola": 17433,
+  "pob2005": 18143,
+  "pob2018": 16532,
+  "envej2005": 38.2,
+  "envej2018": 88.2,
+  "dep2018": 65.1,
+  "p014": 21.0,
+  "p60": 18.5,
+  "ipm": {
+   "total": 37.5,
+   "cab": 28.8,
+   "rural": 48.8,
+   "priv": [
+    [
+     "Trabajo informal",
+     87.4
+    ],
+    [
+     "Bajo logro educativo",
+     71.8
+    ],
+    [
+     "Sin agua mejorada",
+     32.9
+    ],
+    [
+     "Dependencia económica",
+     32.0
+    ],
+    [
+     "Inadecuada eliminación de excretas",
+     20.6
+    ]
+   ]
+  },
+  "serv2018": {
+   "energia": 98.8,
+   "acueducto": 66.0,
+   "alcantarillado": 54.5,
+   "gas": 52.0,
+   "internet": 19.8
+  },
+  "serv2005": {
+   "energia": 97.6,
+   "acueducto": 61.9,
+   "alcantarillado": 56.3,
+   "gas": 15.4,
+   "internet": null
+  }
+ },
+ "Marmato": {
+  "divipola": 17442,
+  "pob2005": 8175,
+  "pob2018": 8485,
+  "envej2005": 22.7,
+  "envej2018": 48.8,
+  "dep2018": 53.3,
+  "p014": 23.4,
+  "p60": 11.4,
+  "ipm": {
+   "total": 37.6,
+   "cab": 27.0,
+   "rural": 39.0,
+   "priv": [
+    [
+     "Trabajo informal",
+     77.1
+    ],
+    [
+     "Bajo logro educativo",
+     67.9
+    ],
+    [
+     "Inadecuada eliminación de excretas",
+     37.6
+    ],
+    [
+     "Dependencia económica",
+     31.2
+    ],
+    [
+     "Rezago escolar",
+     18.9
+    ]
+   ]
+  },
+  "serv2018": {
+   "energia": 96.8,
+   "acueducto": 71.9,
+   "alcantarillado": 54.8,
+   "gas": 3.1,
+   "internet": 12.0
+  },
+  "serv2005": {
+   "energia": 96.5,
+   "acueducto": 62.4,
+   "alcantarillado": 60.0,
+   "gas": 0.0,
+   "internet": null
+  }
+ },
+ "Marquetalia": {
+  "divipola": 17444,
+  "pob2005": 13880,
+  "pob2018": 12146,
+  "envej2005": 34.3,
+  "envej2018": 83.7,
+  "dep2018": 68.7,
+  "p014": 22.2,
+  "p60": 18.5,
+  "ipm": {
+   "total": 40.7,
+   "cab": 24.8,
+   "rural": 54.7,
+   "priv": [
+    [
+     "Trabajo informal",
+     91.6
+    ],
+    [
+     "Bajo logro educativo",
+     77.6
+    ],
+    [
+     "Dependencia económica",
+     35.5
+    ],
+    [
+     "Sin agua mejorada",
+     34.9
+    ],
+    [
+     "Analfabetismo",
+     17.6
+    ]
+   ]
+  },
+  "serv2018": {
+   "energia": 98.8,
+   "acueducto": 64.8,
+   "alcantarillado": 48.1,
+   "gas": 37.3,
+   "internet": 10.7
+  },
+  "serv2005": {
+   "energia": 96.3,
+   "acueducto": 62.9,
+   "alcantarillado": 44.6,
+   "gas": 0.0,
+   "internet": null
+  }
+ },
+ "Marulanda": {
+  "divipola": 17446,
+  "pob2005": 2702,
+  "pob2018": 2081,
+  "envej2005": 33.7,
+  "envej2018": 78.7,
+  "dep2018": 59.0,
+  "p014": 20.8,
+  "p60": 16.3,
+  "ipm": {
+   "total": 34.6,
+   "cab": 23.2,
+   "rural": 40.1,
+   "priv": [
+    [
+     "Trabajo informal",
+     80.4
+    ],
+    [
+     "Bajo logro educativo",
+     79.1
+    ],
+    [
+     "Sin agua mejorada",
+     30.6
+    ],
+    [
+     "Dependencia económica",
+     28.7
+    ],
+    [
+     "Rezago escolar",
+     22.8
+    ]
+   ]
+  },
+  "serv2018": {
+   "energia": 98.6,
+   "acueducto": 70.2,
+   "alcantarillado": 60.8,
+   "gas": 2.1,
+   "internet": 11.5
+  },
+  "serv2005": {
+   "energia": 93.3,
+   "acueducto": 80.5,
+   "alcantarillado": 76.4,
+   "gas": 0.0,
+   "internet": null
+  }
+ },
+ "Neira": {
+  "divipola": 17486,
+  "pob2005": null,
+  "pob2018": 20495,
+  "envej2005": 37.8,
+  "envej2018": 91.7,
+  "dep2018": null,
+  "p014": 20.5,
+  "p60": 18.8,
+  "ipm": {
+   "total": 31.3,
+   "cab": 19.2,
+   "rural": 46.0,
+   "priv": [
+    [
+     "Trabajo informal",
+     83.3
+    ],
+    [
+     "Bajo logro educativo",
+     72.1
+    ],
+    [
+     "Dependencia económica",
+     28.6
+    ],
+    [
+     "Sin aseguramiento en salud",
+     16.7
+    ],
+    [
+     "Analfabetismo",
+     15.9
+    ]
+   ]
+  },
+  "serv2018": {
+   "energia": 98.7,
+   "acueducto": 86.6,
+   "alcantarillado": 73.8,
+   "gas": 51.1,
+   "internet": 15.6
+  },
+  "serv2005": {
+   "energia": 97.7,
+   "acueducto": 82.6,
+   "alcantarillado": 79.2,
+   "gas": 15.1,
+   "internet": null
+  }
+ },
+ "Norcasia": {
+  "divipola": 17495,
+  "pob2005": 6523,
+  "pob2018": 5949,
+  "envej2005": 24.7,
+  "envej2018": 55.0,
+  "dep2018": 62.4,
+  "p014": 24.8,
+  "p60": 13.6,
+  "ipm": {
+   "total": 41.4,
+   "cab": 31.3,
+   "rural": 61.5,
+   "priv": [
+    [
+     "Trabajo informal",
+     83.5
+    ],
+    [
+     "Bajo logro educativo",
+     66.8
+    ],
+    [
+     "Dependencia económica",
+     45.3
+    ],
+    [
+     "Rezago escolar",
+     21.9
+    ],
+    [
+     "Sin agua mejorada",
+     18.9
+    ]
+   ]
+  },
+  "serv2018": {
+   "energia": 97.6,
+   "acueducto": 78.9,
+   "alcantarillado": 67.4,
+   "gas": 48.5,
+   "internet": 16.1
+  },
+  "serv2005": {
+   "energia": 88.5,
+   "acueducto": 72.5,
+   "alcantarillado": 65.7,
+   "gas": 0.0,
+   "internet": null
+  }
+ },
+ "Palestina": {
+  "divipola": 17524,
+  "pob2005": 17310,
+  "pob2018": 13560,
+  "envej2005": 30.1,
+  "envej2018": 80.6,
+  "dep2018": 57.8,
+  "p014": 20.3,
+  "p60": 16.3,
+  "ipm": {
+   "total": 30.1,
+   "cab": 25.6,
+   "rural": 32.4,
+   "priv": [
+    [
+     "Trabajo informal",
+     76.8
+    ],
+    [
+     "Bajo logro educativo",
+     71.7
+    ],
+    [
+     "Dependencia económica",
+     25.6
+    ],
+    [
+     "Sin aseguramiento en salud",
+     19.5
+    ],
+    [
+     "Analfabetismo",
+     17.4
+    ]
+   ]
+  },
+  "serv2018": {
+   "energia": 99.6,
+   "acueducto": 87.4,
+   "alcantarillado": 76.5,
+   "gas": 56.1,
+   "internet": 14.3
+  },
+  "serv2005": {
+   "energia": 98.2,
+   "acueducto": 88.2,
+   "alcantarillado": 84.7,
+   "gas": 14.6,
+   "internet": null
+  }
+ },
+ "Pensilvania": {
+  "divipola": 17541,
+  "pob2005": 23575,
+  "pob2018": 17342,
+  "envej2005": 37.9,
+  "envej2018": 89.5,
+  "dep2018": 68.7,
+  "p014": 21.5,
+  "p60": 19.2,
+  "ipm": {
+   "total": 37.3,
+   "cab": 22.8,
+   "rural": 46.4,
+   "priv": [
+    [
+     "Trabajo informal",
+     88.5
+    ],
+    [
+     "Bajo logro educativo",
+     75.6
+    ],
+    [
+     "Sin agua mejorada",
+     33.9
+    ],
+    [
+     "Dependencia económica",
+     30.1
+    ],
+    [
+     "Inadecuada eliminación de excretas",
+     24.9
+    ]
+   ]
+  },
+  "serv2018": {
+   "energia": 99.1,
+   "acueducto": 64.7,
+   "alcantarillado": 54.7,
+   "gas": 37.2,
+   "internet": 15.5
+  },
+  "serv2005": {
+   "energia": 98.6,
+   "acueducto": 57.8,
+   "alcantarillado": 50.7,
+   "gas": 0.0,
+   "internet": null
+  }
+ },
+ "Pácora": {
+  "divipola": 17513,
+  "pob2005": 14448,
+  "pob2018": 13214,
+  "envej2005": 48.9,
+  "envej2018": 122.7,
+  "dep2018": 63.2,
+  "p014": 17.4,
+  "p60": 21.3,
+  "ipm": {
+   "total": 33.3,
+   "cab": 20.7,
+   "rural": 45.2,
+   "priv": [
+    [
+     "Trabajo informal",
+     85.4
+    ],
+    [
+     "Bajo logro educativo",
+     75.8
+    ],
+    [
+     "Dependencia económica",
+     30.0
+    ],
+    [
+     "Sin agua mejorada",
+     20.4
+    ],
+    [
+     "Analfabetismo",
+     18.8
+    ]
+   ]
+  },
+  "serv2018": {
+   "energia": 99.1,
+   "acueducto": 83.4,
+   "alcantarillado": 58.4,
+   "gas": 1.4,
+   "internet": 15.1
+  },
+  "serv2005": {
+   "energia": 98.9,
+   "acueducto": 79.5,
+   "alcantarillado": 63.7,
+   "gas": 0.0,
+   "internet": null
+  }
+ },
+ "Riosucio": {
+  "divipola": 17614,
+  "pob2005": 35843,
+  "pob2018": 48329,
+  "envej2005": 50.6,
+  "envej2018": 91.8,
+  "dep2018": null,
+  "p014": 20.2,
+  "p60": 18.5,
+  "ipm": {
+   "total": 29.3,
+   "cab": 16.1,
+   "rural": 36.6,
+   "priv": [
+    [
+     "Trabajo informal",
+     86.4
+    ],
+    [
+     "Bajo logro educativo",
+     65.7
+    ],
+    [
+     "Dependencia económica",
+     30.3
+    ],
+    [
+     "Sin aseguramiento en salud",
+     14.6
+    ],
+    [
+     "Rezago escolar",
+     14.2
+    ]
+   ]
+  },
+  "serv2018": {
+   "energia": 98.1,
+   "acueducto": 80.3,
+   "alcantarillado": 69.3,
+   "gas": 44.1,
+   "internet": 19.3
+  },
+  "serv2005": {
+   "energia": 95.9,
+   "acueducto": 90.2,
+   "alcantarillado": 76.4,
+   "gas": 0.0,
+   "internet": null
+  }
+ },
+ "Risaralda": {
+  "divipola": 17616,
+  "pob2005": 10175,
+  "pob2018": 9840,
+  "envej2005": 32.1,
+  "envej2018": 83.7,
+  "dep2018": 58.4,
+  "p014": 20.1,
+  "p60": 16.8,
+  "ipm": {
+   "total": 39.4,
+   "cab": 21.4,
+   "rural": 50.7,
+   "priv": [
+    [
+     "Trabajo informal",
+     86.4
+    ],
+    [
+     "Bajo logro educativo",
+     78.1
+    ],
+    [
+     "Sin agua mejorada",
+     37.8
+    ],
+    [
+     "Dependencia económica",
+     27.8
+    ],
+    [
+     "Analfabetismo",
+     19.1
+    ]
+   ]
+  },
+  "serv2018": {
+   "energia": 96.9,
+   "acueducto": 59.7,
+   "alcantarillado": 49.1,
+   "gas": 36.2,
+   "internet": 7.6
+  },
+  "serv2005": {
+   "energia": 97.9,
+   "acueducto": 64.5,
+   "alcantarillado": 66.5,
+   "gas": 0.0,
+   "internet": null
+  }
+ },
+ "Salamina": {
+  "divipola": 17653,
+  "pob2005": 18281,
+  "pob2018": 16759,
+  "envej2005": 49.9,
+  "envej2018": 117.6,
+  "dep2018": null,
+  "p014": 18.1,
+  "p60": 21.3,
+  "ipm": {
+   "total": 28.7,
+   "cab": 21.6,
+   "rural": 40.8,
+   "priv": [
+    [
+     "Trabajo informal",
+     83.3
+    ],
+    [
+     "Bajo logro educativo",
+     66.8
+    ],
+    [
+     "Inadecuada eliminación de excretas",
+     18.1
+    ],
+    [
+     "Sin agua mejorada",
+     18.1
+    ],
+    [
+     "Analfabetismo",
+     15.9
+    ]
+   ]
+  },
+  "serv2018": {
+   "energia": 98.6,
+   "acueducto": 82.2,
+   "alcantarillado": 69.0,
+   "gas": 16.5,
+   "internet": 17.7
+  },
+  "serv2005": {
+   "energia": 97.4,
+   "acueducto": 81.5,
+   "alcantarillado": 78.9,
+   "gas": 0.0,
+   "internet": null
+  }
+ },
+ "Samaná": {
+  "divipola": 17662,
+  "pob2005": 18295,
+  "pob2018": 17466,
+  "envej2005": 32.4,
+  "envej2018": 73.4,
+  "dep2018": 65.6,
+  "p014": 22.8,
+  "p60": 16.8,
+  "ipm": {
+   "total": 39.9,
+   "cab": 22.9,
+   "rural": 47.1,
+   "priv": [
+    [
+     "Trabajo informal",
+     89.9
+    ],
+    [
+     "Bajo logro educativo",
+     76.5
+    ],
+    [
+     "Sin agua mejorada",
+     37.1
+    ],
+    [
+     "Dependencia económica",
+     32.5
+    ],
+    [
+     "Inadecuada eliminación de excretas",
+     25.7
+    ]
+   ]
+  },
+  "serv2018": {
+   "energia": 97.5,
+   "acueducto": 60.5,
+   "alcantarillado": 43.1,
+   "gas": 1.2,
+   "internet": 7.9
+  },
+  "serv2005": {
+   "energia": 89.7,
+   "acueducto": 61.9,
+   "alcantarillado": 43.3,
+   "gas": 0.0,
+   "internet": null
+  }
+ },
+ "San José": {
+  "divipola": 17665,
+  "pob2005": 5951,
+  "pob2018": 4524,
+  "envej2005": 33.2,
+  "envej2018": 90.9,
+  "dep2018": 62.6,
+  "p014": 20.2,
+  "p60": 18.3,
+  "ipm": {
+   "total": 39.9,
+   "cab": 17.0,
+   "rural": 48.3,
+   "priv": [
+    [
+     "Trabajo informal",
+     84.2
+    ],
+    [
+     "Bajo logro educativo",
+     76.2
+    ],
+    [
+     "Sin agua mejorada",
+     38.7
+    ],
+    [
+     "Dependencia económica",
+     27.4
+    ],
+    [
+     "Analfabetismo",
+     20.2
+    ]
+   ]
+  },
+  "serv2018": {
+   "energia": 98.8,
+   "acueducto": 60.7,
+   "alcantarillado": 32.2,
+   "gas": 26.6,
+   "internet": 9.1
+  },
+  "serv2005": {
+   "energia": 96.6,
+   "acueducto": 63.1,
+   "alcantarillado": 49.4,
+   "gas": 0.0,
+   "internet": null
+  }
+ },
+ "Supía": {
+  "divipola": 17777,
+  "pob2005": 24072,
+  "pob2018": 26571,
+  "envej2005": 36.6,
+  "envej2018": 76.1,
+  "dep2018": 57.9,
+  "p014": 20.8,
+  "p60": 15.8,
+  "ipm": {
+   "total": 31.3,
+   "cab": 21.3,
+   "rural": 40.8,
+   "priv": [
+    [
+     "Trabajo informal",
+     82.8
+    ],
+    [
+     "Bajo logro educativo",
+     64.9
+    ],
+    [
+     "Dependencia económica",
+     32.6
+    ],
+    [
+     "Inadecuada eliminación de excretas",
+     18.9
+    ],
+    [
+     "Sin agua mejorada",
+     15.2
+    ]
+   ]
+  },
+  "serv2018": {
+   "energia": 98.7,
+   "acueducto": 84.4,
+   "alcantarillado": 55.3,
+   "gas": 38.1,
+   "internet": 16.3
+  },
+  "serv2005": {
+   "energia": 96.4,
+   "acueducto": 87.2,
+   "alcantarillado": 73.1,
+   "gas": 0.0,
+   "internet": null
+  }
+ },
+ "Victoria": {
+  "divipola": 17867,
+  "pob2005": 8756,
+  "pob2018": 8172,
+  "envej2005": 39.0,
+  "envej2018": 81.7,
+  "dep2018": 65.7,
+  "p014": 21.8,
+  "p60": 17.8,
+  "ipm": {
+   "total": 34.9,
+   "cab": 25.8,
+   "rural": 43.6,
+   "priv": [
+    [
+     "Trabajo informal",
+     82.6
+    ],
+    [
+     "Bajo logro educativo",
+     68.6
+    ],
+    [
+     "Dependencia económica",
+     30.3
+    ],
+    [
+     "Analfabetismo",
+     19.6
+    ],
+    [
+     "Sin aseguramiento en salud",
+     19.1
+    ]
+   ]
+  },
+  "serv2018": {
+   "energia": 99.2,
+   "acueducto": 84.7,
+   "alcantarillado": 59.2,
+   "gas": 47.8,
+   "internet": 14.6
+  },
+  "serv2005": {
+   "energia": 92.1,
+   "acueducto": 77.6,
+   "alcantarillado": 50.7,
+   "gas": 27.8,
+   "internet": null
+  }
+ },
+ "Villamaría": {
+  "divipola": 17873,
+  "pob2005": 45038,
+  "pob2018": 62831,
+  "envej2005": 37.7,
+  "envej2018": 81.4,
+  "dep2018": 52.1,
+  "p014": 18.9,
+  "p60": 15.4,
+  "ipm": {
+   "total": 17.0,
+   "cab": 13.1,
+   "rural": 42.2,
+   "priv": [
+    [
+     "Trabajo informal",
+     72.0
+    ],
+    [
+     "Bajo logro educativo",
+     40.3
+    ],
+    [
+     "Dependencia económica",
+     23.1
+    ],
+    [
+     "Sin aseguramiento en salud",
+     17.5
+    ],
+    [
+     "Rezago escolar",
+     14.7
+    ]
+   ]
+  },
+  "serv2018": {
+   "energia": 99.3,
+   "acueducto": 93.6,
+   "alcantarillado": 87.5,
+   "gas": 79.6,
+   "internet": 59.1
+  },
+  "serv2005": {
+   "energia": 98.3,
+   "acueducto": 93.8,
+   "alcantarillado": 92.9,
+   "gas": 45.1,
+   "internet": null
+  }
+ },
+ "Viterbo": {
+  "divipola": 17877,
+  "pob2005": 11805,
+  "pob2018": 12432,
+  "envej2005": 38.2,
+  "envej2018": 104.0,
+  "dep2018": 60.7,
+  "p014": 18.5,
+  "p60": 19.3,
+  "ipm": {
+   "total": 26.0,
+   "cab": 22.2,
+   "rural": 49.0,
+   "priv": [
+    [
+     "Trabajo informal",
+     81.2
+    ],
+    [
+     "Bajo logro educativo",
+     61.7
+    ],
+    [
+     "Dependencia económica",
+     27.9
+    ],
+    [
+     "Rezago escolar",
+     17.3
+    ],
+    [
+     "Sin aseguramiento en salud",
+     17.2
+    ]
+   ]
+  },
+  "serv2018": {
+   "energia": 99.5,
+   "acueducto": 93.1,
+   "alcantarillado": 87.5,
+   "gas": 72.5,
+   "internet": 23.8
+  },
+  "serv2005": {
+   "energia": 99.4,
+   "acueducto": 98.6,
+   "alcantarillado": 98.2,
+   "gas": 0.0,
+   "internet": null
+  }
+ }
+}
