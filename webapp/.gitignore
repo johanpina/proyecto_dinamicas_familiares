@@ -1,0 +1,12 @@
+.venv/
+__pycache__/
+*.pyc
+
+# Datos y secretos: nunca al repositorio
+datos/
+.env
+.env.*
+.vercel
+
+# La plantilla de configuración sí se versiona (no lleva valores)
+!.env.example

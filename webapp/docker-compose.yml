@@ -1,0 +1,37 @@
+# Despliegue con PostgreSQL. Para una prueba rápida con SQLite basta con
+# comentar el servicio `db` y la variable DATABASE_URL.
+services:
+  app:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql+psycopg://familias:${CLAVE_DB:-cambiar}@db:5432/familias
+      SECRET_KEY: ${SECRET_KEY:?defina SECRET_KEY en el archivo .env}
+      USUARIO_INICIAL: ${USUARIO_INICIAL:-coordinacion}
+      CLAVE_INICIAL: ${CLAVE_INICIAL:?defina CLAVE_INICIAL en el archivo .env}
+    volumes:
+      - datos:/app/datos
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: familias
+      POSTGRES_USER: familias
+      POSTGRES_PASSWORD: ${CLAVE_DB:-cambiar}
+    volumes:
+      - pg:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U familias"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  datos:
+  pg:

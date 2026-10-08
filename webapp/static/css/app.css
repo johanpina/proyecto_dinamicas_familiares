@@ -1,0 +1,187 @@
+/* Familia, diversidad y territorio — Universidad de Caldas
+   Estilos de la app de entrevista y del panel. Pensados primero para celular. */
+
+:root{
+  --bg:#f7f5f0; --superficie:#fff; --superficie-2:#faf8f4;
+  --borde:#ded8cc; --borde-2:#c2baa9;
+  --texto:#221e19; --suave:#6d6559;
+  --casa:#2f7d5f; --casa-claro:#e5f1ec;
+  --fuera:#c07d1e; --fuera-claro:#fbf0dd;
+  --peligro:#a83232; --aviso:#8a5a2b;
+  --r:14px; --sombra:0 1px 2px rgba(34,30,25,.05), 0 10px 30px rgba(34,30,25,.07);
+}
+@media (prefers-color-scheme:dark){
+  :root{--bg:#191714;--superficie:#221f1b;--superficie-2:#282520;--borde:#3a352e;--borde-2:#4e483f;
+    --texto:#f0ebe2;--suave:#a89f91;--casa:#66c39c;--casa-claro:#1d3a30;--fuera:#dfa657;--fuera-claro:#3a2f1c;
+    --peligro:#e8756e;--aviso:#d9a45f;--sombra:0 1px 2px rgba(0,0,0,.4),0 10px 30px rgba(0,0,0,.35);}
+}
+
+*{box-sizing:border-box}
+html,body{margin:0}
+body{
+  background:var(--bg); color:var(--texto);
+  font:17px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  -webkit-text-size-adjust:100%;
+}
+h1,h2,h3,h4{line-height:1.25;margin:0}
+button{font:inherit;color:inherit}
+a{color:var(--casa)}
+:focus-visible{outline:3px solid var(--casa);outline-offset:2px;border-radius:8px}
+.oculto{display:none !important}
+
+/* ------------------------------ Cabecera ------------------------------ */
+.cabecera{position:sticky;top:0;z-index:30;background:var(--bg);border-bottom:1px solid var(--borde)}
+.cabecera-in{max-width:840px;margin:0 auto;padding:10px 18px;display:flex;align-items:center;gap:12px}
+.sello{width:34px;height:34px;flex:0 0 auto;object-fit:contain}
+@media (prefers-color-scheme:dark){.sello{filter:invert(1) brightness(1.6)}}
+.marca{font-size:14.5px;font-weight:700;letter-spacing:-.01em;line-height:1.25;min-width:0}
+.marca small{display:block;font-weight:400;font-size:12px;color:var(--suave);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:190px}
+.crece{flex:1}
+.paso-num{font-size:13px;color:var(--suave);white-space:nowrap}
+.barra{height:6px;background:var(--borde);max-width:840px;margin:0 auto;width:calc(100% - 36px);border-radius:99px;overflow:hidden}
+.barra i{display:block;height:100%;width:0;background:var(--casa);border-radius:99px;transition:width .4s cubic-bezier(.4,0,.2,1)}
+
+/* ------------------------------ Estructura ------------------------------ */
+main{max-width:840px;margin:0 auto;padding:0 18px}
+.tarjeta{background:var(--superficie);border:1px solid var(--borde);border-radius:var(--r);
+  padding:26px;margin:22px 0;box-shadow:var(--sombra)}
+@media (max-width:620px){.tarjeta{padding:20px 16px}}
+.gorro{font-size:12.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--casa);margin-bottom:10px}
+h2.titulo{font-size:25px;letter-spacing:-.02em;margin-bottom:8px}
+@media (max-width:620px){h2.titulo{font-size:21px}}
+p.bajada{color:var(--suave);font-size:16px;margin:0 0 6px}
+@media (max-width:620px){
+  /* En el paso del dibujo el lienzo debe alcanzar a verse sin desplazar */
+  #paso-dibujo .gorro{margin-bottom:6px}
+  #paso-dibujo h2.titulo{font-size:19px;margin-bottom:5px}
+  #paso-dibujo p.bajada{font-size:14.5px;line-height:1.45}
+}
+
+/* ------------------------------- Campos ------------------------------- */
+.campo{margin-top:24px}
+.campo:first-of-type{margin-top:18px}
+label.q{display:block;font-size:17.5px;font-weight:600;margin-bottom:9px}
+label.mini{display:block;font-size:14px;font-weight:600;color:var(--suave);margin-bottom:6px}
+textarea,input[type=text],input[type=date],input[type=number],input[type=password],select{
+  width:100%;padding:13px 15px;border:2px solid var(--borde-2);border-radius:11px;
+  background:var(--superficie-2);color:var(--texto);font:inherit;
+}
+textarea{min-height:112px;resize:vertical;line-height:1.6}
+textarea.corto{min-height:74px}
+input:focus,textarea:focus,select:focus{border-color:var(--casa);outline:none;background:var(--superficie)}
+.fila{display:grid;gap:15px;grid-template-columns:repeat(2,minmax(0,1fr))}
+@media (max-width:620px){.fila{grid-template-columns:1fr}}
+
+.ops{display:flex;gap:10px;flex-wrap:wrap}
+.ops label{flex:1 1 150px;display:flex;align-items:center;gap:10px;padding:13px 15px;cursor:pointer;
+  border:2px solid var(--borde-2);border-radius:11px;background:var(--superficie-2);font-size:16px}
+.ops.col{flex-direction:column}
+.ops input{width:20px;height:20px;accent-color:var(--casa);flex:0 0 auto}
+.ops label:has(input:checked){border-color:var(--casa);background:var(--casa-claro);font-weight:600}
+
+.nota{background:var(--casa-claro);border-radius:11px;padding:15px 17px;font-size:15px;line-height:1.6;margin-top:16px}
+
+/* ------------------------------- Botones ------------------------------- */
+.btn{border:2px solid var(--borde-2);background:var(--superficie);padding:13px 22px;border-radius:11px;
+  cursor:pointer;font-size:16px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.btn:hover{border-color:var(--casa)}
+.btn.pri{background:var(--casa);border-color:var(--casa);color:#fff}
+.btn.pri:hover{filter:brightness(1.08)}
+.btn:disabled{opacity:.45;cursor:not-allowed;filter:none}
+.btn.chico{padding:9px 14px;font-size:14.5px}
+.btn.ancho{width:100%}
+.btn.peligro{color:var(--peligro)}
+.btn.texto{border-color:transparent;background:none;color:var(--suave);font-weight:500}
+
+.navpie{position:fixed;left:0;right:0;bottom:0;z-index:40;background:var(--bg);border-top:1px solid var(--borde);
+  padding:11px 18px calc(11px + env(safe-area-inset-bottom))}
+.navpie-in{max-width:840px;margin:0 auto;display:flex;gap:12px;align-items:center}
+body.con-nav{padding-bottom:110px}
+
+/* --------------------------- Estado de guardado --------------------------- */
+.sincro{font-size:12.5px;color:var(--suave);display:flex;align-items:center;gap:6px}
+.sincro b{font-weight:600}
+.punto{width:8px;height:8px;border-radius:50%;background:var(--suave);flex:0 0 auto}
+.punto.ok{background:var(--casa)} .punto.espera{background:var(--fuera)} .punto.error{background:var(--peligro)}
+
+/* ------------------------------- El dibujo ------------------------------- */
+.paleta{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:12px 0}
+.pieza{display:flex;flex-direction:column;align-items:center;gap:1px;padding:7px 4px 6px;
+  border:2px solid var(--borde-2);border-radius:12px;background:var(--superficie-2);
+  cursor:grab;font-size:12.5px;font-weight:600;touch-action:none;user-select:none}
+.pieza svg{width:34px;height:38px}
+.pieza:hover{border-color:var(--casa);background:var(--casa-claro)}
+.pieza:active{transform:scale(.97)}
+.lienzo-caja{position:relative}
+.lienzo{border:2px solid var(--borde);border-radius:14px;background:var(--superficie-2);overflow:hidden}
+#dibujo{display:block;width:100%;height:auto;touch-action:none}
+
+/* Ficha flotante anclada al muñeco: evita que la pantalla se vaya hacia abajo */
+.globo{
+  position:absolute;z-index:25;width:min(280px,calc(100% - 16px));
+  background:var(--superficie);border:2px solid var(--casa);border-radius:13px;
+  padding:11px 12px 10px;box-shadow:0 12px 34px rgba(34,30,25,.22);
+}
+.globo .pico{
+  position:absolute;width:14px;height:14px;background:var(--superficie);
+  border-right:2px solid var(--casa);border-bottom:2px solid var(--casa);
+}
+.globo input{padding:9px 11px;font-size:16px}    /* 16px evita que iOS haga zoom */
+.globo input + input{margin-top:7px}
+.globo-pie{display:flex;align-items:center;margin-top:9px}
+.globo-pie .btn{padding:7px 13px;font-size:14px}
+
+.donde{display:flex;gap:7px;margin-top:9px}
+.donde button{flex:1;border:2px solid var(--borde-2);background:var(--superficie);border-radius:10px;
+  padding:8px 4px;font-size:13px;font-weight:600;cursor:pointer;line-height:1.25}
+.donde button.on{border-color:var(--casa);background:var(--casa);color:#fff}
+.donde button.fuera.on{border-color:var(--fuera);background:var(--fuera);color:#fff}
+
+.listas{display:grid;gap:13px;grid-template-columns:1fr 1fr;margin-top:16px}
+@media (max-width:620px){.listas{grid-template-columns:1fr}}
+.lista{border:1px solid var(--borde);border-radius:12px;padding:13px 15px;background:var(--superficie-2)}
+.lista h4{margin:0 0 7px;font-size:13.5px;text-transform:uppercase;letter-spacing:.05em}
+.lista.casa h4{color:var(--casa)} .lista.fuera h4{color:var(--fuera)}
+.lista ul{margin:0;padding-left:18px;font-size:15px} .lista li{margin:3px 0}
+.lista .nada{color:var(--suave);font-size:14.5px;margin:0}
+
+/* --------------------------------- Varios --------------------------------- */
+.aviso-flotante{position:fixed;left:50%;bottom:90px;transform:translateX(-50%) translateY(14px);
+  background:var(--texto);color:var(--bg);padding:11px 20px;border-radius:99px;font-size:15px;
+  opacity:0;pointer-events:none;transition:.25s;z-index:99}
+.aviso-flotante.on{opacity:1;transform:translateX(-50%)}
+dialog{border:1px solid var(--borde);border-radius:14px;background:var(--superficie);color:var(--texto);
+  max-width:640px;width:calc(100% - 28px);padding:22px;box-shadow:var(--sombra)}
+dialog::backdrop{background:rgba(20,17,14,.5)}
+
+.centrado{min-height:100dvh;display:grid;place-items:center;padding:24px 18px}
+.centrado .tarjeta{width:100%;max-width:430px;margin:0}
+
+/* ---------------------------------- Panel ---------------------------------- */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-top:16px}
+.kpi{border:1px solid var(--borde);border-radius:12px;padding:14px 16px;background:var(--superficie-2)}
+.kpi b{display:block;font-size:27px;line-height:1.1;letter-spacing:-.02em}
+.kpi span{font-size:13px;color:var(--suave)}
+.tabla{width:100%;border-collapse:collapse;margin-top:14px;font-size:14.5px}
+.tabla th{text-align:left;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--suave);
+  padding:8px 10px;border-bottom:2px solid var(--borde)}
+.tabla td{padding:10px;border-bottom:1px solid var(--borde);vertical-align:top}
+.tabla tr:hover td{background:var(--superficie-2)}
+.etiqueta{display:inline-block;padding:2px 9px;border-radius:99px;font-size:12px;font-weight:700}
+.et-borrador{background:var(--borde);color:var(--suave)}
+.et-enviada{background:var(--fuera-claro);color:var(--aviso)}
+.et-revisada{background:var(--casa-claro);color:var(--casa)}
+.filtros{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;align-items:center}
+.filtros input,.filtros select{width:auto;flex:0 1 200px;padding:9px 12px}
+.detalle h3{font-size:15px;margin:20px 0 6px}
+.detalle .pq{font-weight:600;margin-top:14px;font-size:15px}
+.detalle .rp{white-space:pre-wrap;background:var(--superficie-2);border-left:3px solid var(--borde-2);
+  padding:9px 12px;border-radius:0 8px 8px 0;margin-top:5px;font-size:15px}
+.detalle .rp.vacia{color:var(--suave);font-style:italic}
+
+@media print{
+  .cabecera,.navpie,.paleta,.editor,.aviso-flotante,.barra{display:none !important}
+  body{background:#fff;padding:0}
+  .tarjeta{box-shadow:none;border-color:#ccc;margin:10px 0}
+}

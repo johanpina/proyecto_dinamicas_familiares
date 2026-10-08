@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Consentimiento informado — Universidad de Caldas</title>
+<link rel="icon" href="/static/img/ucaldas.png">
+<link rel="stylesheet" href="/static/css/app.css">
+<style>
+  /* El documento se renderiza a partir del .docx original, así que aquí solo se
+     le da tipografía legible en pantalla; el contenido no se toca. */
+  .documento{font-size:16px;line-height:1.65}
+  .documento p{margin:12px 0;text-align:justify}
+  .documento h1,.documento h2,.documento h3{margin:26px 0 8px;line-height:1.3}
+  .documento h1{font-size:21px} .documento h2{font-size:18px} .documento h3{font-size:16px}
+  .documento ul,.documento ol{margin:12px 0;padding-left:24px}
+  .documento li{margin:6px 0}
+  .documento img{max-width:100%;height:auto;display:block;margin:14px auto}
+  .documento table{border-collapse:collapse;width:100%;margin:14px 0;font-size:15px}
+  .documento td,.documento th{border:1px solid var(--borde);padding:8px 10px;vertical-align:top}
+  .documento a{word-break:break-word}
+  .cargando{color:var(--suave);text-align:center;padding:40px 0}
+  .barra-acciones{display:flex;gap:10px;flex-wrap:wrap;margin-top:26px;
+    padding-top:20px;border-top:1px solid var(--borde)}
+</style>
+</head>
+<body>
+<main>
+  <div class="tarjeta">
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:20px">
+      <img src="/static/img/ucaldas.png" alt="Universidad de Caldas" style="width:56px;height:56px;object-fit:contain">
+      <div class="marca" style="font-size:16px">Universidad de Caldas
+        <small style="max-width:none">Vicerrectoría de Investigaciones y Postgrados</small></div>
+    </div>
+
+    <div id="documento" class="documento">
+      <p class="cargando">Cargando el documento…</p>
+    </div>
+
+    <div class="barra-acciones">
+      <a class="btn chico" href="/static/docs/consentimiento-informado.docx" download>⬇ Descargar el documento original (Word)</a>
+      <button class="btn chico" onclick="window.print()">🖨 Imprimir</button>
+      <span class="crece" style="flex:1"></span>
+      <button class="btn chico pri" id="volver">Volver a la entrevista</button>
+    </div>
+  </div>
+</main>
+
+<script src="/static/js/vendor/mammoth.browser.min.js"></script>
+<script>
+/* Renderiza el .docx tal como lo entregó el equipo de investigación. No hay una
+   transcripción aparte que pueda quedar desactualizada: se lee el archivo real. */
+const RUTA_DOC = "/static/docs/consentimiento-informado.docx";
+
+async function mostrarDocumento(){
+  const caja = document.getElementById("documento");
+  for(let intento = 1; intento <= 2; intento++){
+    try {
+      const r = await fetch(RUTA_DOC);
+      if(!r.ok) throw new Error("respuesta " + r.status);
+      const salida = await mammoth.convertToHtml({arrayBuffer: await r.arrayBuffer()});
+      caja.innerHTML = salida.value || "<p>El documento está vacío.</p>";
+      caja.querySelectorAll("a").forEach(a => { a.target = "_blank"; a.rel = "noopener"; });
+      return;
+    } catch (e) {
+      // Un tropiezo de red se reintenta una vez; si no, queda la descarga.
+      if(intento === 1){ await new Promise(r => setTimeout(r, 700)); continue; }
+      caja.innerHTML = `<p class="cargando">No se pudo mostrar el documento aquí.
+        <br><a href="${RUTA_DOC}" download>Descárguelo en Word</a> para leerlo.</p>`;
+    }
+  }
+}
+mostrarDocumento();
+
+document.getElementById("volver").onclick = () => {
+  if(window.opener) window.close(); else history.back();
+};
+</script>
+</body>
+</html>

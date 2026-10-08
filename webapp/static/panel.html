@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Panel de revisión — Familia, diversidad y territorio</title>
+<link rel="icon" href="/static/img/ucaldas.png">
+<link rel="stylesheet" href="/static/css/app.css">
+<style>main{max-width:1140px}</style>
+</head>
+<body>
+
+<section id="pantalla-login" class="centrado">
+  <div class="tarjeta">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px">
+      <img src="/static/img/ucaldas.png" class="sello" alt="" style="width:46px;height:46px">
+      <div class="marca">Panel de revisión<small>Familia, diversidad y territorio</small></div>
+    </div>
+    <h2 class="titulo">Entrar</h2>
+    <div class="campo"><label class="mini" for="in-usuario">Usuario</label>
+      <input type="text" id="in-usuario" autocomplete="username" autocapitalize="none" spellcheck="false"></div>
+    <div class="campo"><label class="mini" for="in-clave">Contraseña</label>
+      <input type="password" id="in-clave" autocomplete="current-password"></div>
+    <p id="login-error" style="color:var(--peligro);font-size:15px;margin:14px 0 0" class="oculto"></p>
+    <div class="campo"><button class="btn pri ancho" id="btn-entrar">Entrar</button></div>
+  </div>
+</section>
+
+<section id="pantalla-panel" class="oculto">
+  <header class="cabecera">
+    <div class="cabecera-in">
+      <img src="/static/img/ucaldas.png" class="sello" alt="">
+      <div class="marca">Panel de revisión<small id="quien">—</small></div>
+      <span class="crece"></span>
+      <button class="btn chico" id="btn-app">Abrir la entrevista</button>
+      <button class="btn chico" id="btn-salir">Salir</button>
+    </div>
+  </header>
+
+  <main>
+    <div class="tarjeta">
+      <div class="gorro">Resumen</div>
+      <h2 class="titulo">Entrevistas recogidas</h2>
+      <div class="kpis" id="kpis"></div>
+
+      <div class="filtros">
+        <input type="text" id="f-municipio" placeholder="Filtrar por municipio…">
+        <select id="f-estado">
+          <option value="">Todos los estados</option>
+          <option value="borrador">Borradores</option>
+          <option value="enviada">Enviadas (por revisar)</option>
+          <option value="revisada">Revisadas</option>
+        </select>
+        <button class="btn chico" id="f-aplicar">Filtrar</button>
+        <span class="crece"></span>
+        <a class="btn chico" id="x-json">⬇ JSON</a>
+        <a class="btn chico" id="x-resp">⬇ Respuestas CSV</a>
+        <a class="btn chico" id="x-pers">⬇ Personas CSV</a>
+      </div>
+
+      <div style="overflow-x:auto">
+        <table class="tabla">
+          <thead><tr>
+            <th>Código</th><th>Municipio</th><th>Zona</th><th>Fecha</th>
+            <th>Participante</th><th>Personas</th><th>Respuestas</th>
+            <th>Estado</th><th></th>
+          </tr></thead>
+          <tbody id="filas"><tr><td colspan="9" style="color:var(--suave)">Cargando…</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</section>
+
+<dialog id="dlg-detalle">
+  <div id="detalle" class="detalle"></div>
+  <div style="display:flex;gap:10px;margin-top:20px;flex-wrap:wrap">
+    <button class="btn chico pri" id="d-revisar">Marcar como revisada</button>
+    <button class="btn chico" id="d-devolver">Devolver a «enviada»</button>
+    <span class="crece"></span>
+    <button class="btn chico" id="d-cerrar">Cerrar</button>
+  </div>
+</dialog>
+
+<div class="aviso-flotante" id="aviso"></div>
+
+<script src="/static/js/dibujo.js"></script>
+<script src="/static/js/panel.js"></script>
+</body>
+</html>

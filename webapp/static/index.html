@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#2f7d5f">
+<title>Mi familia — Universidad de Caldas</title>
+<link rel="manifest" href="/static/manifest.json">
+<link rel="icon" href="/static/img/ucaldas.png">
+<link rel="stylesheet" href="/static/css/app.css">
+</head>
+<body>
+
+<!-- ===================== 0. Código de acceso ===================== -->
+<section id="pantalla-codigo" class="centrado oculto">
+  <div class="tarjeta">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px">
+      <img src="/static/img/ucaldas.png" class="sello" alt="Universidad de Caldas" style="width:46px;height:46px">
+      <div class="marca">Universidad de Caldas<small>Familia, diversidad y territorio</small></div>
+    </div>
+    <h2 class="titulo">Escriba el código</h2>
+    <p class="bajada">Este formulario se responde con el enlace que entrega el equipo de
+    investigación. Si llegó aquí sin él, escriba el código que le dieron.</p>
+    <div class="campo">
+      <label class="mini" for="in-codigo">Código</label>
+      <input type="text" id="in-codigo" autocapitalize="none" spellcheck="false" autocomplete="off">
+    </div>
+    <p id="codigo-error" style="color:var(--peligro);font-size:15px;margin:14px 0 0" class="oculto"></p>
+    <div class="campo"><button class="btn pri ancho" id="btn-codigo">Continuar</button></div>
+  </div>
+</section>
+
+<!-- ===================== 1. Consentimiento informado ===================== -->
+<section id="pantalla-consent" class="oculto">
+  <header class="cabecera">
+    <div class="cabecera-in">
+      <img src="/static/img/ucaldas.png" class="sello" alt="">
+      <div class="marca">Universidad de Caldas<small>Familia, diversidad y territorio</small></div>
+      <span class="crece"></span>
+      <button class="btn chico" id="btn-menu-c">☰</button>
+    </div>
+  </header>
+  <main>
+    <div class="tarjeta">
+      <div class="gorro">Consentimiento informado</div>
+      <h2 class="titulo">Antes de empezar, queremos contarle de qué se trata</h2>
+
+      <p class="bajada" style="color:var(--texto);margin-top:14px">
+        Somos la <b>Universidad de Caldas</b>. Estamos haciendo la investigación
+        <b>«Familia, diversidad y territorio: dinámicas familiares en el Eje Cafetero»</b>,
+        de los grupos Colectivo Estudios de Familia, GESEXREC y GITIR.
+      </p>
+
+      <div class="nota">
+        <b>¿Qué vamos a hacer?</b><br>
+        Le haremos algunas preguntas sobre su familia en una conversación de más o menos una hora.
+        Primero haremos juntos un dibujo sencillo de su familia.<br><br>
+        <b>¿Qué pasa con lo que cuente?</b><br>
+        Sus respuestas quedan escritas en este formulario. Todo es confidencial y solo se usa con fines
+        académicos: al analizar la información los nombres se reemplazan por códigos, y su nombre nunca
+        aparecerá en ningún informe.<br><br>
+        <b>¿Puedo retirarme?</b><br>
+        Sí. Participar es voluntario, no tiene ningún pago y usted puede retirarse en cualquier momento,
+        sin dar explicaciones.
+      </div>
+
+      <p style="margin-top:18px;font-size:16px">
+        Para más información, <a href="/consentimiento" target="_blank" rel="noopener"><b>lea aquí el documento completo del consentimiento informado</b></a>,
+        con los datos de contacto de la investigación y del Comité de Ética.
+      </p>
+
+      <div class="campo">
+        <label class="q">¿Acepta participar en esta investigación?</label>
+        <div style="display:flex;gap:12px;margin-top:12px;flex-wrap:wrap">
+          <button class="btn pri" id="btn-acepto" style="flex:1 1 200px">Sí, acepto participar</button>
+          <button class="btn" id="btn-no-acepto" style="flex:1 1 160px">No, gracias</button>
+        </div>
+      </div>
+    </div>
+  </main>
+</section>
+
+<!-- ===================== 2. No aceptó ===================== -->
+<section id="pantalla-gracias" class="centrado oculto">
+  <div class="tarjeta" style="text-align:center">
+    <img src="/static/img/ucaldas.png" class="sello" alt="" style="width:56px;height:56px;margin-bottom:14px">
+    <h2 class="titulo">Gracias por participar</h2>
+    <p class="bajada" style="margin-top:10px">
+      Agradecemos su tiempo y su disposición. No se registró ninguna información suya.
+    </p>
+    <div class="campo"><button class="btn pri ancho" id="btn-otra-persona">Empezar con otra persona</button></div>
+  </div>
+</section>
+
+<!-- ===================== 3. La entrevista ===================== -->
+<section id="pantalla-form" class="oculto">
+  <header class="cabecera">
+    <div class="cabecera-in">
+      <img src="/static/img/ucaldas.png" class="sello" alt="">
+      <div class="marca">Mi familia<small id="quien">Universidad de Caldas</small></div>
+      <span class="crece"></span>
+      <span class="paso-num" id="paso-num"></span>
+      <button class="btn chico" id="btn-menu">☰</button>
+    </div>
+    <div class="barra"><i id="barra"></i></div>
+  </header>
+  <main id="pasos"></main>
+  <div class="navpie">
+    <div class="navpie-in">
+      <button class="btn" id="btn-atras">← Atrás</button>
+      <span class="sincro" id="sincro"><i class="punto"></i><span>—</span></span>
+      <span class="crece"></span>
+      <button class="btn pri" id="btn-sig">Continuar →</button>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== Menú ===================== -->
+<dialog id="dlg-menu">
+  <h2 style="font-size:19px">Menú</h2>
+  <p class="bajada" style="font-size:14.5px">Familia, diversidad y territorio · Universidad de Caldas</p>
+  <div style="display:flex;flex-direction:column;gap:9px;margin-top:16px">
+    <button class="btn ancho" id="m-nueva">＋ Empezar una entrevista nueva</button>
+    <button class="btn ancho" id="m-sincronizar">↑ Enviar ahora</button>
+    <button class="btn ancho" id="m-panel">🔒 Panel del equipo de investigación</button>
+  </div>
+  <h3 style="font-size:14px;margin:22px 0 6px;color:var(--suave)">Entrevistas en este teléfono</h3>
+  <div id="lista-locales" style="display:flex;flex-direction:column;gap:8px;max-height:34vh;overflow:auto"></div>
+  <div style="display:flex;margin-top:18px"><span class="crece"></span>
+    <button class="btn chico" id="m-cerrar">Cerrar</button></div>
+</dialog>
+
+<div class="aviso-flotante" id="aviso"></div>
+
+<script src="/static/js/dibujo.js"></script>
+<script src="/static/js/app.js"></script>
+</body>
+</html>
