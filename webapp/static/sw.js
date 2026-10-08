@@ -1,7 +1,7 @@
 /* Service worker: guarda la app en el teléfono para que abra sin señal.
    Las peticiones a /api nunca se cachean; de eso se encarga la cola de envío. */
 
-const CACHE = "uc-familia-v6";
+const CACHE = "uc-familia-v7";
 
 // Lo indispensable para que la app abra sin señal: son archivos pequeños.
 const BASICOS = [

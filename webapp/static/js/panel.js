@@ -144,7 +144,7 @@ async function verDetalle(id){
     <p style="font-size:14.5px">
       <b>En la casa:</b> ${gente.filter(p=>p.ubicacion==="casa").map(p=>esc(`${p.nombre||"?"} (${p.parentesco||"—"})`)).join(", ") || "—"}<br>
       <b>Cercanas:</b> ${gente.filter(p=>p.ubicacion!=="casa").map(p=>esc(`${p.nombre||"?"} (${p.parentesco||"—"})`)).join(", ") || "—"}${
-        mascotas.length ? `<br><b>Mascotas:</b> 🐾 ${mascotas.map(p=>esc(`${p.nombre||"?"} (${p.parentesco||p.figura})`)).join(", ")}` : ""}
+        mascotas.length ? `<br><b>Mascotas:</b> 🐾 ${mascotas.map(p=>esc(`${p.nombre||"?"} (${[p.especie||p.figura, p.parentesco].filter(Boolean).join(", ")})`)).join(", ")}` : ""}
     </p>
 
     <h3>Respuestas</h3>

@@ -180,6 +180,8 @@ function reparar(e){
   e.dibujo.personas = (e.dibujo.personas || []).map(p => ({
     id: p.id || uid("m"), tipo: p.tipo || p.figura || "mujer",
     nombre: p.nombre || "", parentesco: p.parentesco || "",
+    // Las mascotas de versiones anteriores eran "perro" o "gato": esa era su especie
+    especie: p.especie || ({perro:"Perro", gato:"Gato"}[p.tipo || p.figura] || ""),
     x: p.x ?? Dibujo.CX, y: p.y ?? Dibujo.CY,
     zona: p.zona || (p.ubicacion === "fuera" || p.ubicacion === "cerca" ? "fuera" : "casa")
   }));
@@ -208,6 +210,7 @@ function paquete(e){
     return {
       id: p.id, nombre: p.nombre, parentesco: p.parentesco, figura: p.tipo,
       tipo_integrante: mascota ? "mascota" : "persona",
+      especie: mascota ? (p.especie || "") : "",
       ubicacion: p.zona,
       ubicacion_texto: p.zona === "casa"
         ? (mascota ? "Mascota que vive en la casa" : "Vive en la misma casa")
@@ -218,7 +221,7 @@ function paquete(e){
   const soloPersonas = personas.filter(p => p.tipo_integrante === "persona");
   const soloMascotas = personas.filter(p => p.tipo_integrante === "mascota");
   return {
-    formato: "uc.familia.entrevista/3",
+    formato: "uc.familia.entrevista/4",
     proyecto: "Familia, diversidad y territorio: dinámicas familiares en el Eje Cafetero",
     id: e.id, codigo: e.codigo, creada: e.creada, actualizada: e.actualizada,
     terminada: !!e.terminada,
@@ -464,6 +467,7 @@ function pintarPasos(){
       <div class="globo oculto" id="globo">
         <i class="pico"></i>
         <input type="text" id="g-nombre" placeholder="Nombre. Ej. María" autocomplete="off">
+        <input type="text" id="g-esp" class="oculto" placeholder="Tipo de mascota. Ej. Perro, gato, conejo, pez" autocomplete="off">
         <input type="text" id="g-par" list="dl-par" placeholder="¿Qué es de usted? Ej. Mamá" autocomplete="off">
         <datalist id="dl-par">${Dibujo.PARENTESCOS.map(v=>`<option value="${esc(v)}">`).join("")}</datalist>
         <div class="donde">
@@ -570,8 +574,10 @@ function pintarGlobo(){
   const mascota = Dibujo.esMascota(p.tipo);
   $("#g-nombre").value = p.nombre;
   $("#g-nombre").placeholder = mascota ? "Nombre. Ej. Firulais" : "Nombre. Ej. María";
+  $("#g-esp").value = p.especie || "";
+  $("#g-esp").classList.toggle("oculto", !mascota);
   $("#g-par").value = p.parentesco;
-  $("#g-par").placeholder = mascota ? "¿Qué es de usted? Ej. Perro de la casa" : "¿Qué es de usted? Ej. Mamá";
+  $("#g-par").placeholder = mascota ? "¿Qué es de usted? Ej. Compañía" : "¿Qué es de usted? Ej. Mamá";
   $("#dl-par").innerHTML = (mascota ? Dibujo.VINCULOS_MASCOTA : Dibujo.PARENTESCOS)
     .map(v => `<option value="${esc(v)}">`).join("");
   $("#g-casa").classList.toggle("on", p.zona === "casa");
@@ -617,6 +623,8 @@ function conectarGlobo(){
 
   $("#g-nombre").oninput = e => { const p = actual(); if(!p) return;
     p.nombre = e.target.value; guardar(); repintarLienzo(); };
+  $("#g-esp").oninput = e => { const p = actual(); if(!p) return;
+    p.especie = e.target.value; guardar(); repintarLienzo(); };
   $("#g-par").oninput = e => { const p = actual(); if(!p) return;
     p.parentesco = e.target.value; guardar(); repintarLienzo(); };
 
@@ -641,7 +649,7 @@ function conectarGlobo(){
 function pintarListas(){
   const c = $("#lista-casa"), f = $("#lista-fuera"); if(!c) return;
   const html = arr => arr.length
-    ? `<ul>${arr.map(p=>`<li>${Dibujo.esMascota(p.tipo) ? "🐾 " : ""}${esc(p.nombre||"(sin nombre)")}${p.parentesco?` — ${esc(p.parentesco)}`:""}</li>`).join("")}</ul>`
+    ? `<ul>${arr.map(p=>`<li>${Dibujo.esMascota(p.tipo) ? "🐾 " : ""}${esc(p.nombre||"(sin nombre)")}${Dibujo.esMascota(p.tipo) && p.especie ? ` (${esc(p.especie)})` : ""}${p.parentesco?` — ${esc(p.parentesco)}`:""}</li>`).join("")}</ul>`
     : `<p class="nada">Todavía no hay nadie aquí.</p>`;
   c.innerHTML = html(S.dibujo.personas.filter(p=>p.zona==="casa"));
   f.innerHTML = html(S.dibujo.personas.filter(p=>p.zona==="fuera"));
@@ -695,7 +703,7 @@ function conectarDibujo(){
   paleta.addEventListener("pointerdown", ev => {
     const b = ev.target.closest(".pieza"); if(!b) return;
     ev.preventDefault();
-    const p = { id:uid("m"), tipo:b.dataset.tipo, nombre:"", parentesco:"", zona:"casa",
+    const p = { id:uid("m"), tipo:b.dataset.tipo, nombre:"", parentesco:"", especie:"", zona:"casa",
                 ...Dibujo.puntoLibre(S.dibujo.personas, "casa") };
     S.dibujo.personas.push(p);
     sel = p.id;

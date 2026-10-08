@@ -119,11 +119,18 @@ def cambiar_clave(cuerpo: dict, u: Usuario = Depends(usuario_actual), s: Session
 
 # ------------------------------- entrevistas -------------------------------
 
-MASCOTAS = ("perro", "gato")
+MASCOTAS = ("mascota", "perro", "gato")   # perro y gato: figuras de versiones anteriores
 
 
 def _es_mascota(figura: dict) -> bool:
-    return figura.get("figura") in MASCOTAS
+    return figura.get("tipo_integrante") == "mascota" or figura.get("figura") in MASCOTAS
+
+
+def _especie(figura: dict) -> str:
+    """Qué animal es. Las versiones anteriores lo decían solo con la figura."""
+    if not _es_mascota(figura):
+        return ""
+    return figura.get("especie") or {"perro": "Perro", "gato": "Gato"}.get(figura.get("figura"), "")
 
 
 def _contar(datos: dict) -> tuple[int, int]:
@@ -398,7 +405,7 @@ def exportar_respuestas(u: Usuario = Depends(usuario_actual), s: Session = Depen
 def exportar_personas(u: Usuario = Depends(usuario_actual), s: Session = Depends(obtener_sesion)):
     filas: list[list] = [[
         "codigo", "municipio", "zona", "integrante_id", "nombre", "parentesco",
-        "tipo_integrante", "figura", "ubicacion", "ubicacion_texto",
+        "tipo_integrante", "figura", "ubicacion", "ubicacion_texto", "especie",
     ]]
     for e in _entrevistas_visibles(u, s):
         for p in ((e.datos or {}).get("dibujo") or {}).get("personas", []):
@@ -406,6 +413,7 @@ def exportar_personas(u: Usuario = Depends(usuario_actual), s: Session = Depends
                 e.codigo, e.municipio, e.zona, p.get("id", ""), p.get("nombre", ""),
                 p.get("parentesco", ""), "mascota" if _es_mascota(p) else "persona",
                 p.get("figura", ""), p.get("ubicacion", ""), p.get("ubicacion_texto", ""),
+                _especie(p),
             ])
     r = _csv(filas)
     r.headers["Content-Disposition"] = 'attachment; filename="personas.csv"'

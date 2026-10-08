@@ -17,11 +17,12 @@ const Dibujo = (() => {
     { v:"hombre", l:"Hombre" },
     { v:"nina",   l:"Niña"   },
     { v:"nino",   l:"Niño"   },
-    { v:"perro",  l:"Perro",  mascota:true },
-    { v:"gato",   l:"Gato",   mascota:true }
+    { v:"mascota", l:"Mascota", mascota:true }
   ];
 
-  const MASCOTAS = ["perro", "gato"];
+  /* "perro" y "gato" eran figuras de versiones anteriores: se siguen
+     reconociendo para dibujar bien las entrevistas que ya las tienen. */
+  const MASCOTAS = ["mascota", "perro", "gato"];
   const esMascota = tipo => MASCOTAS.includes(tipo);
 
   const PARENTESCOS = ["Mamá","Papá","Esposo","Esposa","Pareja","Hijo","Hija","Hermano","Hermana",
@@ -29,19 +30,29 @@ const Dibujo = (() => {
     "Suegro","Suegra","Yerno","Nuera","Cuñado","Cuñada","Padrastro","Madrastra","Hijastro","Hijastra",
     "Amigo","Amiga","Vecino","Vecina","Otro familiar"];
 
-  /* Para las mascotas se pregunta lo mismo, pero con ejemplos que tengan sentido */
-  const VINCULOS_MASCOTA = ["Mascota","Perro de la casa","Gata de la casa","Compañía",
+  /* Para las mascotas se pregunta lo mismo, pero con ejemplos que tengan sentido.
+     La especie (perro, gato, conejo…) va en su propio campo de texto libre. */
+  const VINCULOS_MASCOTA = ["Mascota","Compañía",
     "Como un hijo","Del niño","Llegó solo","Heredado de la familia"];
 
   const escala = t => {
     if(t === "nina" || t === "nino") return 0.92;
+    if(t === "mascota") return 1.1;
     if(esMascota(t)) return 0.95;
     return 1.25;
   };
 
   /* Muñeco en coordenadas locales, alto ≈ 48 */
   function glifo(tipo){
-    /* Perro y gato van de perfil: de frente se confunden con un oso. */
+    /* Huella: sirve para cualquier mascota, sea perro, gato, conejo o pez. */
+    if(tipo === "mascota")
+      return `<path d="M0 -1 c7 0 13.5 8 13.5 14 c0 5.5 -5 7 -8.5 6 c-2.2 -0.6 -3.2 -1.6 -5 -1.6
+                c-1.8 0 -2.8 1 -5 1.6 c-3.5 1 -8.5 -0.5 -8.5 -6 c0 -6 6.5 -14 13.5 -14 z"/>
+              <ellipse cx="-14.5" cy="-6" rx="4.6" ry="5.8" transform="rotate(-24 -14.5 -6)"/>
+              <ellipse cx="-5.6" cy="-15" rx="4.9" ry="6.4" transform="rotate(-8 -5.6 -15)"/>
+              <ellipse cx="5.6" cy="-15" rx="4.9" ry="6.4" transform="rotate(8 5.6 -15)"/>
+              <ellipse cx="14.5" cy="-6" rx="4.6" ry="5.8" transform="rotate(24 14.5 -6)"/>`;
+    /* Perro y gato (versiones anteriores) van de perfil: de frente se confunden con un oso. */
     if(tipo === "perro")
       return `<path d="M-15 -1 q-5 -10 1 -13 q3.5 -1.5 3.5 2.5 q0 5 -1.5 9.5 z"/>
               <rect x="-16" y="-2" width="26" height="13" rx="6"/>
@@ -126,7 +137,9 @@ const Dibujo = (() => {
         o += `<circle cx="${p.x}" cy="${p.y}" r="36" class="sel"/>`;
       o += `<g transform="translate(${p.x},${p.y}) scale(${escala(p.tipo)})" fill="${color}">${glifo(p.tipo)}</g>`;
       o += `<text x="${p.x}" y="${p.y+50}" class="nm">${esc((p.nombre||"").slice(0,16))}</text>`;
-      o += `<text x="${p.x}" y="${p.y+67}" class="pr">${esc((p.parentesco||"").slice(0,18))}</text>`;
+      // En las mascotas la segunda línea dice qué animal es; si no lo dicen, el vínculo
+      const linea2 = esMascota(p.tipo) ? (p.especie || p.parentesco) : p.parentesco;
+      o += `<text x="${p.x}" y="${p.y+67}" class="pr">${esc((linea2||"").slice(0,18))}</text>`;
       o += `</g>`;
     });
     return o;
