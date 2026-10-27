@@ -24,14 +24,16 @@ import time
 from datetime import datetime, timezone
 from pathlib import Path
 
-from fastapi import Depends, FastAPI, Header, HTTPException, Query, Request
+from fastapi import BackgroundTasks, Depends, FastAPI, Header, HTTPException, Query, Request
 from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from .db import Base, engine, obtener_sesion
-from .models import Entrevista, Rechazo, Usuario
+from . import clasificador
+from .dimensiones import DIMENSIONES, POR_CLAVE, activa, claves_categoria
+from .models import Clasificacion, Entrevista, Rechazo, Usuario
 from .municipios import normalizar as normalizar_municipio
 from .seguridad import cifrar_clave, crear_token, leer_token, verificar_clave
 
@@ -199,17 +201,22 @@ def guardar_entrevista(
     ident: str,
     datos: dict,
     peticion: Request,
+    tareas: BackgroundTasks,
     s: Session = Depends(obtener_sesion),
 ):
     """Crea o actualiza una entrevista. Ruta ABIERTA: no exige cuenta.
 
     El identificador lo genera el celular y es aleatorio, así que solo puede
     actualizar su propia entrevista quien la está respondiendo. Una vez revisada
-    por el equipo, deja de aceptar cambios."""
+    por el equipo, deja de aceptar cambios.
+
+    Cuando la entrevista pasa a «enviada» se clasifica sola con IA, después de
+    guardarla: el celular no espera a la IA y si esta falla no se pierde nada."""
     _verificar_codigo(peticion)
     _limitar(peticion)
 
     e = s.get(Entrevista, ident)
+    estado_antes = e.estado if e else None
     if e is None:
         e = Entrevista(id=ident)
         s.add(e)
@@ -237,6 +244,9 @@ def guardar_entrevista(
     e.estado = "enviada" if datos.get("terminada") else (e.estado or "borrador")
     e.actualizada = datetime.now(timezone.utc)
     s.commit()
+    # Solo al pasar a «enviada», no en cada guardado automático: una consulta por envío
+    if e.estado == "enviada" and estado_antes != "enviada" and clasificador.disponible():
+        tareas.add_task(clasificar_automaticamente, e.id)
     return {"ok": True, "id": e.id, "estado": e.estado, "actualizada": e.actualizada.isoformat()}
 
 
@@ -313,6 +323,8 @@ def normalizar_municipios(u: Usuario = Depends(solo_coordinador), s: Session = D
 def borrar(ident: str, u: Usuario = Depends(solo_coordinador), s: Session = Depends(obtener_sesion)):
     e = s.get(Entrevista, ident)
     if e:
+        for c in s.scalars(select(Clasificacion).where(Clasificacion.entrevista_id == ident)).all():
+            s.delete(c)
         s.delete(e)
         s.commit()
     return {"ok": True}
@@ -349,6 +361,215 @@ def estadisticas(u: Usuario = Depends(usuario_actual), s: Session = Depends(obte
         "rechazos": s.scalar(select(func.count()).select_from(Rechazo)) or 0,
         "por_municipio": dict(sorted(por_municipio.items(), key=lambda x: -x[1])),
     }
+
+
+# ------------------------------- clasificación -------------------------------
+# Cada entrevista recibe UNA categoría por dimensión (ver dimensiones.py). La IA
+# propone y el equipo confirma o corrige desde el panel; se guardan las dos.
+
+def _dimension(clave: str) -> dict:
+    d = POR_CLAVE.get(clave)
+    if not d:
+        raise HTTPException(404, "No existe esa dimensión")
+    return d
+
+
+def _elegible(d: dict, e: Entrevista) -> bool:
+    """Se clasifica toda entrevista con consentimiento que respondió algo del módulo."""
+    return bool(e.consentimiento) and clasificador.tiene_respuestas(d, e.datos or {})
+
+
+def _clasificaciones(s: Session, dimension: str) -> dict[str, Clasificacion]:
+    q = select(Clasificacion).where(Clasificacion.dimension == dimension)
+    return {c.entrevista_id: c for c in s.scalars(q).all()}
+
+
+def _iso(t: datetime | None) -> str | None:
+    return t.isoformat() if t else None
+
+
+def _clasificacion_json(d: dict, e: Entrevista, c: Clasificacion | None) -> dict | None:
+    if c is None or not c.categoria:
+        return None
+    desactualizada = bool(c.categoria_ia) and (
+        c.huella != clasificador.huella(d, e.datos or {}) or c.version_reglas != d.get("version"))
+    return {
+        "categoria": c.categoria,
+        "categoria_ia": c.categoria_ia,
+        "categoria_final": c.categoria_final,
+        "justificacion": c.justificacion,
+        "evidencias": c.evidencias or {},
+        "confianza": c.confianza,
+        "modelo": c.modelo,
+        "version_reglas": c.version_reglas,
+        "clasificada_en": _iso(c.clasificada_en),
+        "revisada_por": c.revisada_por,
+        "revisada_en": _iso(c.revisada_en),
+        "motivo": c.motivo,
+        "historial": c.historial or [],
+        "desactualizada": desactualizada,
+    }
+
+
+def _fila_clasificacion(d: dict, e: Entrevista, c: Clasificacion | None) -> dict:
+    return {
+        "id": e.id, "codigo": e.codigo, "municipio": e.municipio, "zona": e.zona,
+        "estado": e.estado, "clasificacion": _clasificacion_json(d, e, c),
+    }
+
+
+def _anotar(c: Clasificacion, **cambio) -> None:
+    # JSON en SQLAlchemy no detecta cambios dentro de la lista: se reemplaza entera
+    c.historial = [*(c.historial or []), {"fecha": datetime.now(timezone.utc).isoformat(), **cambio}]
+
+
+@app.get("/api/dimensiones")
+def listar_dimensiones(u: Usuario = Depends(usuario_actual), s: Session = Depends(obtener_sesion)):
+    """Las dimensiones de análisis con sus categorías y cuántas entrevistas hay en cada una."""
+    entrevistas = s.scalars(select(Entrevista)).all()
+    salida = []
+    for d in DIMENSIONES:
+        conteo = {"elegibles": 0, "clasificadas": 0, "revisadas": 0,
+                  "por_categoria": {k: 0 for k in claves_categoria(d)}}
+        if activa(d):
+            clas = _clasificaciones(s, d["clave"])
+            for e in entrevistas:
+                c = clas.get(e.id)
+                if not _elegible(d, e) and not (c and c.categoria):
+                    continue
+                conteo["elegibles"] += 1
+                if c and c.categoria:
+                    conteo["clasificadas"] += 1
+                    conteo["por_categoria"][c.categoria] = conteo["por_categoria"].get(c.categoria, 0) + 1
+                    if c.categoria_final:
+                        conteo["revisadas"] += 1
+        salida.append({
+            "clave": d["clave"], "nombre": d["nombre"], "bloques": d["bloques"],
+            "activa": activa(d), "version": d.get("version", ""), "fuente": d.get("fuente", ""),
+            "categorias": [{k: c[k] for k in ("clave", "nombre", "definicion", "incluye")}
+                           for c in d.get("categorias", [])],
+            "conteo": conteo,
+        })
+    return {"total_entrevistas": len(entrevistas),
+            "ia": {"disponible": clasificador.disponible(), "modelo": clasificador.modelo()},
+            "dimensiones": salida}
+
+
+@app.get("/api/clasificaciones/{dimension}")
+def listar_clasificaciones(dimension: str, u: Usuario = Depends(usuario_actual),
+                           s: Session = Depends(obtener_sesion)):
+    d = _dimension(dimension)
+    clas = _clasificaciones(s, dimension)
+    filas = []
+    for e in s.scalars(select(Entrevista).order_by(Entrevista.codigo)).all():
+        c = clas.get(e.id)
+        if _elegible(d, e) or (c and c.categoria):
+            filas.append(_fila_clasificacion(d, e, c))
+    return {"dimension": dimension, "entrevistas": filas,
+            "ia": {"disponible": clasificador.disponible(), "modelo": clasificador.modelo()}}
+
+
+def _buscar(s: Session, d: dict, ident: str) -> tuple[Entrevista, Clasificacion | None]:
+    e = s.get(Entrevista, ident)
+    if not e:
+        raise HTTPException(404, "No existe esa entrevista")
+    c = s.scalar(select(Clasificacion).where(
+        Clasificacion.entrevista_id == ident, Clasificacion.dimension == d["clave"]))
+    return e, c
+
+
+@app.post("/api/clasificaciones/{dimension}/{ident}/ia")
+def clasificar_con_ia(dimension: str, ident: str, cuerpo: dict | None = None,
+                      u: Usuario = Depends(usuario_actual), s: Session = Depends(obtener_sesion)):
+    """Pide a la IA la categoría de una entrevista. Si ya tiene una vigente no gasta
+    otra consulta, salvo con `forzar`. Nunca cambia la decisión del equipo."""
+    d = _dimension(dimension)
+    if not activa(d):
+        raise HTTPException(400, "Esta dimensión todavía no tiene reglas de clasificación")
+    e, c = _buscar(s, d, ident)
+    if not _elegible(d, e):
+        raise HTTPException(400, "La entrevista no tiene respuestas en este módulo")
+    vigente = _clasificacion_json(d, e, c) if c else None
+    if vigente and c.categoria_ia and not vigente["desactualizada"] and not (cuerpo or {}).get("forzar"):
+        return _fila_clasificacion(d, e, c)
+
+    try:
+        c = _aplicar_ia(s, d, e, c, u.nombre)
+    except clasificador.ErrorIA as err:
+        raise HTTPException(502, str(err)) from err
+    return _fila_clasificacion(d, e, c)
+
+
+def _aplicar_ia(s: Session, d: dict, e: Entrevista, c: Clasificacion | None, quien: str) -> Clasificacion:
+    """Consulta a la IA y guarda su propuesta. La decisión del equipo no se toca."""
+    r = clasificador.clasificar(d, e.datos or {})
+    if c is None:
+        c = Clasificacion(entrevista_id=e.id, dimension=d["clave"])
+        s.add(c)
+    _anotar(c, tipo="ia", usuario=quien, de=c.categoria_ia, a=r["categoria"], modelo=r["modelo"])
+    c.categoria_ia = r["categoria"]
+    c.justificacion = r["justificacion"]
+    c.evidencias = r["evidencias"]
+    c.confianza = r["confianza"]
+    c.modelo = r["modelo"]
+    c.version_reglas = d.get("version", "")
+    c.huella = clasificador.huella(d, e.datos or {})
+    c.clasificada_en = datetime.now(timezone.utc)
+    s.commit()
+    return c
+
+
+def clasificar_automaticamente(ident: str) -> None:
+    """Clasifica una entrevista recién enviada en todas las dimensiones con reglas.
+
+    Corre después de responderle al celular, con su propia sesión. Un error se
+    registra y se sigue: la entrevista queda «por clasificar» en el panel."""
+    from .db import Sesion
+
+    with Sesion() as s:
+        e = s.get(Entrevista, ident)
+        if not e:
+            return
+        for d in DIMENSIONES:
+            if not activa(d) or not _elegible(d, e):
+                continue
+            c = s.scalar(select(Clasificacion).where(
+                Clasificacion.entrevista_id == ident, Clasificacion.dimension == d["clave"]))
+            vigente = _clasificacion_json(d, e, c) if c else None
+            if vigente and c.categoria_ia and not vigente["desactualizada"]:
+                continue
+            try:
+                _aplicar_ia(s, d, e, c, "Clasificación automática")
+            except Exception as err:          # nunca debe tumbar el guardado
+                s.rollback()
+                print(f"[clasificación] {e.codigo} · {d['clave']}: no se pudo clasificar — {err}")
+
+
+@app.post("/api/clasificaciones/{dimension}/{ident}/asignar")
+def asignar_categoria(dimension: str, ident: str, cuerpo: dict,
+                      u: Usuario = Depends(usuario_actual), s: Session = Depends(obtener_sesion)):
+    """El equipo confirma o cambia la categoría (arrastrando en el diagrama).
+    Con `categoria` vacía se quita la decisión del equipo y vuelve a valer la de la IA."""
+    d = _dimension(dimension)
+    if not activa(d):
+        raise HTTPException(400, "Esta dimensión todavía no tiene reglas de clasificación")
+    categoria = cuerpo.get("categoria") or None
+    if categoria is not None and categoria not in claves_categoria(d):
+        raise HTTPException(400, "Categoría no válida")
+    e, c = _buscar(s, d, ident)
+    if c is None:
+        if categoria is None:
+            return _fila_clasificacion(d, e, None)
+        c = Clasificacion(entrevista_id=e.id, dimension=dimension)
+        s.add(c)
+    motivo = str(cuerpo.get("motivo") or "").strip()[:1000]
+    _anotar(c, tipo="equipo", usuario=u.nombre, de=c.categoria, a=categoria or c.categoria_ia, motivo=motivo)
+    c.categoria_final = categoria
+    c.revisada_por = u.nombre if categoria else ""
+    c.revisada_en = datetime.now(timezone.utc) if categoria else None
+    c.motivo = motivo if categoria else ""
+    s.commit()
+    return _fila_clasificacion(d, e, c)
 
 
 # -------------------------------- exportación --------------------------------
@@ -417,6 +638,34 @@ def exportar_personas(u: Usuario = Depends(usuario_actual), s: Session = Depends
             ])
     r = _csv(filas)
     r.headers["Content-Disposition"] = 'attachment; filename="personas.csv"'
+    return r
+
+
+@app.get("/api/exportar/clasificaciones.csv")
+def exportar_clasificaciones(u: Usuario = Depends(usuario_actual), s: Session = Depends(obtener_sesion)):
+    """Una fila por entrevista y dimensión clasificada, con la propuesta de la IA y
+    la decisión del equipo lado a lado, para medir cuánto coinciden."""
+    filas: list[list] = [[
+        "codigo", "municipio", "zona", "estado_entrevista", "dimension", "categoria",
+        "categoria_ia", "categoria_equipo", "coincide", "confianza_ia", "justificacion_ia",
+        "evidencias_ia", "modelo", "version_reglas", "revisada_por", "motivo", "desactualizada",
+    ]]
+    entrevistas = {e.id: e for e in _entrevistas_visibles(u, s)}
+    for c in s.scalars(select(Clasificacion).order_by(Clasificacion.dimension)).all():
+        e, d = entrevistas.get(c.entrevista_id), POR_CLAVE.get(c.dimension)
+        if not e or not d or not c.categoria:
+            continue
+        j = _clasificacion_json(d, e, c)
+        evid = " | ".join(f"{k}: {t}" for k, v in (c.evidencias or {}).items() for t in v)
+        filas.append([
+            e.codigo, e.municipio, e.zona, e.estado, c.dimension, c.categoria,
+            c.categoria_ia or "", c.categoria_final or "",
+            "" if not (c.categoria_ia and c.categoria_final) else ("sí" if c.categoria_ia == c.categoria_final else "no"),
+            c.confianza, c.justificacion.replace("\n", " "), evid, c.modelo, c.version_reglas,
+            c.revisada_por, c.motivo.replace("\n", " "), "sí" if j["desactualizada"] else "no",
+        ])
+    r = _csv(filas)
+    r.headers["Content-Disposition"] = 'attachment; filename="clasificaciones.csv"'
     return r
 
 

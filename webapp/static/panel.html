@@ -38,7 +38,12 @@
   </header>
 
   <main>
-    <div class="tarjeta">
+    <nav class="pestanas" role="tablist" aria-label="Secciones del panel">
+      <button type="button" role="tab" id="tab-entrevistas" aria-selected="true" aria-controls="vista-entrevistas">Entrevistas</button>
+      <button type="button" role="tab" id="tab-clasificacion" aria-selected="false" aria-controls="vista-clasificacion">Clasificación</button>
+    </nav>
+
+    <div class="tarjeta" id="vista-entrevistas" role="tabpanel" aria-labelledby="tab-entrevistas">
       <div class="gorro">Resumen</div>
       <h2 class="titulo">Entrevistas recogidas</h2>
       <div class="kpis" id="kpis"></div>
@@ -56,6 +61,7 @@
         <a class="btn chico" id="x-json">⬇ JSON</a>
         <a class="btn chico" id="x-resp">⬇ Respuestas CSV</a>
         <a class="btn chico" id="x-pers">⬇ Personas CSV</a>
+        <a class="btn chico" id="x-clas">⬇ Clasificaciones CSV</a>
       </div>
 
       <div style="overflow-x:auto">
@@ -68,6 +74,41 @@
           <tbody id="filas"><tr><td colspan="9" style="color:var(--suave)">Cargando…</td></tr></tbody>
         </table>
       </div>
+    </div>
+
+    <!-- Clasificación por dimensiones: diagrama de red con dos niveles -->
+    <div class="tarjeta oculto" id="vista-clasificacion" role="tabpanel" aria-labelledby="tab-clasificacion">
+      <nav class="cl-migas" id="cl-migas" aria-label="Ubicación"></nav>
+      <h2 class="titulo" id="cl-titulo">Dimensiones de análisis</h2>
+      <p class="bajada" id="cl-bajada"></p>
+
+      <div class="filtros" id="cl-filtros">
+        <select id="cl-municipio" aria-label="Municipio"><option value="">Todos los municipios</option></select>
+        <select id="cl-revision" aria-label="Revisión">
+          <option value="">Todas las entrevistas</option>
+          <option value="ia">Propuesta de la IA, sin revisar</option>
+          <option value="equipo">Revisadas por el equipo</option>
+          <option value="movida">Movidas por el equipo</option>
+          <option value="vieja">Desactualizadas</option>
+          <option value="pendiente">Por clasificar</option>
+        </select>
+        <span class="crece"></span>
+        <span class="cl-progreso" id="cl-progreso" aria-live="polite"></span>
+        <button class="btn chico pri" id="cl-clasificar">Clasificar pendientes</button>
+      </div>
+
+      <div class="cl-leyenda" id="cl-leyenda"></div>
+
+      <div class="cl-red-caja" id="cl-red-caja">
+        <svg id="cl-red" role="group" aria-label="Diagrama de red de la clasificación"></svg>
+        <div class="cl-tip oculto" id="cl-tip" role="tooltip"></div>
+      </div>
+      <p class="cl-ayuda" id="cl-ayuda"></p>
+
+      <details class="cl-tabla-caja" id="cl-tabla-caja">
+        <summary>Ver como tabla</summary>
+        <div style="overflow-x:auto"><table class="tabla" id="cl-tabla"></table></div>
+      </details>
     </div>
   </main>
 </section>
@@ -82,9 +123,32 @@
   </div>
 </dialog>
 
+<!-- Ficha de la clasificación de una entrevista -->
+<dialog id="dlg-clas" aria-labelledby="clas-titulo">
+  <div id="clas-ficha" class="detalle"></div>
+  <div style="display:flex;gap:10px;margin-top:20px;flex-wrap:wrap">
+    <button class="btn chico" id="clas-ver">Ver entrevista completa</button>
+    <span class="crece"></span>
+    <button class="btn chico" id="clas-cerrar">Cerrar</button>
+  </div>
+</dialog>
+
+<!-- Confirmación al soltar un circulito en otra categoría -->
+<dialog id="dlg-mover" aria-labelledby="mover-titulo">
+  <h2 class="titulo" id="mover-titulo" style="font-size:20px">Mover la entrevista</h2>
+  <p class="bajada" id="mover-texto" style="font-size:15.5px"></p>
+  <label class="mini" for="mover-motivo">Motivo (opcional)</label>
+  <textarea id="mover-motivo" class="corto" placeholder="Por qué el equipo la ubica en esta categoría…"></textarea>
+  <div style="display:flex;gap:10px;margin-top:18px;justify-content:flex-end">
+    <button class="btn chico" id="mover-no">Cancelar</button>
+    <button class="btn chico pri" id="mover-si">Mover</button>
+  </div>
+</dialog>
+
 <div class="aviso-flotante" id="aviso"></div>
 
 <script src="/static/js/dibujo.js"></script>
 <script src="/static/js/panel.js"></script>
+<script src="/static/js/clasificacion.js"></script>
 </body>
 </html>

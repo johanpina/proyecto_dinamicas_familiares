@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 
-from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, String, Text, JSON
+from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, String, Text, JSON, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .db import Base
@@ -107,3 +107,40 @@ class Rechazo(Base):
     municipio: Mapped[str] = mapped_column(String(80), default="")
     zona: Mapped[str] = mapped_column(String(30), default="")
     creado: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=ahora)
+
+
+class Clasificacion(Base):
+    """La categoría de una entrevista en una dimensión de análisis (p. ej. el cuidado).
+
+    Se guardan las dos: la que propuso la IA y la que asignó el equipo. Si el
+    equipo no la ha tocado, vale la de la IA. Volver a correr la IA nunca pisa la
+    decisión del equipo. `historial` lleva cada cambio con quién, cuándo y por qué."""
+
+    __tablename__ = "clasificaciones"
+    __table_args__ = (UniqueConstraint("entrevista_id", "dimension", name="uq_clasificacion"),)
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    entrevista_id: Mapped[str] = mapped_column(ForeignKey("entrevistas.id", ondelete="CASCADE"), index=True)
+    dimension: Mapped[str] = mapped_column(String(40), index=True)
+
+    # --- propuesta de la IA ---
+    categoria_ia: Mapped[str | None] = mapped_column(String(40))
+    justificacion: Mapped[str] = mapped_column(Text, default="")
+    evidencias: Mapped[dict] = mapped_column(JSON, default=dict)
+    confianza: Mapped[str] = mapped_column(String(10), default="")
+    modelo: Mapped[str] = mapped_column(String(60), default="")
+    version_reglas: Mapped[str] = mapped_column(String(40), default="")
+    huella: Mapped[str] = mapped_column(String(40), default="")   # de las respuestas clasificadas
+    clasificada_en: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+    # --- decisión del equipo (vacía = vale la de la IA) ---
+    categoria_final: Mapped[str | None] = mapped_column(String(40))
+    revisada_por: Mapped[str] = mapped_column(String(120), default="")
+    revisada_en: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    motivo: Mapped[str] = mapped_column(Text, default="")
+
+    historial: Mapped[list] = mapped_column(JSON, default=list)
+
+    @property
+    def categoria(self) -> str | None:
+        return self.categoria_final or self.categoria_ia

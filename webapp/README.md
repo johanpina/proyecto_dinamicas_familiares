@@ -134,8 +134,37 @@ Desde el panel, o directamente por API con la sesión iniciada:
 - `GET /api/exportar/entrevistas.json` — todo, incluido el dibujo
 - `GET /api/exportar/respuestas.csv` — una fila por pregunta (para NVivo, Atlas.ti, pandas)
 - `GET /api/exportar/personas.csv` — una fila por persona del dibujo
+- `GET /api/exportar/clasificaciones.csv` — una fila por entrevista y dimensión, con la
+  propuesta de la IA y la decisión del equipo lado a lado
 
 Los CSV usan `;` como separador y llevan BOM, así que Excel en español los abre bien.
+
+## Clasificación por dimensiones
+
+En el panel, la pestaña **Clasificación** muestra un diagrama de red: un círculo por
+módulo de la entrevista y, al tocar uno, sus categorías con un circulito por entrevista.
+Cada entrevista queda en **una sola** categoría por dimensión.
+
+- Las dimensiones, sus categorías, definiciones y reglas están en `app/dimensiones.py`.
+  Hoy solo **El cuidado** (pantallas `p3`, `p4` y `p5`) tiene reglas; las demás aparecen
+  como pendientes. Al cambiar las reglas de una dimensión hay que subir su `version`.
+- **Cada entrevista se clasifica sola al ser enviada**, en todas las dimensiones con
+  reglas. Se hace después de guardarla: si la IA falla, la entrevista no se pierde y
+  queda «por clasificar»; el botón del panel clasifica esas, los borradores y las
+  desactualizadas.
+- La IA propone la categoría con una justificación y las frases de la persona que la
+  sustentan. Se le envían **solo las respuestas del módulo**, nunca la ficha.
+- El equipo confirma o corrige **arrastrando el circulito** a otra categoría (o desde la
+  ficha). Se guardan las dos —la de la IA y la del equipo— con quién, cuándo y por qué, y
+  volver a clasificar con IA nunca pisa una decisión del equipo.
+- Si las respuestas cambian o se suben las reglas, la clasificación queda marcada como
+  desactualizada.
+
+Requiere en el servidor `OPENAI_API_KEY` y, opcional, `MODELO_IA` (por defecto
+`gpt-5-mini`). Sin la clave, el panel igual permite clasificar a mano.
+
+> Enviar respuestas a un servicio externo de IA es un tratamiento de datos que el
+> consentimiento informado actual no menciona: conviene validarlo con el Comité de Ética.
 
 ## Estructura
 
@@ -143,8 +172,10 @@ Los CSV usan `;` como separador y llevan BOM, así que Excel en español los abr
 webapp/
 ├── app/
 │   ├── main.py        API y rutas web
-│   ├── models.py      tablas: usuarios, entrevistas, rechazos
+│   ├── models.py      tablas: usuarios, entrevistas, rechazos, clasificaciones
 │   ├── db.py          conexión (SQLite por defecto, PostgreSQL con DATABASE_URL)
+│   ├── dimensiones.py dimensiones de análisis: categorías, definiciones y reglas
+│   ├── clasificador.py consulta a la IA (OpenAI) para proponer la categoría
 │   └── seguridad.py   contraseñas y tokens de sesión (solo librería estándar)
 ├── static/
 │   ├── index.html     la entrevista
@@ -152,7 +183,8 @@ webapp/
 │   ├── consentimiento.html
 │   ├── js/app.js      guía de preguntas, pasos, guardado y sincronización
 │   ├── js/dibujo.js   el dibujo de la familia
-│   └── js/panel.js
+│   ├── js/panel.js
+│   └── js/clasificacion.js  diagrama de red de la clasificación
 ├── usuarios.py        administración de cuentas
 └── docker-compose.yml
 ```

@@ -56,7 +56,7 @@ async function abrirPanel(){
   $("#pantalla-login").classList.add("oculto");
   $("#pantalla-panel").classList.remove("oculto");
   $("#quien").textContent = `${perfil.nombre} · ${perfil.rol}`;
-  ["x-json","x-resp","x-pers"].forEach(id => $("#"+id).onclick = ev => { ev.preventDefault(); descargar(id); });
+  ["x-json","x-resp","x-pers","x-clas"].forEach(id => $("#"+id).onclick = ev => { ev.preventDefault(); descargar(id); });
   await Promise.all([cargarKpis(), cargarLista()]);
 }
 
@@ -65,7 +65,8 @@ async function descargar(cual){
   const rutas = {
     "x-json": ["/exportar/entrevistas.json", "entrevistas.json"],
     "x-resp": ["/exportar/respuestas.csv", "respuestas.csv"],
-    "x-pers": ["/exportar/personas.csv", "personas.csv"]
+    "x-pers": ["/exportar/personas.csv", "personas.csv"],
+    "x-clas": ["/exportar/clasificaciones.csv", "clasificaciones.csv"]
   };
   const [ruta, nombre] = rutas[cual];
   try{

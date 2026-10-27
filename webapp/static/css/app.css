@@ -180,6 +180,73 @@ dialog::backdrop{background:rgba(20,17,14,.5)}
   padding:9px 12px;border-radius:0 8px 8px 0;margin-top:5px;font-size:15px}
 .detalle .rp.vacia{color:var(--suave);font-style:italic}
 
+/* ------------------------- Panel: clasificación ------------------------- */
+/* Colores de categoría validados para daltonismo y contraste sobre las
+   superficies del panel (modo claro y oscuro). El orden es fijo: la primera
+   categoría de cada dimensión es siempre cat-1, la segunda cat-2… «Sin
+   información» es neutra porque no es una categoría con contenido. */
+:root{--cat-1:#2a78d6;--cat-2:#eb6834;--cat-3:#1baf7a;--cat-neutro:#a39d92;--estado-aviso:#fab219}
+@media (prefers-color-scheme:dark){
+  :root{--cat-1:#3987e5;--cat-2:#d95926;--cat-3:#199e70;--cat-neutro:#6f685e}
+}
+.pestanas{display:flex;gap:6px;margin:22px 0 0;border-bottom:1px solid var(--borde)}
+.pestanas button{background:none;border:0;border-bottom:3px solid transparent;padding:10px 14px 9px;
+  font-size:15.5px;font-weight:600;color:var(--suave);cursor:pointer;margin-bottom:-1px}
+.pestanas button[aria-selected="true"]{color:var(--texto);border-bottom-color:var(--casa)}
+.pestanas + .tarjeta{margin-top:16px}
+.cl-migas{font-size:13.5px;color:var(--suave);margin-bottom:8px;min-height:20px}
+.cl-migas button{background:none;border:0;padding:0;color:var(--casa);font-weight:600;cursor:pointer;font-size:inherit}
+.cl-migas span{margin:0 6px}
+.cl-progreso{font-size:14px;color:var(--suave)}
+.cl-leyenda{display:flex;flex-wrap:wrap;gap:6px 18px;margin:16px 0 4px;font-size:14px;color:var(--suave)}
+.cl-leyenda span{display:inline-flex;align-items:center;gap:7px}
+.cl-leyenda b{color:var(--texto);font-weight:600}
+.cl-leyenda svg{flex:0 0 auto}
+.cl-red-caja{position:relative;margin-top:8px;border:1px solid var(--borde);border-radius:12px;
+  background:var(--superficie-2);overflow:hidden}
+#cl-red{display:block;width:100%;height:auto;touch-action:none;user-select:none;-webkit-user-select:none}
+#cl-red text{font-family:inherit}
+#cl-red .tx{fill:var(--texto);font-size:16px;font-weight:600;text-anchor:middle}
+#cl-red .tx-s{fill:var(--suave);font-size:13.5px;text-anchor:middle}
+#cl-red .tx-n{font-size:17px;font-weight:700;text-anchor:middle;dominant-baseline:central}
+#cl-red.angosto .tx{font-size:21px}
+#cl-red.angosto .tx-s{font-size:17px}
+#cl-red .enlace{stroke:var(--borde-2);stroke-width:1.2}
+#cl-red .enlace.tenue{stroke:var(--borde);stroke-width:1}
+#cl-red .nodo{cursor:pointer}
+#cl-red .nodo:focus{outline:none}
+#cl-red .nodo:focus-visible .aro-foco,#cl-red .nodo:hover .aro-foco{stroke:var(--casa);stroke-width:3}
+#cl-red .nodo.inactivo{cursor:default}
+#cl-red .hub.destino .aro-foco{stroke:var(--texto);stroke-width:3;stroke-dasharray:none}
+#cl-red .punto{cursor:grab;transition:transform .45s cubic-bezier(.4,0,.2,1)}
+#cl-red .punto.arrastrando{cursor:grabbing;transition:none}
+#cl-red .punto:focus{outline:none}
+#cl-red .punto:focus-visible .golpe,#cl-red .punto:hover .golpe{stroke:var(--casa);stroke-width:2.5}
+@media (prefers-reduced-motion:reduce){#cl-red .punto{transition:none}}
+.cl-tip{position:absolute;pointer-events:none;z-index:5;background:var(--superficie);color:var(--texto);
+  border:1px solid var(--borde);border-radius:10px;padding:8px 11px;font-size:13.5px;line-height:1.4;
+  box-shadow:var(--sombra);max-width:260px}
+.cl-tip b{display:block;font-size:14.5px}
+.cl-tip i{display:inline-block;width:12px;height:3px;border-radius:2px;vertical-align:middle;margin-right:6px}
+.cl-ayuda{font-size:13.5px;color:var(--suave);margin:10px 2px 0}
+.cl-tabla-caja{margin-top:14px}
+.cl-tabla-caja summary{cursor:pointer;font-size:14.5px;font-weight:600;color:var(--casa)}
+.cl-chip{display:inline-flex;align-items:center;gap:6px;font-weight:600}
+.cl-chip i{width:10px;height:10px;border-radius:50%;flex:0 0 auto}
+.cl-aviso{display:flex;gap:8px;align-items:flex-start;padding:10px 12px;border-radius:10px;font-size:14.5px;
+  background:var(--fuera-claro);color:var(--texto);margin:12px 0}
+.cl-citas{margin:6px 0 0;padding-left:18px;font-size:14.5px}
+.cl-citas li{margin:4px 0}
+.cl-acciones{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:12px}
+.cl-acciones select{width:auto;padding:8px 10px}
+.cl-hist{font-size:13.5px;color:var(--suave);margin-top:14px}
+.cl-hist ul{margin:6px 0 0;padding-left:18px}
+.cl-deshacer{position:fixed;left:50%;bottom:40px;transform:translateX(-50%);z-index:99;display:flex;gap:14px;
+  align-items:center;background:var(--texto);color:var(--bg);padding:9px 10px 9px 20px;border-radius:99px;font-size:15px;
+  box-shadow:var(--sombra)}
+.cl-deshacer button{background:none;border:1px solid currentColor;color:inherit;border-radius:99px;
+  padding:4px 13px;font-weight:700;cursor:pointer;font-size:14px}
+
 @media print{
   .cabecera,.navpie,.paleta,.editor,.aviso-flotante,.barra{display:none !important}
   body{background:#fff;padding:0}
