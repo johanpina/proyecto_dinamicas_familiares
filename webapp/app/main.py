@@ -408,6 +408,8 @@ def _clasificacion_json(d: dict, e: Entrevista, c: Clasificacion | None) -> dict
         "motivo": c.motivo,
         "historial": c.historial or [],
         "desactualizada": desactualizada,
+        # la propuesta vigente la hizo un modelo distinto del configurado hoy
+        "otro_modelo": bool(c.categoria_ia) and not clasificador.es_modelo_actual(c.modelo),
     }
 
 

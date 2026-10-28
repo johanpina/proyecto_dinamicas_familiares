@@ -17,6 +17,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import re
 import urllib.error
 import urllib.request
 
@@ -28,6 +29,13 @@ ESPERA_S = 50          # Vercel corta la función a los 60 s
 
 def modelo() -> str:
     return os.getenv("MODELO_IA", "gpt-5.6-luna").strip() or "gpt-5.6-luna"
+
+
+def es_modelo_actual(nombre: str | None) -> bool:
+    """True si la propuesta la hizo el modelo configurado. OpenAI responde con el
+    nombre fechado (gpt-5-mini → gpt-5-mini-2025-08-07), así que se acepta la fecha."""
+    m = modelo()
+    return bool(nombre) and re.fullmatch(re.escape(m) + r"(-\d{4}-\d{2}-\d{2})?", nombre) is not None
 
 
 def disponible() -> bool:

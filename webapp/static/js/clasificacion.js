@@ -650,28 +650,47 @@ const Clasificacion = (() => {
   }
 
   const pendientes = () => filas.filter(f => !f.clasificacion?.categoria_ia || f.clasificacion.desactualizada);
+  /* Propuestas vigentes hechas con un modelo anterior. El botón para rehacerlas
+     solo aparece mientras queden: al terminar, desaparece solo. */
+  const deOtroModelo = () => filas.filter(f => f.clasificacion?.otro_modelo && !f.clasificacion.desactualizada);
 
   function pintarBoton(){
-    const b = $("#cl-clasificar"), n = pendientes().length;
-    if(corriendo){ b.textContent = "Detener"; b.disabled = false; return; }
+    const b = $("#cl-clasificar"), r = $("#cl-reclasificar");
+    const n = pendientes().length, m = deOtroModelo().length;
+    if(corriendo){
+      const activo = corriendo === "reclasificar" ? r : b, otro = activo === r ? b : r;
+      activo.textContent = "Detener"; activo.disabled = false;
+      otro.disabled = true;
+      return;
+    }
     b.textContent = n ? `Clasificar con IA (${n})` : "Todo clasificado";
     b.disabled = !n || !ia.disponible;
     b.title = ia.disponible ? "" : "Falta configurar OPENAI_API_KEY en el servidor";
+    r.classList.toggle("oculto", !m || !ia.disponible);
+    r.disabled = false;
+    r.textContent = `Reclasificar con ${ia.modelo} (${m})`;
+    r.title = `Estas propuestas las hizo otro modelo. Las decisiones del equipo se mantienen.`;
   }
 
-  async function clasificarPendientes(){
+  /* Corre la IA de a una entrevista; un error de clave o saldo detiene el lote */
+  async function clasificarLote(modo){
     if(corriendo){ corriendo = false; return; }
-    const cola = pendientes(); if(!cola.length) return;
-    corriendo = true; pintarBoton();
+    const reclasificar = modo === "reclasificar";
+    const cola = reclasificar ? deOtroModelo() : pendientes(); if(!cola.length) return;
+    if(reclasificar && !confirm(
+      `Se volverán a clasificar ${cola.length} entrevista${cola.length === 1 ? "" : "s"} con ${ia.modelo}, ` +
+      `una por una (unos 10 segundos cada una). Se reemplaza solo la propuesta de la IA: ` +
+      `las categorías que el equipo confirmó o movió se mantienen.\n\n¿Continuar?`)) return;
+    corriendo = modo; pintarBoton();
     let hechas = 0;
     for(const f of cola){
       if(!corriendo) break;
-      $("#cl-progreso").textContent = `Clasificando ${hechas + 1} de ${cola.length}…`;
-      if(!await clasificarUna(f, false)) break;       // un error de clave o saldo detiene el lote
+      $("#cl-progreso").textContent = `${reclasificar ? "Reclasificando" : "Clasificando"} ${hechas + 1} de ${cola.length}…`;
+      if(!await clasificarUna(f, reclasificar)) break;
       hechas++;
     }
     corriendo = false;
-    $("#cl-progreso").textContent = hechas ? `${hechas} clasificada${hechas === 1 ? "" : "s"}` : "";
+    $("#cl-progreso").textContent = hechas ? `${hechas} ${reclasificar ? "reclasificada" : "clasificada"}${hechas === 1 ? "" : "s"}` : "";
     pintarBoton();
   }
 
@@ -711,7 +730,8 @@ const Clasificacion = (() => {
     $("#cl-municipio").onchange = pintar;
     $("#cl-revision").onchange = pintar;
     $("#cl-confianza").onchange = pintar;
-    $("#cl-clasificar").onclick = clasificarPendientes;
+    $("#cl-clasificar").onclick = () => clasificarLote("pendientes");
+    $("#cl-reclasificar").onclick = () => clasificarLote("reclasificar");
     $("#clas-cerrar").onclick = () => $("#dlg-clas").close();
     let t; window.addEventListener("resize", () => {
       clearTimeout(t); t = setTimeout(() => { if(!$("#vista-clasificacion").classList.contains("oculto")) pintar(); }, 200);
