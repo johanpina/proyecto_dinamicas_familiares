@@ -20,6 +20,7 @@ import csv
 import hmac
 import io
 import os
+import secrets
 import time
 from datetime import datetime, timezone
 from pathlib import Path
@@ -46,6 +47,14 @@ app = FastAPI(title="Dinámicas familiares — Eje Cafetero", docs_url="/api/doc
 def preparar() -> None:
     Base.metadata.create_all(engine)
     _crear_usuario_inicial()
+    try:
+        from .db import Sesion
+        with Sesion() as s:
+            cambios = _codigos_unicos(s)
+        if cambios:
+            print(f"[inicio] {len(cambios)} códigos de entrevista repetidos quedaron únicos")
+    except Exception as err:            # nunca debe impedir que arranque la app
+        print(f"[inicio] no se pudieron revisar los códigos repetidos: {err}")
 
 
 def _crear_usuario_inicial() -> None:
@@ -217,7 +226,8 @@ def guardar_entrevista(
 
     e = s.get(Entrevista, ident)
     estado_antes = e.estado if e else None
-    if e is None:
+    nueva = e is None
+    if nueva:
         e = Entrevista(id=ident)
         s.add(e)
     elif e.estado == "revisada":
@@ -226,7 +236,11 @@ def guardar_entrevista(
     ficha = datos.get("datos") or {}
     consent = datos.get("consentimiento") or {}
 
-    e.codigo = datos.get("codigo") or e.codigo or ident
+    # El código se fija la primera vez y después no lo cambia el celular: así una
+    # corrección hecha en el servidor no se pierde con el siguiente envío.
+    if nueva or not e.codigo:
+        e.codigo = _codigo_libre(s, datos.get("codigo") or ident, ident)
+    datos["codigo"] = e.codigo
     e.departamento = ficha.get("departamento", "")
     municipio = normalizar_municipio(ficha.get("municipio", ""))
     ficha["municipio"] = municipio           # queda normalizado también en el JSON
@@ -247,7 +261,8 @@ def guardar_entrevista(
     # Solo al pasar a «enviada», no en cada guardado automático: una consulta por envío
     if e.estado == "enviada" and estado_antes != "enviada" and clasificador.disponible():
         tareas.add_task(clasificar_automaticamente, e.id)
-    return {"ok": True, "id": e.id, "estado": e.estado, "actualizada": e.actualizada.isoformat()}
+    return {"ok": True, "id": e.id, "codigo": e.codigo, "estado": e.estado,
+            "actualizada": e.actualizada.isoformat()}
 
 
 @app.get("/api/entrevistas")
@@ -293,6 +308,46 @@ def revisar(
     e.revisada_en = datetime.now(timezone.utc) if estado == "revisada" else None
     s.commit()
     return {"ok": True, "estado": e.estado}
+
+
+def _codigo_libre(s: Session, codigo: str, ident: str) -> str:
+    """El código pedido si nadie más lo tiene; si no, con un sufijo al azar.
+    Cubre a los celulares con una versión vieja de la app, que no traen sufijo."""
+    otra = select(Entrevista.id).where(Entrevista.codigo == codigo, Entrevista.id != ident)
+    while s.scalar(otra.limit(1)):
+        codigo = f"{codigo}-{secrets.token_hex(2).upper()}"
+        otra = select(Entrevista.id).where(Entrevista.codigo == codigo, Entrevista.id != ident)
+    return codigo
+
+
+def _codigos_unicos(s: Session) -> list[dict]:
+    """Distingue las entrevistas que comparten código agregándoles -A, -B, -C…
+    en el orden en que se crearon. Es idempotente: si no hay repetidos, no hace nada.
+    Las clasificaciones no se tocan: están atadas al id, no al código."""
+    repetidos = s.scalars(select(Entrevista.codigo).group_by(Entrevista.codigo)
+                          .having(func.count() > 1)).all()
+    usados = set(s.scalars(select(Entrevista.codigo)).all())
+    cambios: list[dict] = []
+    for codigo in repetidos:
+        grupo = s.scalars(select(Entrevista).where(Entrevista.codigo == codigo)
+                          .order_by(Entrevista.creada, Entrevista.id)).all()
+        letras = (chr(c) for c in range(ord("A"), ord("Z") + 1))
+        for e in grupo:
+            nuevo = next(f"{codigo}-{l}" for l in letras if f"{codigo}-{l}" not in usados)
+            usados.add(nuevo)
+            e.codigo = nuevo
+            e.datos = {**(e.datos or {}), "codigo": nuevo}
+            cambios.append({"antes": codigo, "despues": nuevo, "municipio": e.municipio, "estado": e.estado})
+    if cambios:
+        s.commit()
+    return cambios
+
+
+@app.post("/api/mantenimiento/codigos-unicos")
+def codigos_unicos(u: Usuario = Depends(solo_coordinador), s: Session = Depends(obtener_sesion)):
+    """Corrige los códigos repetidos (también se hace solo al arrancar el servidor)."""
+    cambios = _codigos_unicos(s)
+    return {"ok": True, "corregidas": len(cambios), "cambios": cambios}
 
 
 @app.post("/api/mantenimiento/normalizar-municipios")
@@ -609,7 +664,7 @@ def exportar_json(u: Usuario = Depends(usuario_actual), s: Session = Depends(obt
 def exportar_respuestas(u: Usuario = Depends(usuario_actual), s: Session = Depends(obtener_sesion)):
     filas: list[list] = [[
         "codigo", "estado", "departamento", "municipio", "lugar", "zona", "fecha",
-        "participante", "edad", "bloque", "campo", "pregunta", "respuesta",
+        "participante", "edad", "bloque", "campo", "pregunta", "respuesta", "entrevista_id",
     ]]
     for e in _entrevistas_visibles(u, s):
         for r in (e.datos or {}).get("respuestas", []):
@@ -617,7 +672,7 @@ def exportar_respuestas(u: Usuario = Depends(usuario_actual), s: Session = Depen
                 e.codigo, e.estado, e.departamento,
                 e.municipio, e.lugar, e.zona, e.fecha, e.identidad, e.edad,
                 r.get("bloque", ""), r.get("campo", ""), r.get("pregunta", ""),
-                str(r.get("respuesta", "")).replace("\n", " ⏎ "),
+                str(r.get("respuesta", "")).replace("\n", " ⏎ "), e.id,
             ])
     r = _csv(filas)
     r.headers["Content-Disposition"] = 'attachment; filename="respuestas.csv"'
@@ -628,7 +683,7 @@ def exportar_respuestas(u: Usuario = Depends(usuario_actual), s: Session = Depen
 def exportar_personas(u: Usuario = Depends(usuario_actual), s: Session = Depends(obtener_sesion)):
     filas: list[list] = [[
         "codigo", "municipio", "zona", "integrante_id", "nombre", "parentesco",
-        "tipo_integrante", "figura", "ubicacion", "ubicacion_texto", "especie",
+        "tipo_integrante", "figura", "ubicacion", "ubicacion_texto", "especie", "entrevista_id",
     ]]
     for e in _entrevistas_visibles(u, s):
         for p in ((e.datos or {}).get("dibujo") or {}).get("personas", []):
@@ -636,7 +691,7 @@ def exportar_personas(u: Usuario = Depends(usuario_actual), s: Session = Depends
                 e.codigo, e.municipio, e.zona, p.get("id", ""), p.get("nombre", ""),
                 p.get("parentesco", ""), "mascota" if _es_mascota(p) else "persona",
                 p.get("figura", ""), p.get("ubicacion", ""), p.get("ubicacion_texto", ""),
-                _especie(p),
+                _especie(p), e.id,
             ])
     r = _csv(filas)
     r.headers["Content-Disposition"] = 'attachment; filename="personas.csv"'
@@ -651,6 +706,7 @@ def exportar_clasificaciones(u: Usuario = Depends(usuario_actual), s: Session = 
         "codigo", "municipio", "zona", "estado_entrevista", "dimension", "categoria",
         "categoria_ia", "categoria_equipo", "coincide", "confianza_ia", "justificacion_ia",
         "evidencias_ia", "modelo", "version_reglas", "revisada_por", "motivo", "desactualizada",
+        "entrevista_id",
     ]]
     entrevistas = {e.id: e for e in _entrevistas_visibles(u, s)}
     for c in s.scalars(select(Clasificacion).order_by(Clasificacion.dimension)).all():
@@ -665,6 +721,7 @@ def exportar_clasificaciones(u: Usuario = Depends(usuario_actual), s: Session = 
             "" if not (c.categoria_ia and c.categoria_final) else ("sí" if c.categoria_ia == c.categoria_final else "no"),
             c.confianza, c.justificacion.replace("\n", " "), evid, c.modelo, c.version_reglas,
             c.revisada_por, c.motivo.replace("\n", " "), "sí" if j["desactualizada"] else "no",
+            e.id,
         ])
     r = _csv(filas)
     r.headers["Content-Disposition"] = 'attachment; filename="clasificaciones.csv"'
@@ -692,8 +749,13 @@ def avisar_almacenamiento() -> None:
               "PERDERÁN al reiniciar. Defina DATABASE_URL con una PostgreSQL.")
 
 
+# Las páginas y el service worker se revalidan siempre: así, tras un despliegue,
+# el navegador pide los archivos nuevos (que llevan ?v=…) y no usa los viejos.
+SIN_CACHE = {"Cache-Control": "no-cache"}
+
+
 def _pagina(nombre: str) -> FileResponse:
-    return FileResponse(ESTATICOS / nombre, media_type="text/html")
+    return FileResponse(ESTATICOS / nombre, media_type="text/html", headers=SIN_CACHE)
 
 
 @app.get("/", response_class=HTMLResponse)
@@ -714,7 +776,7 @@ def consentimiento():
 @app.get("/sw.js")
 def service_worker():
     # El service worker debe servirse desde la raíz para poder cachear toda la app
-    return FileResponse(ESTATICOS / "sw.js", media_type="application/javascript")
+    return FileResponse(ESTATICOS / "sw.js", media_type="application/javascript", headers=SIN_CACHE)
 
 
 app.mount("/static", StaticFiles(directory=ESTATICOS), name="static")

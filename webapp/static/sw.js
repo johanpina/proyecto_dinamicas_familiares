@@ -1,11 +1,14 @@
 /* Service worker: guarda la app en el teléfono para que abra sin señal.
    Las peticiones a /api nunca se cachean; de eso se encarga la cola de envío. */
 
-const CACHE = "uc-familia-v7";
+const CACHE = "uc-familia-v8";
 
 // Lo indispensable para que la app abra sin señal: son archivos pequeños.
+// VERSION debe coincidir con el ?v= de index.html y consentimiento.html: al
+// cambiar los archivos se suben los tres juntos y también CACHE.
+const VERSION = "20261028";
 const BASICOS = [
-  "/", "/static/css/app.css", "/static/js/app.js", "/static/js/dibujo.js",
+  "/", `/static/css/app.css?v=${VERSION}`, `/static/js/app.js?v=${VERSION}`, `/static/js/dibujo.js?v=${VERSION}`,
   "/static/img/ucaldas.png", "/static/manifest.json", "/consentimiento"
 ];
 
@@ -35,9 +38,13 @@ self.addEventListener("fetch", ev => {
   const url = new URL(ev.request.url);
   if(ev.request.method !== "GET" || url.pathname.startsWith("/api")) return;
 
-  // Red primero y, si no hay señal, lo guardado
+  // Red primero y, si no hay señal, lo guardado. Las páginas se piden sin usar
+  // la caché del navegador, para que tras un despliegue carguen los archivos nuevos.
+  const pedido = ev.request.mode === "navigate"
+    ? fetch(ev.request.url, {cache:"no-cache", credentials:"same-origin"})
+    : fetch(ev.request);
   ev.respondWith(
-    fetch(ev.request)
+    pedido
       .then(r => {
         if(r.ok && url.origin === self.location.origin){
           const copia = r.clone();

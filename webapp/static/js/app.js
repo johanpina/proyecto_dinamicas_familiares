@@ -153,13 +153,22 @@ async function api(ruta, opciones = {}){
 
 /* ------------------------------ Estado en memoria ------------------------------ */
 
+/* Código legible de la entrevista: fecha, hora y cuatro caracteres al azar. Sin
+   el sufijo, dos personas que empiezan en el mismo minuto (un taller) quedaban
+   con el mismo código. Se evitan letras que se confunden (0/O, 1/I/L). */
+function codigoNuevo(d){
+  const pad = n => String(n).padStart(2,"0"), letras = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
+  const azar = [...crypto.getRandomValues(new Uint8Array(4))].map(n => letras[n % letras.length]).join("");
+  return `ENT-${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}-${pad(d.getHours())}${pad(d.getMinutes())}-${azar}`;
+}
+
 function nueva(){
   const respuestas = {};
   BLOQUES.forEach(b => b.campos.forEach(c => respuestas[c.k] = ""));
   const d = new Date(), pad = n => String(n).padStart(2,"0");
   return {
     id: uid("e"),
-    codigo: `ENT-${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}-${pad(d.getHours())}${pad(d.getMinutes())}`,
+    codigo: codigoNuevo(d),
     creada: d.toISOString(),
     actualizada: d.toISOString(),
     paso: 0,
@@ -257,6 +266,15 @@ function guardar(ya){
   ya ? hacer() : (tGuardar = setTimeout(hacer, 600));
 }
 
+function adoptarCodigo(id, codigo){
+  const todas = leerJSON(LS_ENTREVISTAS, {});
+  if(todas[id]){ todas[id].codigo = codigo; guardarJSON(LS_ENTREVISTAS, todas); }
+  if(S.id === id){
+    S.codigo = codigo;
+    const f = document.getElementById("cod-final"); if(f) f.textContent = codigo;
+  }
+}
+
 function encolar(id){
   const p = new Set(leerJSON(LS_PENDIENTES, []));
   p.add(id);
@@ -288,7 +306,9 @@ async function sincronizar(){
     const e = leerJSON(LS_ENTREVISTAS, {})[id];
     if(!e) continue;
     try {
-      await api(`/entrevistas/${id}`, {method:"PUT", body: JSON.stringify(paquete(e))});
+      const r = await api(`/entrevistas/${id}`, {method:"PUT", body: JSON.stringify(paquete(e))});
+      // El código lo fija el servidor (p. ej. si estaba repetido): se adopta el suyo
+      if(r?.codigo && r.codigo !== e.codigo) adoptarCodigo(id, r.codigo);
     } catch(err){
       // 409 = ya la revisó el equipo; reintentar no sirve de nada
       if(err.estado !== 409) encolar(id);
