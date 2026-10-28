@@ -22,6 +22,8 @@ const Clasificacion = (() => {
   let hubs = [];            // posiciones de las categorías en el nivel 2
   let corriendo = false;    // clasificación por lotes en curso
   let cargada = false;
+  let zoom = {k:1, x:0, y:0};   // vista del nivel 2: escala y desplazamiento (unidades del lienzo)
+  const ZOOM_MIN = 0.6, ZOOM_MAX = 4;
 
   /* ------------------------------ utilidades ------------------------------ */
 
@@ -66,14 +68,17 @@ const Clasificacion = (() => {
                            movida:"Movida por el equipo"};
 
   function filtradas(){
-    const m = $("#cl-municipio").value, r = $("#cl-revision").value;
+    const m = $("#cl-municipio").value, r = $("#cl-revision").value, k = $("#cl-confianza").value;
     return filas.filter(f => (!m || f.municipio === m) && (!r ||
-      (r === "vieja" ? !!f.clasificacion?.desactualizada : estadoDe(f) === r)));
+      (r === "vieja" ? !!f.clasificacion?.desactualizada : estadoDe(f) === r)) &&
+      (!k || f.clasificacion?.confianza === k));
   }
 
   function medirLienzo(){
     const ancho = $("#cl-red-caja").clientWidth || 1000;
+    const antes = lienzo.W;
     lienzo = ancho < 640 ? {W:600, H:860} : {W:1000, H:680};
+    if(lienzo.W !== antes) zoom = {k:1, x:0, y:0};      // cambió la forma del lienzo
     $("#cl-red").setAttribute("viewBox", `0 0 ${lienzo.W} ${lienzo.H}`);
     $("#cl-red").classList.toggle("angosto", ancho < 640);
   }
@@ -110,7 +115,8 @@ const Clasificacion = (() => {
   }
   async function irA(clave){
     dim = clave;
-    $("#cl-revision").value = ""; $("#cl-municipio").value = "";
+    zoom = {k:1, x:0, y:0};
+    $("#cl-revision").value = ""; $("#cl-municipio").value = ""; $("#cl-confianza").value = "";
     try{
       if(dim) await cargarFilas(); else await cargarDimensiones();
       pintar();
@@ -121,6 +127,8 @@ const Clasificacion = (() => {
     medirLienzo();
     ocultarTip();
     const nivel2 = !!dim;
+    $("#cl-zoom").classList.toggle("oculto", !nivel2);
+    $("#cl-red").classList.toggle("navegable", nivel2);
     $("#cl-filtros").classList.toggle("oculto", !nivel2);
     const migas = $("#cl-migas");
     migas.innerHTML = nivel2
@@ -204,11 +212,12 @@ const Clasificacion = (() => {
     });
   }
 
+  /* En este nivel solo va lo común a todos los módulos; las categorías de cada
+     uno se explican al abrirlo */
   function pintarLeyendaDimensiones(){
-    const activas = info.dimensiones.filter(d => d.activa);
-    $("#cl-leyenda").innerHTML = activas.map(d => d.categorias.map(c =>
-      `<span>${muestra(colorDe(d, c.clave))}<b>${esc(c.nombre)}</b></span>`).join("")).join("") +
-      `<span>${muestraVacia()}Módulo sin reglas</span>`;
+    $("#cl-leyenda").innerHTML =
+      `<span>${muestraModulo()}Módulo con reglas: el anillo muestra el reparto entre sus categorías</span>` +
+      `<span>${muestraVacia()}Módulo sin reglas aún</span>`;
   }
 
   function pintarTablaDimensiones(){
@@ -233,8 +242,9 @@ const Clasificacion = (() => {
     $("#cl-bajada").textContent = `Cada circulito es una entrevista, ubicada en la categoría que tiene hoy en esta dimensión. ` +
       `Arrástrelo a otra categoría para corregirla o tóquelo para ver por qué quedó ahí.`;
     $("#cl-ayuda").textContent = ia.disponible
-      ? `La IA (${ia.modelo}) propone y el equipo decide: una categoría puesta por el equipo no se cambia al volver a clasificar.`
-      : "La clasificación automática no está disponible: falta configurar OPENAI_API_KEY en el servidor. Igual puede ubicar las entrevistas a mano.";
+      ? `La IA (${ia.modelo}) propone y el equipo decide: una categoría puesta por el equipo no se cambia al volver a clasificar. `
+      : "La clasificación automática no está disponible: falta configurar OPENAI_API_KEY en el servidor. Igual puede ubicar las entrevistas a mano. ";
+    $("#cl-ayuda").textContent += "Para ver mejor: arrastre el fondo para moverse y acerque con los botones, Ctrl + rueda o pellizcando.";
     pintarBoton();
 
     // Grupos: las categorías de la dimensión y, si hay, las entrevistas por clasificar
@@ -247,7 +257,10 @@ const Clasificacion = (() => {
     });
 
     const svg = $("#cl-red"); svg.innerHTML = "";
-    const capaEnlaces = el("g", {}, svg), capaHubs = el("g", {}, svg), capaPuntos = el("g", {}, svg);
+    // Fondo que recibe el arrastre para desplazarse, y la vista que se acerca o aleja
+    el("rect", {x:-5000, y:-5000, width:10000, height:10000, fill:"transparent", class:"fondo"}, svg);
+    const capaVista = el("g", {id:"cl-vista"}, svg);
+    const capaEnlaces = el("g", {}, capaVista), capaHubs = el("g", {}, capaVista), capaPuntos = el("g", {}, capaVista);
 
     // La dimensión en el centro
     el("circle", {cx, cy, r:42, fill:"var(--superficie)", stroke:"var(--texto)", "stroke-width":1.5}, capaHubs);
@@ -284,6 +297,7 @@ const Clasificacion = (() => {
       dentro(texto(g, h.x, ty + 21, `${h.n} entrevista${h.n === 1 ? "" : "s"}`, "tx-s"), h.x);
     });
 
+    aplicarZoom();
     pintarLeyendaDimension(d);
     pintarTablaDimension(d, vista);
   }
@@ -336,6 +350,7 @@ const Clasificacion = (() => {
 
   /* Muestras pequeñas para la leyenda */
   const muestra = color => `<svg width="14" height="14" aria-hidden="true"><circle cx="7" cy="7" r="6" fill="${color}"/></svg>`;
+  const muestraModulo = () => `<svg width="18" height="18" viewBox="-9 -9 18 18" aria-hidden="true"><circle r="7.5" fill="none" stroke="var(--suave)" stroke-width="2.5"/><circle r="4" fill="var(--superficie)" stroke="var(--texto)" stroke-width="1.2"/></svg>`;
   const muestraVacia = () => `<svg width="14" height="14" aria-hidden="true"><circle cx="7" cy="7" r="5.5" fill="none" stroke="var(--borde-2)" stroke-dasharray="3 3"/></svg>`;
   function muestraPunto(tipo){
     const base = `<svg width="22" height="22" viewBox="-11 -11 22 22" aria-hidden="true">`;
@@ -377,12 +392,53 @@ const Clasificacion = (() => {
 
   /* ------------------------------ arrastrar ------------------------------ */
 
-  let arr = null;
+  let arr = null;        // circulito que se está arrastrando
+  let pan = null;        // desplazamiento del fondo en curso
+  let pellizco = null;   // zoom con dos dedos en curso
+  const toques = new Map();
 
+  /* Punto del puntero en las coordenadas de los dibujos (ya con el zoom aplicado) */
   function aSvg(ev){
     const svg = $("#cl-red"), pt = svg.createSVGPoint();
     pt.x = ev.clientX; pt.y = ev.clientY;
+    const ref = $("#cl-vista") || svg;
+    return pt.matrixTransform(ref.getScreenCTM().inverse());
+  }
+  /* Punto del puntero en las coordenadas del lienzo, sin zoom */
+  function aLienzo(x, y){
+    const svg = $("#cl-red"), pt = svg.createSVGPoint();
+    pt.x = x; pt.y = y;
     return pt.matrixTransform(svg.getScreenCTM().inverse());
+  }
+
+  /* ------------------------------ zoom y desplazamiento ------------------------------ */
+
+  function aplicarZoom(){
+    $("#cl-vista")?.setAttribute("transform", `translate(${zoom.x.toFixed(1)} ${zoom.y.toFixed(1)}) scale(${zoom.k.toFixed(3)})`);
+    $("#cl-zoom-menos").disabled = zoom.k <= ZOOM_MIN + 1e-3;
+    $("#cl-zoom-mas").disabled = zoom.k >= ZOOM_MAX - 1e-3;
+  }
+  /* Acerca o aleja manteniendo fijo el punto (px, py) del lienzo */
+  function zoomEn(px, py, factor){
+    const k = Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, zoom.k * factor)), f = k / zoom.k;
+    zoom = {k, x: px - (px - zoom.x) * f, y: py - (py - zoom.y) * f};
+    aplicarZoom();
+  }
+  const zoomCentro = factor => zoomEn(lienzo.W / 2, lienzo.H / 2, factor);
+  function restablecerZoom(){ zoom = {k:1, x:0, y:0}; aplicarZoom(); }
+  /* Cuántas unidades del lienzo hay en un píxel de pantalla */
+  const escalaPantalla = () => lienzo.W / ($("#cl-red").clientWidth || lienzo.W);
+
+  function alRodar(ev){
+    if(!dim || !(ev.ctrlKey || ev.metaKey)) return;      // la rueda sola sigue bajando la página
+    ev.preventDefault();
+    const p = aLienzo(ev.clientX, ev.clientY);
+    zoomEn(p.x, p.y, Math.exp(-ev.deltaY * 0.0025 * (ev.deltaMode === 1 ? 16 : 1)));
+  }
+
+  function datosPellizco(){
+    const [a, b] = [...toques.values()];
+    return {d: Math.hypot(a.x - b.x, a.y - b.y) || 1, x: (a.x + b.x) / 2, y: (a.y + b.y) / 2};
   }
   function hubBajo(x, y){
     let mejor = null, dmin = Infinity;
@@ -398,12 +454,47 @@ const Clasificacion = (() => {
   }
 
   function alPresionar(ev){
-    const g = ev.target.closest(".punto"); if(!g || ev.button > 0) return;
+    if(ev.button > 0) return;
+    const svg = $("#cl-red");
+    if(dim && ev.pointerType === "touch"){
+      toques.set(ev.pointerId, {x:ev.clientX, y:ev.clientY});
+      if(toques.size === 2){                     // segundo dedo: se cancela lo demás y empieza el pellizco
+        if(arr?.moviendo){ arr = null; marcarDestino(null); pintar(); }
+        arr = null; pan = null;
+        pellizco = datosPellizco();
+        svg.setPointerCapture(ev.pointerId);
+        return;
+      }
+    }
+    const g = ev.target.closest(".punto");
+    if(!g){
+      if(!dim || ev.target.closest(".hub")) return;
+      pan = {x0:ev.clientX, y0:ev.clientY, zx:zoom.x, zy:zoom.y};
+      svg.classList.add("desplazando"); ocultarTip();
+      svg.setPointerCapture(ev.pointerId);
+      return;
+    }
     const f = filas.find(x => x.id === g.dataset.id); if(!f) return;
     arr = {g, f, x0:ev.clientX, y0:ev.clientY, moviendo:false, id:ev.pointerId};
-    $("#cl-red").setPointerCapture(ev.pointerId);
+    svg.setPointerCapture(ev.pointerId);
   }
   function alMover(ev){
+    if(toques.has(ev.pointerId)) toques.set(ev.pointerId, {x:ev.clientX, y:ev.clientY});
+    if(pellizco && toques.size === 2){
+      const ahora = datosPellizco(), k = escalaPantalla();
+      zoom.x += (ahora.x - pellizco.x) * k; zoom.y += (ahora.y - pellizco.y) * k;
+      const p = aLienzo(ahora.x, ahora.y);
+      zoomEn(p.x, p.y, ahora.d / pellizco.d);
+      pellizco = ahora;
+      return;
+    }
+    if(pan){
+      const k = escalaPantalla();
+      zoom.x = pan.zx + (ev.clientX - pan.x0) * k;
+      zoom.y = pan.zy + (ev.clientY - pan.y0) * k;
+      aplicarZoom();
+      return;
+    }
     if(!arr){
       const g = ev.target.closest?.(".punto");
       if(g){ const f = filas.find(x => x.id === g.dataset.id); if(f) mostrarTip(ev, f); }
@@ -421,7 +512,10 @@ const Clasificacion = (() => {
     arr.destino = hubBajo(p.x, p.y);
     marcarDestino(arr.destino);
   }
-  function alSoltar(){
+  function alSoltar(ev){
+    toques.delete(ev?.pointerId);
+    if(pellizco){ if(toques.size < 2) pellizco = null; return; }
+    if(pan){ pan = null; $("#cl-red").classList.remove("desplazando"); return; }
     if(!arr) return;
     const {g, f, moviendo, destino} = arr;
     arr = null;
@@ -588,7 +682,15 @@ const Clasificacion = (() => {
     svg.addEventListener("pointerdown", alPresionar);
     svg.addEventListener("pointermove", alMover);
     svg.addEventListener("pointerup", alSoltar);
-    svg.addEventListener("pointercancel", () => { if(arr){ arr = null; marcarDestino(null); pintar(); } });
+    svg.addEventListener("pointercancel", ev => {
+      toques.delete(ev.pointerId); pellizco = null;
+      if(pan){ pan = null; svg.classList.remove("desplazando"); }
+      if(arr){ arr = null; marcarDestino(null); pintar(); }
+    });
+    svg.addEventListener("wheel", alRodar, {passive:false});
+    $("#cl-zoom-mas").onclick = () => zoomCentro(1.35);
+    $("#cl-zoom-menos").onclick = () => zoomCentro(1 / 1.35);
+    $("#cl-zoom-reset").onclick = restablecerZoom;
     svg.addEventListener("pointerleave", () => { if(!arr) ocultarTip(); });
     svg.addEventListener("click", ev => {
       const n = ev.target.closest(".nodo:not(.inactivo)");
@@ -608,6 +710,7 @@ const Clasificacion = (() => {
     svg.addEventListener("focusout", ocultarTip);
     $("#cl-municipio").onchange = pintar;
     $("#cl-revision").onchange = pintar;
+    $("#cl-confianza").onchange = pintar;
     $("#cl-clasificar").onclick = clasificarPendientes;
     $("#clas-cerrar").onclick = () => $("#dlg-clas").close();
     let t; window.addEventListener("resize", () => {

@@ -10,7 +10,7 @@ igual que el resto del servidor: basta urllib.
 
 Variables:
     OPENAI_API_KEY  la clave de la API (obligatoria para clasificar)
-    MODELO_IA       el modelo a usar (por defecto gpt-5-mini)
+    MODELO_IA       el modelo a usar (por defecto gpt-5.6-luna)
 """
 from __future__ import annotations
 
@@ -27,7 +27,7 @@ ESPERA_S = 50          # Vercel corta la función a los 60 s
 
 
 def modelo() -> str:
-    return os.getenv("MODELO_IA", "gpt-5-mini").strip() or "gpt-5-mini"
+    return os.getenv("MODELO_IA", "gpt-5.6-luna").strip() or "gpt-5.6-luna"
 
 
 def disponible() -> bool:

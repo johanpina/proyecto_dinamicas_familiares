@@ -161,7 +161,7 @@ Cada entrevista queda en **una sola** categoría por dimensión.
   desactualizada.
 
 Requiere en el servidor `OPENAI_API_KEY` y, opcional, `MODELO_IA` (por defecto
-`gpt-5-mini`). Sin la clave, el panel igual permite clasificar a mano.
+`gpt-5.6-luna`). Sin la clave, el panel igual permite clasificar a mano.
 
 > Enviar respuestas a un servicio externo de IA es un tratamiento de datos que el
 > consentimiento informado actual no menciona: conviene validarlo con el Comité de Ética.

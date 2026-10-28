@@ -5,8 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Panel de revisión — Familia, diversidad y territorio</title>
 <link rel="icon" href="/static/img/ucaldas.png">
-<link rel="stylesheet" href="/static/css/app.css">
+<link rel="stylesheet" href="/static/css/app.css?v=20261027">
 <style>main{max-width:1140px}</style>
+<!-- ?v=… obliga al navegador a bajar los archivos nuevos tras cada cambio: súbalo al modificarlos -->
 </head>
 <body>
 
@@ -92,6 +93,12 @@
           <option value="vieja">Desactualizadas</option>
           <option value="pendiente">Por clasificar</option>
         </select>
+        <select id="cl-confianza" aria-label="Confianza de la IA">
+          <option value="">Toda confianza de la IA</option>
+          <option value="alta">Confianza alta</option>
+          <option value="media">Confianza media</option>
+          <option value="baja">Confianza baja</option>
+        </select>
         <span class="crece"></span>
         <span class="cl-progreso" id="cl-progreso" aria-live="polite"></span>
         <button class="btn chico pri" id="cl-clasificar">Clasificar pendientes</button>
@@ -101,6 +108,11 @@
 
       <div class="cl-red-caja" id="cl-red-caja">
         <svg id="cl-red" role="group" aria-label="Diagrama de red de la clasificación"></svg>
+        <div class="cl-zoom oculto" id="cl-zoom" role="group" aria-label="Zoom del diagrama">
+          <button type="button" id="cl-zoom-mas" aria-label="Acercar" title="Acercar">+</button>
+          <button type="button" id="cl-zoom-menos" aria-label="Alejar" title="Alejar">−</button>
+          <button type="button" id="cl-zoom-reset" aria-label="Restablecer la vista" title="Restablecer la vista">⟲</button>
+        </div>
         <div class="cl-tip oculto" id="cl-tip" role="tooltip"></div>
       </div>
       <p class="cl-ayuda" id="cl-ayuda"></p>
@@ -147,8 +159,8 @@
 
 <div class="aviso-flotante" id="aviso"></div>
 
-<script src="/static/js/dibujo.js"></script>
-<script src="/static/js/panel.js"></script>
-<script src="/static/js/clasificacion.js"></script>
+<script src="/static/js/dibujo.js?v=20261027"></script>
+<script src="/static/js/panel.js?v=20261027"></script>
+<script src="/static/js/clasificacion.js?v=20261027"></script>
 </body>
 </html>
