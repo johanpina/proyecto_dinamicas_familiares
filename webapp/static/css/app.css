@@ -194,9 +194,6 @@ dialog::backdrop{background:rgba(20,17,14,.5)}
   font-size:15.5px;font-weight:600;color:var(--suave);cursor:pointer;margin-bottom:-1px}
 .pestanas button[aria-selected="true"]{color:var(--texto);border-bottom-color:var(--casa)}
 .pestanas + .tarjeta{margin-top:16px}
-.cl-migas{font-size:13.5px;color:var(--suave);margin-bottom:8px;min-height:20px}
-.cl-migas button{background:none;border:0;padding:0;color:var(--casa);font-weight:600;cursor:pointer;font-size:inherit}
-.cl-migas span{margin:0 6px}
 .cl-progreso{font-size:14px;color:var(--suave)}
 .cl-leyenda{display:flex;flex-wrap:wrap;gap:6px 18px;margin:16px 0 4px;font-size:14px;color:var(--suave)}
 .cl-leyenda span{display:inline-flex;align-items:center;gap:7px}
@@ -204,33 +201,69 @@ dialog::backdrop{background:rgba(20,17,14,.5)}
 .cl-leyenda svg{flex:0 0 auto}
 .cl-red-caja{position:relative;margin-top:8px;border:1px solid var(--borde);border-radius:12px;
   background:var(--superficie-2);overflow:hidden}
-#cl-red{display:block;width:100%;height:auto;touch-action:none;user-select:none;-webkit-user-select:none}
-#cl-red text{font-family:inherit}
-#cl-red .tx{fill:var(--texto);font-size:16px;font-weight:600;text-anchor:middle}
-#cl-red .tx-s{fill:var(--suave);font-size:13.5px;text-anchor:middle}
-#cl-red .tx-n{font-size:17px;font-weight:700;text-anchor:middle;dominant-baseline:central}
-#cl-red.angosto .tx{font-size:21px}
-#cl-red.angosto .tx-s{font-size:17px}
-#cl-red .enlace{stroke:var(--borde-2);stroke-width:1.2}
-#cl-red .enlace.tenue{stroke:var(--borde);stroke-width:1}
-#cl-red .nodo{cursor:pointer}
-#cl-red .nodo:focus{outline:none}
-#cl-red .nodo:focus-visible .aro-foco,#cl-red .nodo:hover .aro-foco{stroke:var(--casa);stroke-width:3}
-#cl-red .nodo.inactivo{cursor:default}
-#cl-red .hub.destino .aro-foco{stroke:var(--texto);stroke-width:3;stroke-dasharray:none}
-#cl-red .punto{cursor:grab;transition:transform .45s cubic-bezier(.4,0,.2,1)}
-#cl-red .punto.arrastrando{cursor:grabbing;transition:none}
-#cl-red .punto:focus{outline:none}
-#cl-red .punto:focus-visible .golpe,#cl-red .punto:hover .golpe{stroke:var(--casa);stroke-width:2.5}
-@media (prefers-reduced-motion:reduce){#cl-red .punto{transition:none}}
-#cl-red.navegable{cursor:grab}
-#cl-red.navegable.desplazando{cursor:grabbing}
-#cl-red .hub{cursor:default}
-.cl-zoom{position:absolute;top:10px;right:10px;z-index:4;display:flex;flex-direction:column;gap:6px}
-.cl-zoom button{width:36px;height:36px;border-radius:9px;border:1px solid var(--borde-2);background:var(--superficie);
-  color:var(--texto);font-size:19px;font-weight:600;line-height:1;cursor:pointer;box-shadow:var(--sombra)}
-.cl-zoom button:hover{background:var(--superficie-2)}
-.cl-zoom button:disabled{opacity:.45;cursor:default}
+.cl-red{display:block;width:100%;height:auto;touch-action:manipulation;user-select:none;-webkit-user-select:none}
+.cl-red text{font-family:inherit}
+/* Sankey */
+.cl-red .cl-col{fill:var(--suave);font-size:12.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.cl-red .cl-flujo{opacity:.42;transition:opacity .35s ease;cursor:pointer}
+.cl-red .cl-nodo{transition:opacity .35s ease}
+.cl-red .cl-particulas{pointer-events:none}
+/* Llenado: el diagrama arranca vacío; cintas, barras y etiquetas aparecen solo
+   donde ya pasaron los puntos */
+.cl-red .cl-nodo{transition:opacity .3s ease}
+/* Anillo de la superficie: el punto se distingue sobre una cinta de su mismo color */
+.cl-red .cl-particulas circle{stroke:var(--superficie);stroke-width:1.6}
+.cl-red .cl-flujo.cambio{opacity:.62}
+.cl-red .cl-flujo:hover,.cl-red .cl-flujo:focus-visible{opacity:.78;outline:none}
+.cl-red .cl-flujo.tenue{opacity:.12}
+.cl-red .cl-flujo.elegido{opacity:.85}
+.cl-red .cl-nodo{cursor:pointer}
+.cl-red .cl-nodo:focus{outline:none}
+.cl-red .cl-nodo:focus-visible .cl-barra,.cl-red .cl-nodo.elegido .cl-barra{stroke:var(--texto);stroke-width:2.5}
+.cl-red .cl-etiqueta{fill:var(--texto);font-size:15px;font-weight:600;paint-order:stroke;stroke:var(--superficie-2);
+  stroke-width:4px;stroke-linejoin:round;pointer-events:none}
+.cl-red .cl-cuenta{fill:var(--suave);font-weight:500;font-size:13.5px}
+.cl-red.angosto .cl-etiqueta{font-size:19px} .cl-red.angosto .cl-cuenta{font-size:17px} .cl-red.angosto .cl-col{font-size:16px}
+/* Al arrastrar una tarjeta, las categorías finales se marcan como destino */
+.cl-red.soltando .cl-nodo.destino .cl-barra{stroke:var(--texto);stroke-width:2;stroke-dasharray:4 3}
+.cl-red.soltando .cl-nodo.destino.sobre .cl-barra{stroke-width:4;stroke-dasharray:none}
+/* Lista de entrevistas del flujo elegido */
+.cl-lista{margin-top:16px;border-top:1px solid var(--borde);padding-top:14px}
+.cl-lista-vacia,.cl-lista-ayuda{font-size:14px;color:var(--suave);margin:0}
+.cl-lista-cab{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.cl-lista-cab h3{font-size:16px;margin:0}
+.cl-lista-ayuda{margin:6px 0 10px}
+.cl-tarjetas{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:8px}
+.cl-tarjeta{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1px solid var(--borde);border-radius:10px;
+  background:var(--superficie);cursor:grab;user-select:none;-webkit-user-select:none}
+.cl-tarjeta:hover{border-color:var(--borde-2)}
+.cl-tarjeta:focus-visible{outline:3px solid var(--casa);outline-offset:1px}
+.cl-tarjeta.arrastrada{opacity:.4}
+.cl-tarjeta-txt{display:flex;flex-direction:column;gap:2px;min-width:0}
+.cl-tarjeta-txt b{font-size:14.5px}
+.cl-tarjeta-txt small{font-size:13px;color:var(--suave)}
+.cl-asa{color:var(--suave);font-size:18px;line-height:1;padding:2px 4px;touch-action:none;cursor:grab}
+.cl-fantasma{position:fixed;left:0;top:0;z-index:100;pointer-events:none;box-shadow:var(--sombra);opacity:.95}
+/* Un bloque por módulo */
+.cl-modulos{display:flex;flex-direction:column;gap:22px;margin-top:18px}
+.cl-modulo{border:1px solid var(--borde);border-radius:14px;padding:18px 18px 16px;background:var(--superficie)}
+.cl-modulo.sin-reglas{background:var(--superficie-2)}
+.cl-mod-cab{display:flex;gap:14px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap}
+.cl-mod-gorro{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:4px}
+.cl-mod-num{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--casa)}
+.cl-mod-estado{font-size:12px;font-weight:600;padding:2px 9px;border-radius:99px;background:var(--casa-claro);color:var(--casa)}
+.cl-modulo.sin-reglas .cl-mod-num{color:var(--suave)}
+.cl-modulo.sin-reglas .cl-mod-estado{background:var(--borde);color:var(--suave)}
+.cl-mod-titulo h3{font-size:21px;letter-spacing:-.01em;margin:0}
+.cl-mod-resumen{font-size:14px;color:var(--suave);margin:4px 0 0}
+.cl-mod-acciones{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.cl-modulo .cl-leyenda{margin:12px 0 0}
+.cl-modulo .cl-red-caja{margin-top:12px}
+.cl-lista-mod{display:block;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--casa);margin-bottom:2px}
+/* Cuando le llega un punto, la barra de la categoría destella */
+#cl-modulos .cl-nodo.pulso .cl-barra{animation:cl-pulso .45s ease-out}
+@keyframes cl-pulso{0%{filter:brightness(1.6) saturate(1.3)}100%{filter:none}}
+@media (prefers-reduced-motion:reduce){#cl-modulos .cl-nodo.pulso .cl-barra{animation:none}}
 .cl-tip{position:absolute;pointer-events:none;z-index:5;background:var(--superficie);color:var(--texto);
   border:1px solid var(--borde);border-radius:10px;padding:8px 11px;font-size:13.5px;line-height:1.4;
   box-shadow:var(--sombra);max-width:260px}

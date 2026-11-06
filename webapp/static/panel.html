@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Panel de revisión — Familia, diversidad y territorio</title>
 <link rel="icon" href="/static/img/ucaldas.png">
-<link rel="stylesheet" href="/static/css/app.css?v=20261028">
+<link rel="stylesheet" href="/static/css/app.css?v=20261030p">
 <style>main{max-width:1140px}</style>
 <!-- ?v=… obliga al navegador a bajar los archivos nuevos tras cada cambio: súbalo al modificarlos -->
 </head>
@@ -77,13 +77,15 @@
       </div>
     </div>
 
-    <!-- Clasificación por dimensiones: diagrama de red con dos niveles -->
+    <!-- Clasificación: todos los módulos en una sola pantalla, cada uno con su diagrama de Sankey -->
     <div class="tarjeta oculto" id="vista-clasificacion" role="tabpanel" aria-labelledby="tab-clasificacion">
-      <nav class="cl-migas" id="cl-migas" aria-label="Ubicación"></nav>
-      <h2 class="titulo" id="cl-titulo">Dimensiones de análisis</h2>
-      <p class="bajada" id="cl-bajada"></p>
+      <div class="gorro">Clasificación por módulo</div>
+      <h2 class="titulo">Cómo se clasificaron las entrevistas</h2>
+      <p class="bajada">Cada módulo de la entrevista tiene su diagrama. Las cintas recorren el diagrama de izquierda a
+        derecha y su grosor es la cantidad de entrevistas; el color es lo que propuso la IA, así que una cinta que llega a una
+        categoría de otro color fue movida por el equipo. Cada punto es una entrevista.</p>
 
-      <div class="filtros" id="cl-filtros">
+      <div class="filtros cl-filtros" id="cl-filtros">
         <select id="cl-municipio" aria-label="Municipio"><option value="">Todos los municipios</option></select>
         <select id="cl-revision" aria-label="Revisión">
           <option value="">Todas las entrevistas</option>
@@ -100,26 +102,17 @@
           <option value="baja">Confianza baja</option>
         </select>
         <span class="crece"></span>
-        <span class="cl-progreso" id="cl-progreso" aria-live="polite"></span>
-        <button class="btn chico oculto" id="cl-reclasificar"></button>
-        <button class="btn chico pri" id="cl-clasificar">Clasificar pendientes</button>
+        <button type="button" class="btn chico cl-pausa" id="cl-pausa" aria-pressed="false">⏸ Pausar animación</button>
       </div>
+      <p class="cl-ayuda">Los filtros valen para todos los módulos. Toque una cinta o una categoría para ver sus entrevistas.</p>
 
-      <div class="cl-leyenda" id="cl-leyenda"></div>
+      <div class="cl-modulos" id="cl-modulos"></div>
 
-      <div class="cl-red-caja" id="cl-red-caja">
-        <svg id="cl-red" role="group" aria-label="Diagrama de red de la clasificación"></svg>
-        <div class="cl-zoom oculto" id="cl-zoom" role="group" aria-label="Zoom del diagrama">
-          <button type="button" id="cl-zoom-mas" aria-label="Acercar" title="Acercar">+</button>
-          <button type="button" id="cl-zoom-menos" aria-label="Alejar" title="Alejar">−</button>
-          <button type="button" id="cl-zoom-reset" aria-label="Restablecer la vista" title="Restablecer la vista">⟲</button>
-        </div>
-        <div class="cl-tip oculto" id="cl-tip" role="tooltip"></div>
-      </div>
-      <p class="cl-ayuda" id="cl-ayuda"></p>
+      <!-- Entrevistas de lo elegido: se ubica debajo del módulo donde se tocó -->
+      <section class="cl-lista oculto" id="cl-lista" aria-live="polite"></section>
 
       <details class="cl-tabla-caja" id="cl-tabla-caja">
-        <summary>Ver como tabla</summary>
+        <summary id="cl-tabla-titulo">Ver como tabla</summary>
         <div style="overflow-x:auto"><table class="tabla" id="cl-tabla"></table></div>
       </details>
     </div>
@@ -160,8 +153,8 @@
 
 <div class="aviso-flotante" id="aviso"></div>
 
-<script src="/static/js/dibujo.js?v=20261028"></script>
-<script src="/static/js/panel.js?v=20261028"></script>
-<script src="/static/js/clasificacion.js?v=20261028"></script>
+<script src="/static/js/dibujo.js?v=20261030p"></script>
+<script src="/static/js/panel.js?v=20261030p"></script>
+<script src="/static/js/clasificacion.js?v=20261030p"></script>
 </body>
 </html>

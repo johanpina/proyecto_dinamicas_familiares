@@ -71,7 +71,19 @@ def respuestas_modulo(d: dict, datos: dict) -> list[dict]:
 
 
 def tiene_respuestas(d: dict, datos: dict) -> bool:
-    return any(r["respuesta"] for r in respuestas_modulo(d, datos))
+    if d.get("campos"):
+        return any(r["respuesta"] for r in respuestas_modulo(d, datos))
+    # Módulo sin reglas todavía: basta con saber si respondió algo de sus bloques.
+    # El bloque sale de la clave del campo (r3a → p3), que es igual en las dos formas.
+    crudas = (datos or {}).get("respuestas") or []
+    pares = crudas.items() if isinstance(crudas, dict) else (
+        (r.get("campo"), r.get("respuesta")) for r in crudas if isinstance(r, dict))
+    bloques = set(d.get("bloques", []))
+    for campo, respuesta in pares:
+        m = re.match(r"r(\d+)", str(campo or ""))
+        if m and f"p{m.group(1)}" in bloques and str(respuesta or "").strip():
+            return True
+    return False
 
 
 def huella(d: dict, datos: dict) -> str:

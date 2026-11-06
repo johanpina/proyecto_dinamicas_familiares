@@ -1,62 +1,71 @@
 /* ============================================================================
-   Panel — Clasificación de las entrevistas por dimensiones
+   Panel — Clasificación de las entrevistas por módulo
    ----------------------------------------------------------------------------
-   Diagrama de red en dos niveles:
-     1. Las dimensiones (módulos de la guía) alrededor del corpus.
-     2. Al tocar una: sus categorías, y alrededor de cada una un circulito por
-        entrevista. Los circulitos se arrastran a otra categoría para que el
-        equipo corrija la propuesta de la IA; un toque simple abre la ficha.
-   La tabla al pie muestra lo mismo sin depender del diagrama.
+   Todos los módulos de la entrevista en una sola pantalla, uno debajo del
+   otro, cada uno con su diagrama de Sankey:
+
+     con reglas:  Entrevistas → respondieron / no → confianza de la IA
+                  → propuesta de la IA → categoría final
+     sin reglas:  Entrevistas → respondieron / no → «sin reglas aún»
+
+   El color de cada cinta es la propuesta de la IA y se mantiene de punta a
+   punta; una cinta que llega a una categoría de otro color fue movida por el
+   equipo. Un punto por entrevista recorre su camino. La primera vez que un
+   módulo aparece en pantalla los contadores arrancan en cero y suben a medida
+   que llegan los puntos, hasta el valor final; después los puntos siguen
+   circulando (se puede pausar; nada se mueve si el sistema pide reducir el
+   movimiento). Al filtrar, cintas y números cambian de forma gradual.
+
+   Al tocar una cinta o una categoría se listan sus entrevistas debajo de ese
+   módulo; cada tarjeta se arrastra a una categoría de la columna final para
+   reclasificarla, o se toca para abrir su ficha.
    Usa api(), aviso(), esc(), $, $$ y verDetalle() de panel.js.
    ========================================================================== */
 
 const Clasificacion = (() => {
   const NS = "http://www.w3.org/2000/svg";
-  const R_PUNTO = 8, R_HUB = 32, UMBRAL_ARRASTRE = 6;
+  const ANCHO_NODO = 16, HUECO = 14, UMBRAL_ARRASTRE = 6, DURACION = 650;
+  const sinMovimiento = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  let info = null;          // respuesta de /api/dimensiones
-  let dim = null;           // dimensión abierta (nivel 2) o null (nivel 1)
-  let filas = [];           // entrevistas de la dimensión abierta
+  let info = null;          // /api/dimensiones: módulos, entrevistas y quién respondió cada módulo
+  const datos = {};         // clave del módulo → {filas} de los módulos con reglas
+  const diagramas = {};     // clave del módulo → diagrama dibujado
+  let dim = null, filas = [];   // módulo con el que se está trabajando (lista, ficha, mover, IA)
   let ia = {disponible:false, modelo:""};
-  let lienzo = {W:1000, H:680};
-  let hubs = [];            // posiciones de las categorías en el nivel 2
-  let corriendo = false;    // clasificación por lotes en curso
+  let corriendo = false;    // clasificación por lotes en curso: {clave, modo}
   let cargada = false;
-  let zoom = {k:1, x:0, y:0};   // vista del nivel 2: escala y desplazamiento (unidades del lienzo)
-  const ZOOM_MIN = 0.6, ZOOM_MAX = 4;
+  let seleccion = null;     // {dim, tipo:"enlace"|"nodo", clave}
+  let pausado = false;
+  try{ pausado = localStorage.getItem("uc_sankey_pausa") === "1"; }catch(e){}
 
   /* ------------------------------ utilidades ------------------------------ */
 
   function el(tag, attrs = {}, padre){
     const n = document.createElementNS(NS, tag);
-    for(const [k,v] of Object.entries(attrs)) if(v != null) n.setAttribute(k, v);
+    poner(n, attrs);
     if(padre) padre.appendChild(n);
     return n;
   }
-  function texto(padre, x, y, contenido, clase, extra = {}){
-    const t = el("text", {x, y, class:clase, ...extra}, padre);
-    t.textContent = contenido;
-    return t;
+  function poner(n, attrs){
+    for(const [k, v] of Object.entries(attrs)){
+      if(v == null) n.removeAttribute(k); else n.setAttribute(k, v);
+    }
   }
-  /* Corre una etiqueta lo necesario para que no se salga del lienzo */
-  function dentro(t, x){
-    const mitad = t.getComputedTextLength() / 2, m = 10;
-    const nx = Math.min(Math.max(x, m + mitad), lienzo.W - m - mitad);
-    if(nx !== x) t.setAttribute("x", nx.toFixed(1));
-  }
+  const dimDe = clave => info?.dimensiones.find(x => x.clave === clave);
+  const dimAbierta = () => dimDe(dim);
+  const plural = (n, s, p) => `${n} ${n === 1 ? s : (p || s + "s")}`;
+  const corto = nombre => nombre.split(" (")[0];          // «Cuidado indirecto (trabajo doméstico)» → «Cuidado indirecto»
+  const suave = t => t < .5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2;
 
-  /* Color fijo por posición de la categoría en su dimensión; «sin información» es neutra */
+  /* Color fijo por posición de la categoría en su módulo; «sin información» es neutra */
   function colorDe(d, clave){
-    if(!clave) return "none";
+    if(!clave || clave === "pend" || clave === "sin" || clave === "x") return "var(--borde-2)";
     if(clave === "sin_info") return "var(--cat-neutro)";
     const i = d.categorias.filter(c => c.clave !== "sin_info").findIndex(c => c.clave === clave);
     return `var(--cat-${Math.min(i + 1, 3)})`;
   }
-  const tintaSobre = clave => clave === "sin_info" ? "var(--texto)" : "#fff";
   const nombreCat = (d, clave) => (d.categorias.find(c => c.clave === clave) || {}).nombre || "Por clasificar";
-  const dimAbierta = () => info?.dimensiones.find(x => x.clave === dim);
 
-  /* Estado de revisión de cada entrevista, para los filtros, la leyenda y la tabla */
   function estadoDe(f){
     const c = f.clasificacion;
     if(!c) return "pendiente";
@@ -67,270 +76,743 @@ const Clasificacion = (() => {
   const ETIQUETA_ESTADO = {pendiente:"Por clasificar", ia:"Propuesta de la IA", equipo:"Revisada por el equipo",
                            movida:"Movida por el equipo"};
 
-  function filtradas(){
-    const m = $("#cl-municipio").value, r = $("#cl-revision").value, k = $("#cl-confianza").value;
-    return filas.filter(f => (!m || f.municipio === m) && (!r ||
+  /* Los filtros valen para todos los módulos */
+  const filtros = () => ({m: $("#cl-municipio").value, r: $("#cl-revision").value, k: $("#cl-confianza").value});
+  function filtrarFilas(lista){
+    const {m, r, k} = filtros();
+    return lista.filter(f => (!m || f.municipio === m) && (!r ||
       (r === "vieja" ? !!f.clasificacion?.desactualizada : estadoDe(f) === r)) &&
       (!k || f.clasificacion?.confianza === k));
   }
+  /* Entrevistas sin clasificación que entran al diagrama de un módulo: las que no
+     lo respondieron y, en los módulos sin reglas, todas. Los filtros de revisión y
+     de confianza las dejan por fuera porque no tienen esos datos. */
+  function filtrarSueltas(lista){
+    const {m, r, k} = filtros();
+    if(r || k) return [];
+    return lista.filter(f => !m || f.municipio === m);
+  }
 
-  function medirLienzo(){
-    const ancho = $("#cl-red-caja").clientWidth || 1000;
-    const antes = lienzo.W;
-    lienzo = ancho < 640 ? {W:600, H:860} : {W:1000, H:680};
-    if(lienzo.W !== antes) zoom = {k:1, x:0, y:0};      // cambió la forma del lienzo
-    $("#cl-red").setAttribute("viewBox", `0 0 ${lienzo.W} ${lienzo.H}`);
-    $("#cl-red").classList.toggle("angosto", ancho < 640);
+  function renglones(t, max){
+    const salida = []; let linea = "";
+    for(const p of t.split(" ")){
+      if(linea && (linea + " " + p).length > max){ salida.push(linea); linea = p; }
+      else linea = linea ? linea + " " + p : p;
+    }
+    if(linea) salida.push(linea);
+    return salida;
+  }
+  const coloresResueltos = {};
+  function colorReal(c){
+    if(!c.startsWith("var(")) return c;
+    if(!coloresResueltos[c]) coloresResueltos[c] =
+      getComputedStyle(document.body).getPropertyValue(c.slice(4, -1)).trim() || "#888";
+    return coloresResueltos[c];
   }
 
   /* --------------------------------- datos --------------------------------- */
 
-  async function cargarDimensiones(){
+  async function cargar(){
     info = await api("/dimensiones");
     ia = info.ia;
-  }
-  async function cargarFilas(){
-    const r = await api("/clasificaciones/" + dim);
-    filas = r.entrevistas; ia = r.ia;
-    const municipios = [...new Set(filas.map(f => f.municipio).filter(Boolean))].sort((a,b) => a.localeCompare(b, "es"));
+    const activas = info.dimensiones.filter(d => d.activa);
+    await Promise.all(activas.map(async d => {
+      const r = await api("/clasificaciones/" + d.clave);
+      datos[d.clave] = {filas: r.entrevistas};
+      ia = r.ia;
+    }));
+    trabajarEn(dim && datos[dim] ? dim : (activas[0]?.clave || null));
+    const municipios = [...new Set(info.entrevistas.map(f => f.municipio).filter(Boolean))].sort((a, b) => a.localeCompare(b, "es"));
     const sel = $("#cl-municipio"), antes = sel.value;
     sel.innerHTML = `<option value="">Todos los municipios</option>` +
       municipios.map(m => `<option value="${esc(m)}">${esc(m)}</option>`).join("");
     if(municipios.includes(antes)) sel.value = antes;
   }
-  function reemplazarFila(nueva){
-    const i = filas.findIndex(f => f.id === nueva.id);
-    if(i >= 0) filas[i] = nueva; else filas.push(nueva);
+  /* Fija el módulo con el que se trabaja: lo usan la lista, la ficha, mover y la IA */
+  function trabajarEn(clave){
+    dim = clave;
+    filas = clave && datos[clave] ? datos[clave].filas : [];
   }
-
-  /* ------------------------------- navegación ------------------------------- */
+  function reemplazarFila(nueva, clave = dim){
+    const lista = datos[clave]?.filas; if(!lista) return;
+    const i = lista.findIndex(f => f.id === nueva.id);
+    if(i >= 0) lista[i] = nueva; else lista.push(nueva);
+    if(clave === dim) filas = lista;
+  }
 
   async function abrir(){
     if(!cargada){ conectar(); cargada = true; }
     try{
-      await cargarDimensiones();
-      if(dim) await cargarFilas();
-      pintar();
+      await cargar();
+      pintar(true);
     }catch(e){ aviso(e.message); }
-  }
-  async function irA(clave){
-    dim = clave;
-    zoom = {k:1, x:0, y:0};
-    $("#cl-revision").value = ""; $("#cl-municipio").value = ""; $("#cl-confianza").value = "";
-    try{
-      if(dim) await cargarFilas(); else await cargarDimensiones();
-      pintar();
-    }catch(e){ aviso(e.message); }
+    arrancarParticulas();
   }
 
-  function pintar(){
-    medirLienzo();
-    ocultarTip();
-    const nivel2 = !!dim;
-    $("#cl-zoom").classList.toggle("oculto", !nivel2);
-    $("#cl-red").classList.toggle("navegable", nivel2);
-    $("#cl-filtros").classList.toggle("oculto", !nivel2);
-    const migas = $("#cl-migas");
-    migas.innerHTML = nivel2
-      ? `<button type="button" id="cl-volver">Dimensiones</button><span aria-hidden="true">›</span>${esc(dimAbierta().nombre)}`
-      : "Dimensiones";
-    if(nivel2) $("#cl-volver").onclick = () => irA(null);
-    if(nivel2) pintarDimension(); else pintarDimensiones();
-  }
+  /* ============================== motor del Sankey ==============================
+     columnas: [[{clave, etiqueta, n, color, punteado, minimo, destino, lado, maxCar, ids}]]
+     enlaces:  [{clave, de, a, n, color, ids, cambio, orden}]                      */
 
-  /* ------------------------ nivel 1: las dimensiones ------------------------ */
-
-  function pintarDimensiones(){
-    const {W, H} = lienzo, cx = W/2, cy = H/2;
-    const dims = info.dimensiones, total = info.total_entrevistas;
-    $("#cl-titulo").textContent = "Dimensiones de análisis";
-    $("#cl-bajada").textContent = "Cada círculo es un módulo de la entrevista. Toque uno con reglas para ver cómo quedaron clasificadas sus entrevistas.";
-    $("#cl-ayuda").textContent = "El tamaño de cada círculo crece con las entrevistas clasificadas; el anillo muestra cómo se reparten entre las categorías.";
-
-    const svg = $("#cl-red"); svg.innerHTML = "";
-    const capaEnlaces = el("g", {}, svg), capaNodos = el("g", {}, svg);
-    const rx = W * (W < 700 ? 0.33 : 0.34), ry = H * (W < 700 ? 0.34 : 0.33);
-
-    // El corpus en el centro
-    const centro = el("g", {}, capaNodos);
-    el("circle", {cx, cy, r:50, fill:"var(--superficie)", stroke:"var(--borde-2)", "stroke-width":1.5}, centro);
-    texto(centro, cx, cy - 4, String(total), "tx-n", {fill:"var(--texto)", style:"font-size:24px"});
-    texto(centro, cx, cy + 22, "entrevistas", "tx-s");
-
-    dims.forEach((d, i) => {
-      const a = -Math.PI/2 + i / dims.length * Math.PI * 2;
-      const x = cx + rx * Math.cos(a), y = cy + ry * Math.sin(a);
-      const n = d.conteo.clasificadas;
-      const r = d.activa ? 30 + 26 * Math.sqrt(n / Math.max(1, total)) : 24;
-      el("line", {x1:cx, y1:cy, x2:x, y2:y, class:"enlace" + (d.activa ? "" : " tenue")}, capaEnlaces);
-
-      const g = el("g", {class:"nodo" + (d.activa ? "" : " inactivo"), "data-dim":d.clave}, capaNodos);
-      if(d.activa){
-        g.setAttribute("tabindex", "0");
-        g.setAttribute("role", "button");
-        g.setAttribute("aria-label", `${d.nombre}: ${n} de ${d.conteo.elegibles} entrevistas clasificadas. Abrir.`);
-      }
-      el("circle", {cx:x, cy:y, r, fill:"var(--superficie)", class:"aro-foco",
-        stroke: d.activa ? "var(--texto)" : "var(--borde-2)", "stroke-width": d.activa ? 1.5 : 1.2,
-        "stroke-dasharray": d.activa ? null : "5 5"}, g);
-      if(d.activa){
-        anillo(g, d, x, y, r + 7);
-        texto(g, x, y, String(n), "tx-n", {fill:"var(--texto)"});
-      }
-      const abajo = y >= cy - 1;
-      const ty = abajo ? y + r + (d.activa ? 34 : 22) : y - r - (d.activa ? 30 : 18);
-      dentro(texto(g, x, ty, d.nombre, "tx"), x);
-      dentro(texto(g, x, ty + 21, d.activa ? `${n} de ${d.conteo.elegibles} clasificadas` : "Sin reglas aún", "tx-s"), x);
-    });
-
-    pintarLeyendaDimensiones();
-    pintarTablaDimensiones();
-  }
-
-  /* Anillo de la distribución por categoría alrededor del nodo de la dimensión */
-  function anillo(g, d, x, y, r){
-    const total = Object.values(d.conteo.por_categoria).reduce((a,b) => a+b, 0);
-    if(!total){
-      el("circle", {cx:x, cy:y, r, fill:"none", stroke:"var(--borde)", "stroke-width":6}, g);
-      return;
+  function disponer({columnas, enlaces, xs, arriba, alto}){
+    const total = Math.max(1, ...columnas.map(c => c.reduce((s, n) => s + n.n, 0)));
+    const masNodos = Math.max(...columnas.map(c => c.length));
+    // Cada nodo ocupa al menos el alto de su etiqueta, para que las categorías
+    // pequeñas no se monten una sobre otra. La escala se ajusta para que quepa.
+    const espacio = n => (renglones(n.etiqueta, n.maxCar || 30).length + 1) * 17 + 6;
+    const libre = alto - arriba - 12 - HUECO * (masNodos - 1);
+    let k = Math.max(0.3, libre / total);
+    for(let i = 0; i < 4; i++){
+      const extra = Math.max(...columnas.map(c => c.reduce((s, n) => s + Math.max(0, espacio(n) - Math.max(n.n * k, n.minimo || 0)), 0)));
+      k = Math.max(0.3, (libre - extra) / total);
     }
-    const hueco = 2 / r;     // 2px de superficie entre segmentos
-    let a0 = -Math.PI/2;
-    d.categorias.forEach(c => {
-      const v = d.conteo.por_categoria[c.clave] || 0;
-      if(!v) return;
-      const da = v / total * Math.PI * 2;
-      const ini = a0 + (v < total ? hueco/2 : 0), fin = a0 + da - (v < total ? hueco/2 : 0);
-      a0 += da;
-      if(v === total){
-        el("circle", {cx:x, cy:y, r, fill:"none", stroke:colorDe(d, c.clave), "stroke-width":6}, g);
-        return;
-      }
-      const p = t => `${(x + r*Math.cos(t)).toFixed(1)} ${(y + r*Math.sin(t)).toFixed(1)}`;
-      el("path", {d:`M ${p(ini)} A ${r} ${r} 0 ${fin - ini > Math.PI ? 1 : 0} 1 ${p(fin)}`,
-        fill:"none", stroke:colorDe(d, c.clave), "stroke-width":6, "stroke-linecap":"butt"}, g);
+    const nodos = {};
+    columnas.forEach((col, ci) => {
+      let y = arriba;
+      col.forEach((n, i) => {
+        const h = Math.max(n.n * k, n.minimo || 0), bloque = Math.max(h, espacio(n));
+        nodos[n.clave] = {...n, x: xs[ci], y: y + (bloque - h) / 2, h, col: ci, orden: i, sale: 0, entra: 0};
+        y += bloque + HUECO;
+      });
     });
-  }
-
-  /* En este nivel solo va lo común a todos los módulos; las categorías de cada
-     uno se explican al abrirlo */
-  function pintarLeyendaDimensiones(){
-    $("#cl-leyenda").innerHTML =
-      `<span>${muestraModulo()}Módulo con reglas: el anillo muestra el reparto entre sus categorías</span>` +
-      `<span>${muestraVacia()}Módulo sin reglas aún</span>`;
-  }
-
-  function pintarTablaDimensiones(){
-    $("#cl-tabla").innerHTML = `<thead><tr><th>Dimensión</th><th>Estado</th><th>Clasificadas</th>
-      <th>Revisadas por el equipo</th><th>Por categoría</th></tr></thead><tbody>` +
-      info.dimensiones.map(d => `<tr>
-        <td><b>${esc(d.nombre)}</b></td>
-        <td>${d.activa ? "Con reglas" : "Sin reglas aún"}</td>
-        <td>${d.activa ? `${d.conteo.clasificadas} de ${d.conteo.elegibles}` : "—"}</td>
-        <td>${d.activa ? d.conteo.revisadas : "—"}</td>
-        <td>${d.activa ? d.categorias.map(c => `${esc(c.nombre)}: ${d.conteo.por_categoria[c.clave] || 0}`).join(" · ") : "—"}</td>
-      </tr>`).join("") + `</tbody>`;
-  }
-
-  /* --------------------- nivel 2: categorías y entrevistas --------------------- */
-
-  function pintarDimension(){
-    const d = dimAbierta();
-    const {W, H} = lienzo, cx = W/2, cy = H/2;
-    const vista = filtradas();
-    $("#cl-titulo").textContent = d.nombre;
-    $("#cl-bajada").textContent = `Cada circulito es una entrevista, ubicada en la categoría que tiene hoy en esta dimensión. ` +
-      `Arrástrelo a otra categoría para corregirla o tóquelo para ver por qué quedó ahí.`;
-    $("#cl-ayuda").textContent = ia.disponible
-      ? `La IA (${ia.modelo}) propone y el equipo decide: una categoría puesta por el equipo no se cambia al volver a clasificar. `
-      : "La clasificación automática no está disponible: falta configurar OPENAI_API_KEY en el servidor. Igual puede ubicar las entrevistas a mano. ";
-    $("#cl-ayuda").textContent += "Para ver mejor: arrastre el fondo para moverse y acerque con los botones, Ctrl + rueda o pellizcando.";
-    pintarBoton();
-
-    // Grupos: las categorías de la dimensión y, si hay, las entrevistas por clasificar
-    const grupos = d.categorias.map(c => ({clave:c.clave, nombre:c.nombre}));
-    if(vista.some(f => !f.clasificacion)) grupos.push({clave:null, nombre:"Por clasificar"});
-    const rx = W * (W < 700 ? 0.27 : 0.30), ry = H * (W < 700 ? 0.31 : 0.30);
-    hubs = grupos.map((gr, i) => {
-      const a = -Math.PI/2 + i / grupos.length * Math.PI * 2;
-      return {...gr, x: cx + rx*Math.cos(a), y: cy + ry*Math.sin(a), a};
+    const lista = enlaces.filter(e => e.n > 0 && nodos[e.de] && nodos[e.a]).map(e => ({...e, w: e.n * k}));
+    // Dentro de cada nodo las cintas se apilan por destino (u origen) y luego por
+    // propuesta de la IA, para que crucen lo menos posible
+    [...lista].sort((a, b) => nodos[a.a].orden - nodos[b.a].orden || a.orden - b.orden).forEach(e => {
+      const n = nodos[e.de]; e.sy = n.y + n.sale; n.sale += e.w;
     });
+    [...lista].sort((a, b) => nodos[a.de].orden - nodos[b.de].orden || a.orden - b.orden).forEach(e => {
+      const n = nodos[e.a]; e.ty = n.y + n.entra; n.entra += e.w;
+    });
+    const salida = {};
+    lista.forEach(e => { salida[e.clave] = {...e, x0: nodos[e.de].x + ANCHO_NODO, x1: nodos[e.a].x, col: nodos[e.de].col}; });
+    return {nodos, enlaces: salida};
+  }
 
-    const svg = $("#cl-red"); svg.innerHTML = "";
-    // Fondo que recibe el arrastre para desplazarse, y la vista que se acerca o aleja
-    el("rect", {x:-5000, y:-5000, width:10000, height:10000, fill:"transparent", class:"fondo"}, svg);
-    const capaVista = el("g", {id:"cl-vista"}, svg);
-    const capaEnlaces = el("g", {}, capaVista), capaHubs = el("g", {}, capaVista), capaPuntos = el("g", {}, capaVista);
+  function cinta(x0, sy, x1, ty, w){
+    const xm = (x0 + x1) / 2;
+    return `M${x0},${sy}C${xm},${sy} ${xm},${ty} ${x1},${ty}L${x1},${ty + w}C${xm},${ty + w} ${xm},${sy + w} ${x0},${sy + w}Z`;
+  }
+  /* La cinta pintada solo hasta la fracción f (0–1) de su largo: se corta la curva
+     con de Casteljau, así el borde de la pintura sigue exactamente la curva */
+  function cintaParcial(e, w, f){
+    if(f >= .999) return cinta(e.x0, e.sy, e.x1, e.ty, w);
+    const xm = (e.x0 + e.x1) / 2;
+    const corte = (y0, y1) => {
+      const P = [[e.x0, y0], [xm, y0], [xm, y1], [e.x1, y1]];
+      const l = (a, b) => [a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f];
+      const a = l(P[0], P[1]), b = l(P[1], P[2]), c = l(P[2], P[3]), ab = l(a, b), bc = l(b, c);
+      return [P[0], a, ab, l(ab, bc)];
+    };
+    const [A0, A1, A2, A3] = corte(e.sy, e.ty), [B0, B1, B2, B3] = corte(e.sy + w, e.ty + w);
+    const p = q => `${q[0].toFixed(1)},${q[1].toFixed(1)}`;
+    return `M${p(A0)}C${p(A1)} ${p(A2)} ${p(A3)}L${p(B3)}C${p(B2)} ${p(B1)} ${p(B0)}Z`;
+  }
 
-    // La dimensión en el centro
-    el("circle", {cx, cy, r:42, fill:"var(--superficie)", stroke:"var(--texto)", "stroke-width":1.5}, capaHubs);
-    texto(capaHubs, cx, cy, String(vista.length), "tx-n", {fill:"var(--texto)", style:"font-size:21px"});
+  /* Punto de la curva a una altura relativa `u` (0–1) del grosor de la cinta, en t (0–1) */
+  function puntoEn(e, u, t){
+    const y0 = e.sy + u * e.w, y1 = e.ty + u * e.w, xm = (e.x0 + e.x1) / 2, s = 1 - t;
+    return {x: s*s*s*e.x0 + 3*s*s*t*xm + 3*s*t*t*xm + t*t*t*e.x1, y: s*s*s*y0 + 3*s*s*t*y0 + 3*s*t*t*y1 + t*t*t*y1};
+  }
 
-    hubs.forEach(h => {
-      const miembros = vista.filter(f => (f.clasificacion?.categoria || null) === h.clave)
-        .sort((a,b) => a.codigo.localeCompare(b.codigo, "es"));
-      h.n = miembros.length;
-      el("line", {x1:cx, y1:cy, x2:h.x, y2:h.y, class:"enlace"}, capaEnlaces);
+  /* Interpola dos geometrías; también los números, para que cambien de a poco */
+  function mezclar(a, b, t){
+    const lerp = (p, q) => p + (q - p) * t;
+    const nodos = {}, enlaces = {};
+    for(const k of new Set([...Object.keys(a.nodos), ...Object.keys(b.nodos)])){
+      const p = a.nodos[k], q = b.nodos[k], base = q || p;
+      nodos[k] = {...base, y: lerp(p ? p.y : q.y + q.h / 2, q ? q.y : p.y + p.h / 2), h: lerp(p ? p.h : 0, q ? q.h : 0),
+        mostrar: Math.round(lerp(p ? (p.mostrar ?? p.n) : 0, q ? q.n : 0)), opacidad: p && q ? 1 : (q ? t : 1 - t)};
+    }
+    for(const k of new Set([...Object.keys(a.enlaces), ...Object.keys(b.enlaces)])){
+      const p = a.enlaces[k], q = b.enlaces[k], base = q || p;
+      enlaces[k] = {...base, x0: lerp((p || q).x0, (q || p).x0), x1: lerp((p || q).x1, (q || p).x1),
+        sy: lerp(p ? p.sy : q.sy + q.w / 2, q ? q.sy : p.sy + p.w / 2),
+        ty: lerp(p ? p.ty : q.ty + q.w / 2, q ? q.ty : p.ty + p.w / 2), w: lerp(p ? p.w : 0, q ? q.w : 0)};
+    }
+    return {...b, nodos, enlaces};
+  }
 
-      const g = el("g", {class:"hub", "data-hub":h.clave ?? ""}, capaHubs);
-      el("circle", {cx:h.x, cy:h.y, r:R_HUB, class:"aro-foco",
-        fill: h.clave ? colorDe(d, h.clave) : "var(--superficie)",
-        stroke: h.clave ? "var(--superficie-2)" : "var(--borde-2)", "stroke-width":2,
-        "stroke-dasharray": h.clave ? null : "5 5"}, g);
-      texto(g, h.x, h.y, String(h.n), "tx-n", {fill: h.clave ? tintaSobre(h.clave) : "var(--texto)"});
+  /* ------------------------------- un diagrama -------------------------------
+     Cada módulo tiene el suyo: su SVG, su geometría, sus puntos y su llenado.
+     Los elementos se crean una vez y luego solo se actualizan, así los cambios
+     de opacidad al elegir o al pasar el mouse se animan con CSS. */
 
-      // Los circulitos en espiral (filotaxis) alrededor de su categoría
-      const r0 = R_HUB + 18, rmax = Math.min(W < 700 ? 150 : 140, Math.max(r0 + 20, 22 + 15 * Math.sqrt(h.n)));
-      const paso = Math.max(9.5, Math.min(15.5, (rmax - r0) / Math.sqrt(Math.max(1, h.n - 1))));
-      h.radio = r0 + paso * Math.sqrt(Math.max(0, h.n - 1)) + R_PUNTO;
-      miembros.forEach((f, i) => {
-        const rr = r0 + paso * Math.sqrt(i), ang = i * 2.39996 + h.a;
-        f._x = h.x + rr * Math.cos(ang); f._y = h.y + rr * Math.sin(ang);
-        el("line", {x1:h.x, y1:h.y, x2:f._x, y2:f._y, class:"enlace tenue"}, capaEnlaces);
-        pintarPunto(capaPuntos, d, f);
+  function crearDiagrama(clave, svg){
+    const D = {clave, svg, geo: null, raf: 0, vivos: {flujos: new Map(), nodos: new Map()},
+      particulas: [], recorridos: new Map(), llenado: null, visto: false, visible: false,
+      lienzo: {W:1000, H:600, angosto:false}};
+    // Si va a haber llenado, el diagrama nace vacío y así espera hasta aparecer en pantalla
+    if(!sinMovimiento() && !pausado) D.llenado = {cuenta: {}, entran: {}, frente: {}, pendientes: 0, esperando: true};
+    const capas = {titulos: el("g", {}, svg), flujos: el("g", {}, svg),
+      particulas: el("g", {class:"cl-particulas", "aria-hidden":"true"}, svg), nodos: el("g", {}, svg)};
+
+    D.dibujar = geo => {
+      const {W, H} = D.lienzo;
+      poner(svg, {viewBox: `0 0 ${W} ${H}`});
+      svg.classList.toggle("angosto", D.lienzo.angosto);
+      capas.titulos.replaceChildren();
+      (geo.titulos || []).forEach(t => {
+        el("text", {x:t.x, y:22, class:"cl-col", "text-anchor":t.ancla}, capas.titulos).textContent = t.texto;
       });
 
-      // Nombre de la categoría por fuera del grupo, del lado opuesto al centro
-      const fuera = Math.sin(h.a) >= -0.2;    // abajo o a los lados → debajo
-      const ty = fuera ? h.y + h.radio + 22 : h.y - h.radio - 26;
-      dentro(texto(g, h.x, ty, h.nombre, "tx"), h.x);
-      dentro(texto(g, h.x, ty + 21, `${h.n} entrevista${h.n === 1 ? "" : "s"}`, "tx-s"), h.x);
-    });
+      const suya = seleccion?.dim === clave ? seleccion : null;
+      const elegidos = idsElegidos(D);
+      const vistos = new Set();
+      for(const [k, e] of Object.entries(geo.enlaces)){
+        vistos.add(k);
+        let p = D.vivos.flujos.get(k);
+        if(!p){ p = el("path", {"data-enlace": k, tabindex: 0, role: "button"}, capas.flujos); D.vivos.flujos.set(k, p); }
+        const marcado = suya && (suya.tipo === "enlace" ? suya.clave === k : e.ids.some(id => elegidos.has(id)));
+        poner(p, {d: D.trazo(k, e), fill: e.color,
+          "aria-label": `${e.textoDe} → ${e.textoA}: ${plural(e.n, "entrevista")}. Ver la lista.`});
+        p.setAttribute("class", "cl-flujo" + (e.cambio ? " cambio" : "") + (suya ? (marcado ? " elegido" : " tenue") : ""));
+      }
+      for(const [k, p] of D.vivos.flujos) if(!vistos.has(k)){ p.remove(); D.vivos.flujos.delete(k); }
+      svg.classList.toggle("llenando", !!D.llenado);
 
-    aplicarZoom();
-    pintarLeyendaDimension(d);
-    pintarTablaDimension(d, vista);
+      const vistosN = new Set();
+      for(const [k, n] of Object.entries(geo.nodos)){
+        if(n.h < 0.05 && !n.minimo && (n.opacidad ?? 1) <= 0) continue;
+        vistosN.add(k);
+        let g = D.vivos.nodos.get(k);
+        if(!g){
+          g = el("g", {"data-nodo": k}, capas.nodos);
+          el("rect", {class:"cl-barra", rx:3, width:ANCHO_NODO}, g);
+          el("text", {class:"cl-etiqueta"}, g);
+          D.vivos.nodos.set(k, g);
+        }
+        const elegido = suya?.tipo === "nodo" && suya.clave === k;
+        g.classList.toggle("destino", !!n.destino);
+        g.classList.toggle("elegido", elegido);
+        g.classList.add("cl-nodo");
+        poner(g, {"data-destino": n.destino || null, opacity: D.opacidadNodo(k, n),
+          tabindex: n.n ? 0 : null, role: n.n ? "button" : null,
+          "aria-label": n.n ? `${n.etiqueta}: ${plural(n.n, "entrevista")}. Ver la lista.` : null});
+        const alto = Math.max(n.h, n.minimo || 0);
+        const hb = D.altoBarra(k, n);
+        poner(g.firstChild, {x: n.x, y: (n.y + (alto - hb) / 2).toFixed(1), height: hb.toFixed(1),
+          fill: n.punteado ? "var(--superficie)" : n.color,
+          stroke: n.punteado ? "var(--suave)" : null, "stroke-dasharray": n.punteado ? "4 3" : null});
+        const izq = n.lado === "izq", lx = izq ? n.x - 9 : n.x + ANCHO_NODO + 9;
+        const lineas = renglones(n.etiqueta, n.maxCar || 30);
+        const cy = n.y + alto / 2 - ((lineas.length + 1) * 17) / 2 + 13;
+        const t = g.lastChild;
+        poner(t, {x: lx, y: cy.toFixed(1), "text-anchor": izq ? "end" : "start"});
+        const firma = lineas.join("|");
+        if(t.dataset.firma !== firma){
+          t.dataset.firma = firma;
+          t.replaceChildren();
+          lineas.forEach((l, i) => { el("tspan", {x: lx, dy: i ? 17 : 0}, t).textContent = l; });
+          g._cuenta = el("tspan", {x: lx, dy: 17, class: "cl-cuenta"}, t);
+        }else t.querySelectorAll("tspan").forEach(s => s.setAttribute("x", lx));
+        D.ponerCuenta(k, n);
+      }
+      for(const [k, g] of D.vivos.nodos) if(!vistosN.has(k)){ g.remove(); D.vivos.nodos.delete(k); }
+    };
+
+    /* Durante el llenado cada cinta se pinta de izquierda a derecha hasta donde va el
+       punto más adelantado, y se ensancha desde su centro con cada entrevista que entra */
+    D.trazo = (k, e) => {
+      if(!D.llenado) return cinta(e.x0, e.sy, e.x1, e.ty, Math.max(0, e.w));
+      const entran = D.llenado.entran[k] || 0;
+      if(!entran) return "";
+      // El grosor crece desde el centro de la cinta hacia sus dos bordes
+      const w = Math.max(.8, e.w * entran / Math.max(1, e.n)), m = (e.w - w) / 2;
+      return cintaParcial({...e, sy: e.sy + m, ty: e.ty + m}, w, D.llenado.frente[k] || 0);
+    };
+    /* Las barras crecen desde su centro con los puntos que llegan (en la primera columna, con los que salen) */
+    D.altoBarra = (k, n) => {
+      const alto = Math.max(n.h, n.minimo || 0);
+      if(!D.llenado || !n.n) return alto;
+      return alto * Math.min(1, (D.llenado.cuenta[k] || 0) / n.n);
+    };
+    /* Mientras se llena, un nodo aparece cuando le llega (o le sale) el primer punto */
+    D.opacidadNodo = (k, n) => {
+      if(D.llenado) return (D.llenado.cuenta[k] || 0) > 0 ? null : "0";
+      return (n.opacidad ?? 1) < 1 ? n.opacidad.toFixed(2) : null;
+    };
+    D.pintarLlenado = () => {
+      const geo = D.geo;
+      for(const [k, p] of D.vivos.flujos){ const e = geo.enlaces[k]; if(e) p.setAttribute("d", D.trazo(k, e)); }
+      for(const [k, g] of D.vivos.nodos){
+        const n = geo.nodos[k]; if(!n) continue;
+        // La barra también crece desde su centro
+        const alto = Math.max(n.h, n.minimo || 0), hb = D.altoBarra(k, n);
+        g.firstChild.setAttribute("y", (n.y + (alto - hb) / 2).toFixed(1));
+        g.firstChild.setAttribute("height", hb.toFixed(1));
+        const o = D.opacidadNodo(k, n); if(o == null) g.removeAttribute("opacity"); else g.setAttribute("opacity", o);
+      }
+    };
+
+    /* Número que se ve en cada nodo: durante el llenado, los puntos que ya llegaron */
+    D.ponerCuenta = (k, n) => {
+      const g = D.vivos.nodos.get(k); if(!g?._cuenta || !n) return;
+      const valor = D.llenado ? (D.llenado.cuenta[k] || 0) : (n.mostrar ?? n.n);
+      const txt = String(valor);
+      if(g._cuenta.textContent !== txt) g._cuenta.textContent = txt;
+    };
+
+    D.animarHacia = geo => {
+      cancelAnimationFrame(D.raf);
+      const previa = D.geo;
+      if(!previa || previa.forma !== geo.forma || sinMovimiento()){ D.geo = geo; D.dibujar(geo); return; }
+      const t0 = performance.now();
+      const paso = ahora => {
+        const t = Math.min(1, Math.max(0, (ahora - t0) / DURACION));
+        D.geo = t < 1 ? mezclar(previa, geo, suave(t)) : geo;
+        D.dibujar(D.geo);
+        if(t < 1) D.raf = requestAnimationFrame(paso);
+      };
+      D.raf = requestAnimationFrame(paso);
+    };
+
+    /* Un punto por entrevista, con su recorrido (las cintas que atraviesa, en orden) */
+    D.prepararParticulas = ids => {
+      const ruta = {};
+      for(const [k, e] of Object.entries(D.geo.enlaces)) for(const id of e.ids) (ruta[id] = ruta[id] || []).push([e.col, k]);
+      D.particulas = [];
+      for(const id of ids){
+        const tramos = (ruta[id] || []).sort((a, b) => a[0] - b[0]).map(x => x[1]);
+        if(!tramos.length) continue;
+        let p = D.recorridos.get(id);
+        if(!p){
+          // Arranca en un lugar al azar de su recorrido: desde el primer cuadro hay movimiento
+          p = {id, u: .12 + Math.random() * .76, tramo: Math.floor(Math.random() * tramos.length), t: Math.random(),
+               espera: Math.random() < .15 ? Math.random() * 2 : 0, velocidad: 1 / (1.7 + Math.random() * 1.1)};
+          D.recorridos.set(id, p);
+        }
+        p.tramos = tramos;
+        if(p.tramo >= tramos.length){ p.tramo = 0; p.t = 0; }
+        D.particulas.push(p);
+      }
+      const capa = capas.particulas, r = D.lienzo.angosto ? 5 : 4;
+      while(capa.childElementCount < D.particulas.length) el("circle", {}, capa);
+      while(capa.childElementCount > D.particulas.length) capa.lastChild.remove();
+      [...capa.children].forEach(c => c.setAttribute("r", r));
+      if(D.llenado) D.llenado.pendientes = D.particulas.filter(p => p.llenando).length;
+    };
+
+    /* Llenado: los puntos salen escalonados desde «Entrevistas» y cada nodo cuenta
+       los que le van llegando, hasta su valor final. Después siguen circulando. */
+    D.empezarLlenado = () => {
+      if(sinMovimiento() || pausado || !D.geo || !D.particulas.length){ if(D.llenado) terminarLlenado(); return; }
+      const N = D.particulas.length;
+      D.particulas.forEach((p, i) => {
+        p.tramo = 0; p.t = 0; p.llenando = true; p.salio = false;
+        p.espera = (i / N) * 2.6 + Math.random() * .3;
+        p.velocidad = 1 / (.7 + Math.random() * .35);
+      });
+      D.llenado = {cuenta: {}, entran: {}, frente: {}, pendientes: N, esperando: false};
+      D.dibujar(D.geo);
+    };
+    const sumar = k => {
+      D.llenado.cuenta[k] = (D.llenado.cuenta[k] || 0) + 1;
+      D.ponerCuenta(k, D.geo.nodos[k]);
+      const g = D.vivos.nodos.get(k);
+      if(g){ g.classList.remove("pulso"); void g.getBBox(); g.classList.add("pulso"); }
+    };
+    const terminarLlenado = () => {
+      D.llenado = null;
+      D.dibujar(D.geo);
+    };
+    const entra = k => { D.llenado.entran[k] = (D.llenado.entran[k] || 0) + 1; };
+
+    D.moverParticulas = dt => {
+      const capa = capas.particulas, geo = D.geo; if(!geo) return;
+      if(D.llenado?.esperando){ [...capa.children].forEach(c => c.setAttribute("opacity", "0")); return; }
+      const suya = seleccion?.dim === clave, elegidos = suya ? idsElegidos(D) : null;
+      D.particulas.forEach((p, i) => {
+        const c = capa.children[i]; if(!c) return;
+        if(dt){
+          if(p.espera > 0){
+            p.espera -= dt;
+            // Al salir, el punto ya cuenta en «Entrevistas»
+            if(p.espera <= 0 && p.llenando && !p.salio && D.llenado){
+              p.salio = true;
+              const e0 = geo.enlaces[p.tramos[0]]; if(e0){ sumar(e0.de); entra(p.tramos[0]); }
+            }
+          }else{
+            p.t += dt * p.velocidad;
+            if(p.t >= 1){
+              const e = geo.enlaces[p.tramos[p.tramo]];
+              if(p.llenando && D.llenado && e){
+                sumar(e.a); D.llenado.frente[p.tramos[p.tramo]] = 1;
+                if(p.tramo + 1 < p.tramos.length) entra(p.tramos[p.tramo + 1]);
+              }
+              p.t = 0; p.tramo++;
+              if(p.tramo >= p.tramos.length){
+                p.tramo = 0; p.espera = 1 + Math.random() * 4;
+                if(p.llenando){
+                  p.llenando = false; p.velocidad = 1 / (1.7 + Math.random() * 1.1);
+                  if(D.llenado && --D.llenado.pendientes <= 0) terminarLlenado();
+                }
+              }
+            }
+          }
+        }
+        const e = geo.enlaces[p.tramos[p.tramo]];
+        if(p.llenando && D.llenado && p.espera <= 0 && e){
+          const k = p.tramos[p.tramo];
+          if((D.llenado.frente[k] || 0) < p.t) D.llenado.frente[k] = p.t;
+        }
+        if(!e || p.espera > 0 || e.w < .5){ c.setAttribute("opacity", "0"); return; }
+        // Mientras se llena, el punto viaja dentro de la franja ya pintada (centrada)
+        let via = e;
+        if(D.llenado){
+          const ancho = Math.max(.8, e.w * (D.llenado.entran[p.tramos[p.tramo]] || 1) / Math.max(1, e.n)), m = (e.w - ancho) / 2;
+          via = {...e, sy: e.sy + m, ty: e.ty + m, w: ancho};
+        }
+        const {x, y} = puntoEn(via, p.u, p.t);
+        let a = .9;
+        if(p.tramo === 0 && p.t < .15 && !p.llenando) a *= p.t / .15;
+        if(p.tramo === p.tramos.length - 1 && p.t > .8 && !p.llenando) a *= (1 - p.t) / .2;
+        if(suya && !elegidos.has(p.id)) a *= .15;
+        c.setAttribute("cx", x.toFixed(1)); c.setAttribute("cy", y.toFixed(1));
+        c.setAttribute("fill", colorReal(e.colorPunto || e.color)); c.setAttribute("opacity", a.toFixed(2));
+      });
+      if(dt && D.llenado) D.pintarLlenado();
+    };
+    /* Sin animación: los números quedan en su valor final */
+    D.detener = () => { if(D.llenado) terminarLlenado(); D.particulas.forEach(p => { p.llenando = false; }); D.moverParticulas(0); };
+    return D;
   }
 
-  function pintarPunto(capa, d, f){
-    const c = f.clasificacion, estado = estadoDe(f);
-    const g = el("g", {class:"punto", "data-id":f.id, tabindex:0, role:"button",
-      style:`transform:translate(${f._x.toFixed(1)}px,${f._y.toFixed(1)}px)`,
-      "aria-label":`${f.codigo}, ${f.municipio || "sin municipio"}: ${c ? nombreCat(d, c.categoria) : "por clasificar"}, ${ETIQUETA_ESTADO[estado].toLowerCase()}. Abrir ficha.`}, capa);
-    el("circle", {r:13, fill:"transparent", class:"golpe", stroke:"none"}, g);      // área de toque de 26px
-    if(c?.desactualizada)
-      el("circle", {r:R_PUNTO + 4.5, fill:"none", stroke:"var(--estado-aviso)", "stroke-width":2, "stroke-dasharray":"3 2.5"}, g);
-    if(!c){
-      el("circle", {r:R_PUNTO - 1, fill:"var(--superficie)", stroke:"var(--suave)", "stroke-width":1.5}, g);
+  /* ----------------------- la geometría de cada módulo ----------------------- */
+
+  const CONFIANZAS = [["alta","Alta"], ["media","Media"], ["baja","Baja"], ["sin","Sin IA"]];
+
+  function rutaDe(f){
+    const c = f.clasificacion;
+    return {conf: c?.categoria_ia ? (c.confianza || "media") : "sin", ia: c?.categoria_ia || "sin", fin: c?.categoria || "pend"};
+  }
+
+  /* Geometría del módulo y la lista de entrevistas (ids) que recorren su diagrama */
+  function geometriaDe(d, angosto){
+    const W = angosto ? 600 : 1000, H = angosto ? 720 : 600;
+    const base = info.entrevistas;
+    const cats = d.categorias.map(c => c.clave);
+    const ordenIA = k => k === "x" ? -1 : (k === "sin" ? cats.length : cats.indexOf(k));
+    const cuenta = {}, cintas = {};
+    const sumar = (nodo, id) => (cuenta[nodo] = cuenta[nodo] || []).push(id);
+    const tramo = (de, a, iaK, id, extra = {}) => {
+      const k = `${de}>${a}|${iaK}`;
+      (cintas[k] = cintas[k] || {clave: k, de, a, ia: iaK, ids: [], ...extra}).ids.push(id);
+    };
+    let con, sin;
+    if(d.activa){
+      con = filtrarFilas(datos[d.clave].filas);
+      const ids = new Set(datos[d.clave].filas.map(f => f.id));
+      sin = filtrarSueltas(base.filter(e => !ids.has(e.id)));
+      con.forEach(f => {
+        const r = rutaDe(f);
+        ["todas", "con", "conf:" + r.conf, "ia:" + r.ia, "fin:" + r.fin].forEach(n => sumar(n, f.id));
+        tramo("todas", "con", r.ia, f.id);
+        tramo("con", "conf:" + r.conf, r.ia, f.id);
+        tramo("conf:" + r.conf, "ia:" + r.ia, r.ia, f.id);
+        tramo("ia:" + r.ia, "fin:" + r.fin, r.ia, f.id, {fin: r.fin});
+      });
     }else{
-      const revisada = estado === "equipo" || estado === "movida";
-      el("circle", {r:R_PUNTO, fill:colorDe(d, c.categoria),
-        stroke: revisada ? "var(--texto)" : "var(--superficie-2)", "stroke-width": revisada ? 2.5 : 2}, g);
-      if(estado === "movida") el("circle", {r:2.6, fill:"var(--superficie)"}, g);
+      const respondieron = new Set(d.respondieron), sueltas = filtrarSueltas(base);
+      con = sueltas.filter(e => respondieron.has(e.id));
+      sin = sueltas.filter(e => !respondieron.has(e.id));
+      con.forEach(f => {
+        ["todas", "con", "reglas"].forEach(n => sumar(n, f.id));
+        tramo("todas", "con", "x", f.id); tramo("con", "reglas", "x", f.id);
+      });
     }
+    sin.forEach(f => { sumar("todas", f.id); sumar("sin", f.id); tramo("todas", "sin", "x", f.id); });
+
+    const n = k => (cuenta[k] || []).length;
+    const nombreNodo = k => {
+      if(k === "todas") return "Entrevistas";
+      if(k === "con") return "Respondieron el módulo";
+      if(k === "sin") return "No respondieron";
+      if(k === "reglas") return "Sin reglas de clasificación aún";
+      const [col, v] = k.split(":");
+      if(col === "conf") return CONFIANZAS.find(x => x[0] === v)[1];
+      if(v === "sin") return "Sin propuesta";
+      if(v === "pend") return "Por clasificar";
+      return corto(nombreCat(d, v));
+    };
+    const nodo = (k, extra = {}) => {
+      const v = k.includes(":") ? k.split(":")[1] : k;
+      return {clave: k, etiqueta: nombreNodo(k), n: n(k), ids: cuenta[k] || [], lado: "der",
+        color: k === "todas" ? "var(--texto)" : k === "con" || k.startsWith("conf") ? "var(--suave)"
+             : k === "sin" ? "var(--borde-2)" : colorDe(d, v),
+        punteado: (v === "sin" && k !== "sin") || v === "pend" || k === "reglas", ...extra};
+    };
+
+    let columnas, xs, titulos;
+    if(d.activa){
+      const fin = [...cats.map(k => nodo("fin:" + k, {destino: k, minimo: 4, maxCar: angosto ? 12 : 18})),
+                   ...(n("fin:pend") ? [nodo("fin:pend", {maxCar: angosto ? 12 : 18})] : [])];
+      const confs = CONFIANZAS.map(([k]) => nodo("conf:" + k, {maxCar: angosto ? 8 : 30})).filter(x => x.n);
+      const props = [...cats, "sin"].map(k => nodo("ia:" + k, {maxCar: angosto ? 10 : 24})).filter(x => x.n);
+      // En pantallas angostas se omiten las dos primeras columnas; el resumen da esos números
+      columnas = angosto ? [confs, props, fin]
+        : [[nodo("todas", {lado: "izq"})], [nodo("con", {maxCar: 14}), nodo("sin", {maxCar: 14})].filter(x => x.n), confs, props, fin];
+      xs = angosto ? [24, 230, 420] : [110, 280, 460, 640, 815];
+      titulos = angosto ? ["Confianza", "IA", "Final"] : ["Entrevistas", "Módulo", "Confianza IA", "Propuesta IA", "Categoría final"];
+    }else{
+      columnas = [[nodo("todas", {lado: angosto ? "der" : "izq"})],
+                  [nodo("con", {maxCar: 14}), nodo("sin", {maxCar: 14})].filter(x => x.n),
+                  n("reglas") ? [nodo("reglas", {maxCar: angosto ? 12 : 22})] : []];
+      xs = angosto ? [24, 230, 420] : [110, 400, 690];
+      titulos = angosto ? ["", "Módulo", "Clasificación"] : ["Entrevistas", "Módulo", "Clasificación"];
+    }
+
+    const texto = k => {
+      const nombre = nombreNodo(k), min = nombre.toLowerCase();
+      if(k.startsWith("conf:")) return k === "conf:sin" ? "Sin propuesta de la IA" : `Confianza ${min}`;
+      if(k.startsWith("ia:")) return `IA: ${min}`;
+      if(k.startsWith("fin:")) return `Final: ${min}`;
+      return nombre;
+    };
+    const quitar = angosto && d.activa;
+    const enlaces = Object.values(cintas)
+      .filter(c => !quitar || !(c.de === "todas" || c.de === "con"))
+      .map(c => ({...c, n: c.ids.length,
+        color: c.ia === "x" ? (c.a === "sin" ? "var(--borde)" : "var(--borde-2)") : colorDe(d, c.ia),
+        // Sobre las cintas grises, el punto va en un gris más claro para que se vea
+        colorPunto: c.ia === "x" || c.ia === "sin" ? "var(--suave)" : colorDe(d, c.ia),
+        orden: ordenIA(c.ia), cambio: !!c.fin && c.ia !== "sin" && c.fin !== "pend" && c.ia !== c.fin,
+        textoDe: texto(c.de),
+        textoA: texto(c.a) + (c.ia !== "x" && !c.a.startsWith("ia:") && !c.a.startsWith("fin:")
+          ? ` (IA: ${c.ia === "sin" ? "sin propuesta" : corto(nombreCat(d, c.ia)).toLowerCase()})` : "")}));
+
+    columnas = columnas.filter(c => c.length);
+    const geo = disponer({columnas, enlaces, xs, arriba: 46, alto: H});
+    geo.forma = (angosto ? "angosto:" : "ancho:") + d.clave;
+    geo.titulos = titulos.slice(0, columnas.length).map((t, i) => ({x: i === 0 && !angosto ? xs[0] + ANCHO_NODO : xs[i],
+      ancla: i === 0 && !angosto ? "end" : "start", texto: t}));
+    // El lienzo se ajusta al alto que de verdad ocupa el diagrama
+    const altoReal = Math.ceil(Math.max(120, ...Object.values(geo.nodos).map(x => x.y + Math.max(x.h, 40))) + 40);
+    return {geo, lienzo: {W, H: altoReal, angosto}, ids: [...con, ...sin].map(f => f.id),
+            resumen: {total: con.length + sin.length, con: con.length}};
   }
 
-  function pintarLeyendaDimension(d){
-    const cats = d.categorias.map(c => `<span>${muestra(colorDe(d, c.clave))}<b>${esc(c.nombre)}</b></span>`).join("");
-    $("#cl-leyenda").innerHTML = cats +
-      `<span>${muestraPunto("ia")}Propuesta de la IA</span>` +
-      `<span>${muestraPunto("equipo")}Revisada por el equipo</span>` +
-      `<span>${muestraPunto("movida")}Movida por el equipo</span>` +
-      `<span>${muestraPunto("vieja")}Desactualizada</span>` +
-      `<span>${muestraPunto("pendiente")}Por clasificar</span>`;
+  /* ---------------------------- la pantalla completa ---------------------------- */
+
+  function pintar(primeraVez){
+    ocultarTips();
+    for(const k in coloresResueltos) delete coloresResueltos[k];   // por si cambió el tema claro/oscuro
+    const caja = $("#cl-modulos");
+    if(!info) return;
+    // Las secciones se crean una vez; después solo se actualizan
+    if(primeraVez || caja.childElementCount !== info.dimensiones.length){
+      Object.values(diagramas).forEach(D => observador.unobserve(D.seccion));
+      Object.keys(diagramas).forEach(k => delete diagramas[k]);
+      $("#cl-modulos").after($("#cl-lista"));
+      caja.innerHTML = info.dimensiones.map((d, i) => `
+        <section class="cl-modulo${d.activa ? "" : " sin-reglas"}" data-dim="${esc(d.clave)}" aria-labelledby="cl-mod-${esc(d.clave)}">
+          <div class="cl-mod-cab">
+            <div class="cl-mod-titulo">
+              <div class="cl-mod-gorro"><span class="cl-mod-num">Módulo ${i + 1} de ${info.dimensiones.length}</span>
+                <span class="cl-mod-estado">${d.activa ? "Con reglas de clasificación" : "Sin reglas aún"}</span></div>
+              <h3 id="cl-mod-${esc(d.clave)}">${esc(d.nombre)}</h3>
+              <p class="cl-mod-resumen"></p>
+            </div>
+            ${d.activa ? `<div class="cl-mod-acciones">
+              <span class="cl-progreso" aria-live="polite"></span>
+              <button class="btn chico oculto" data-accion="reclasificar"></button>
+              <button class="btn chico pri" data-accion="clasificar"></button>
+            </div>` : ""}
+          </div>
+          ${d.activa ? `<div class="cl-leyenda">${d.categorias.map(c =>
+            `<span>${muestraFlujo(colorDe(d, c.clave))}<b>${esc(c.nombre)}</b></span>`).join("")}</div>` : ""}
+          <div class="cl-red-caja">
+            <svg class="cl-red" role="group" aria-label="Diagrama de Sankey del módulo ${esc(d.nombre)}"></svg>
+            <div class="cl-tip oculto" role="tooltip"></div>
+          </div>
+          <div class="cl-lista-hueco"></div>
+        </section>`).join("");
+      info.dimensiones.forEach(d => {
+        const sec = caja.querySelector(`[data-dim="${CSS.escape(d.clave)}"]`);
+        const D = crearDiagrama(d.clave, sec.querySelector(".cl-red"));
+        D.seccion = sec;
+        diagramas[d.clave] = D;
+        observador.observe(sec);
+      });
+    }
+    const ancho = caja.querySelector(".cl-red-caja")?.clientWidth || 1000, angosto = ancho < 640;
+    info.dimensiones.forEach(d => {
+      const D = diagramas[d.clave];
+      const {geo, lienzo, ids, resumen} = geometriaDe(d, angosto);
+      if(D.geo && D.geo.forma !== geo.forma) D.geo = null;
+      D.lienzo = lienzo;
+      if(seleccion?.dim === d.clave && !(seleccion.tipo === "enlace" ? geo.enlaces[seleccion.clave] : geo.nodos[seleccion.clave]?.n)) seleccion = null;
+      D.animarHacia(geo);
+      D.prepararParticulas(ids);
+      D.moverParticulas(0);
+      pintarResumen(d, D.seccion, resumen, angosto);
+      if(d.activa) pintarBotones(d.clave);
+    });
+    $("#cl-pausa").classList.toggle("oculto", sinMovimiento());
+    pintarPausa();
+    pintarLista();
+    pintarTabla();
   }
 
-  function pintarTablaDimension(d, vista){
+  function pintarResumen(d, sec, r, angosto){
+    const partes = [`${r.con} de ${r.total} entrevistas respondieron`,
+                    `bloque${d.bloques.length > 1 ? "s" : ""} ${d.bloques.join(", ")} de la guía`];
+    if(d.activa){
+      const fs = filtrarFilas(datos[d.clave].filas);
+      partes.push(`${fs.filter(f => f.clasificacion).length} clasificadas`,
+                  `${fs.filter(f => f.clasificacion?.categoria_final).length} revisadas por el equipo`);
+    }
+    sec.querySelector(".cl-mod-resumen").textContent = partes.join(" · ");
+  }
+
+  /* Cuando un módulo entra en pantalla por primera vez, arranca su llenado */
+  const observador = new IntersectionObserver(entradas => {
+    entradas.forEach(en => {
+      const D = diagramas[en.target.dataset.dim]; if(!D) return;
+      D.visible = en.isIntersecting;
+      if(en.isIntersecting && !D.visto){ D.visto = true; D.empezarLlenado(); }
+    });
+  }, {threshold: .2});
+
+  /* --------------------------------- partículas --------------------------------- */
+
+  let rafParticulas = 0, ultimo = 0;
+  function arrancarParticulas(){
+    cancelAnimationFrame(rafParticulas);
+    if(pausado || sinMovimiento()){ Object.values(diagramas).forEach(D => D.detener()); return; }
+    ultimo = performance.now();
+    const paso = ahora => {
+      if($("#vista-clasificacion").classList.contains("oculto")) return;     // se reanuda al volver
+      const dt = Math.min(.1, Math.max(0, (ahora - ultimo) / 1000)); ultimo = ahora;
+      // Solo se mueven los módulos que están a la vista
+      Object.values(diagramas).forEach(D => { if(D.visible) D.moverParticulas(dt); });
+      rafParticulas = requestAnimationFrame(paso);
+    };
+    rafParticulas = requestAnimationFrame(paso);
+  }
+  function pintarPausa(){
+    const b = $("#cl-pausa");
+    b.textContent = pausado ? "▶ Animar" : "⏸ Pausar animación";
+    b.setAttribute("aria-pressed", String(pausado));
+  }
+  function alternarPausa(){
+    pausado = !pausado;
+    try{ localStorage.setItem("uc_sankey_pausa", pausado ? "1" : "0"); }catch(e){}
+    pintarPausa();
+    arrancarParticulas();
+  }
+
+  /* ------------------ lista de entrevistas de lo elegido ------------------ */
+
+  function idsElegidos(D){
+    if(!seleccion || !D?.geo || seleccion.dim !== D.clave) return new Set();
+    const x = seleccion.tipo === "enlace" ? D.geo.enlaces[seleccion.clave] : D.geo.nodos[seleccion.clave];
+    return new Set(x?.ids || []);
+  }
+
+  /* La lista aparece debajo del diagrama del módulo donde se eligió */
+  function pintarLista(){
+    const caja = $("#cl-lista");
+    if(!seleccion){ caja.classList.add("oculto"); caja.replaceChildren(); return; }
+    const D = diagramas[seleccion.dim], d = dimDe(seleccion.dim);
+    D.seccion.querySelector(".cl-lista-hueco").appendChild(caja);
+    caja.classList.remove("oculto");
+    const ids = idsElegidos(D);
+    const lista = (datos[d.clave]?.filas || []).filter(f => ids.has(f.id)).sort((a, b) => a.codigo.localeCompare(b.codigo, "es"));
+    const otrasN = ids.size - lista.length;
+    const g = D.geo;
+    const titulo = seleccion.tipo === "enlace"
+      ? `${g.enlaces[seleccion.clave].textoDe} → ${g.enlaces[seleccion.clave].textoA}` : g.nodos[seleccion.clave].etiqueta;
+    caja.innerHTML = `
+      <div class="cl-lista-cab">
+        <h3><span class="cl-lista-mod">${esc(d.nombre)}</span>${esc(titulo)} · ${plural(ids.size, "entrevista")}</h3>
+        <button type="button" class="btn chico" id="cl-soltar">Quitar selección</button>
+      </div>
+      ${lista.length ? `<p class="cl-lista-ayuda">Arrastre una tarjeta (o su asa <span aria-hidden="true">⠿</span> en el celular) hasta una
+        categoría de la columna «Categoría final» de este módulo para moverla. Tóquela para ver su ficha.</p>` : ""}
+      ${otrasN ? `<p class="cl-lista-ayuda">${plural(otrasN, "entrevista")} ${d.activa
+        ? `no ${otrasN === 1 ? "respondió" : "respondieron"} este módulo: no hay nada que clasificar.`
+        : `de un módulo que aún no tiene reglas de clasificación: todavía no hay nada que revisar.`}</p>` : ""}
+      <div class="cl-tarjetas">${lista.map(f => {
+        const c = f.clasificacion, est = estadoDe(f);
+        return `<div class="cl-tarjeta" data-id="${esc(f.id)}" tabindex="0" role="button"
+            aria-label="${esc(f.codigo)}, ${esc(f.municipio || "sin municipio")}: abrir ficha">
+          <span class="cl-asa" aria-hidden="true">⠿</span>
+          <span class="cl-tarjeta-txt">
+            <b>${esc(f.codigo)}</b>
+            <small>${esc(f.municipio || "Sin municipio")}${c?.confianza ? ` · confianza ${esc(c.confianza)}` : ""}</small>
+            <small>${c ? chip(d, c.categoria) : "Por clasificar"} · ${ETIQUETA_ESTADO[est]}${c?.desactualizada ? " · ⚠" : ""}</small>
+          </span>
+        </div>`;}).join("")}</div>`;
+    $("#cl-soltar").onclick = () => elegir(null);
+  }
+
+  function elegir(sel){
+    const igual = seleccion && sel && seleccion.dim === sel.dim && seleccion.tipo === sel.tipo && seleccion.clave === sel.clave;
+    const antes = seleccion?.dim;
+    seleccion = igual ? null : sel;
+    if(seleccion?.dim && datos[seleccion.dim]) trabajarEn(seleccion.dim);
+    for(const k of new Set([antes, seleccion?.dim].filter(Boolean))){
+      const D = diagramas[k]; if(D?.geo){ D.dibujar(D.geo); D.moverParticulas(0); }
+    }
+    pintarLista();
+    pintarTabla();
+    if(seleccion) $("#cl-lista").scrollIntoView({behavior: sinMovimiento() ? "auto" : "smooth", block:"nearest"});
+  }
+
+  /* ------------- arrastrar una tarjeta a una categoría final ------------- */
+
+  let arr = null;
+
+  function destinoBajo(x, y){
+    const n = document.elementFromPoint(x, y)?.closest?.("[data-destino]");
+    // Solo valen las categorías del mismo módulo
+    return n && n.closest(".cl-modulo")?.dataset.dim === dim ? n.dataset.destino : null;
+  }
+  function marcarDestino(cat){
+    $$(`.cl-modulo[data-dim="${CSS.escape(dim || "")}"] [data-destino]`).forEach(g => g.classList.toggle("sobre", g.dataset.destino === cat));
+  }
+  function alPresionarTarjeta(ev){
+    const t = ev.target.closest(".cl-tarjeta"); if(!t || ev.button > 0) return;
+    // En pantallas táctiles se arrastra desde el asa, para no impedir el desplazamiento de la página
+    if(ev.pointerType === "touch" && !ev.target.closest(".cl-asa")) return;
+    arr = {t, id: t.dataset.id, x0: ev.clientX, y0: ev.clientY, moviendo: false, fantasma: null};
+    t.setPointerCapture(ev.pointerId);
+  }
+  function alMoverTarjeta(ev){
+    if(!arr) return;
+    if(!arr.moviendo){
+      if(Math.hypot(ev.clientX - arr.x0, ev.clientY - arr.y0) < UMBRAL_ARRASTRE) return;
+      arr.moviendo = true;
+      const f = arr.t.cloneNode(true); f.classList.add("cl-fantasma"); f.removeAttribute("tabindex");
+      f.style.width = arr.t.offsetWidth + "px";
+      document.body.appendChild(f); arr.fantasma = f;
+      arr.t.classList.add("arrastrada");
+      diagramas[dim]?.svg.classList.add("soltando");
+    }
+    arr.fantasma.style.transform = `translate(${ev.clientX + 12}px, ${ev.clientY + 12}px)`;
+    arr.destino = destinoBajo(ev.clientX, ev.clientY);
+    marcarDestino(arr.destino);
+  }
+  function terminarArrastre(){
+    arr?.fantasma?.remove(); arr?.t.classList.remove("arrastrada");
+    $$(".cl-red.soltando").forEach(s => s.classList.remove("soltando")); marcarDestino(null);
+  }
+  function alSoltarTarjeta(){
+    if(!arr) return;
+    const {id, moviendo, destino} = arr;
+    terminarArrastre(); arr = null;
+    if(!moviendo){ abrirFicha(id); return; }
+    const f = filas.find(x => x.id === id);
+    if(f && destino && destino !== f.clasificacion?.categoria) confirmarMovida(f, destino);
+  }
+
+  /* ------------------------------ tabla ------------------------------ */
+
+  function pintarTabla(){
+    const d = dimAbierta();
+    $("#cl-tabla-titulo").textContent = d ? `Ver como tabla · ${d.nombre}` : "Ver como tabla";
+    if(!d){ $("#cl-tabla").innerHTML = ""; return; }
+    const vista = filtrarFilas(filas);
     $("#cl-tabla").innerHTML = `<thead><tr><th>Código</th><th>Municipio</th><th>Categoría</th>
       <th>Propuesta de la IA</th><th>Confianza</th><th>Revisión</th><th></th></tr></thead><tbody>` +
       (vista.length ? [...vista].sort((a,b) => a.codigo.localeCompare(b.codigo, "es")).map(f => {
@@ -348,191 +830,56 @@ const Clasificacion = (() => {
     $$("#cl-tabla [data-ficha]").forEach(b => b.onclick = () => abrirFicha(b.dataset.ficha));
   }
 
-  /* Muestras pequeñas para la leyenda */
-  const muestra = color => `<svg width="14" height="14" aria-hidden="true"><circle cx="7" cy="7" r="6" fill="${color}"/></svg>`;
-  const muestraModulo = () => `<svg width="18" height="18" viewBox="-9 -9 18 18" aria-hidden="true"><circle r="7.5" fill="none" stroke="var(--suave)" stroke-width="2.5"/><circle r="4" fill="var(--superficie)" stroke="var(--texto)" stroke-width="1.2"/></svg>`;
-  const muestraVacia = () => `<svg width="14" height="14" aria-hidden="true"><circle cx="7" cy="7" r="5.5" fill="none" stroke="var(--borde-2)" stroke-dasharray="3 3"/></svg>`;
-  function muestraPunto(tipo){
-    const base = `<svg width="22" height="22" viewBox="-11 -11 22 22" aria-hidden="true">`;
-    if(tipo === "pendiente") return base + `<circle r="6" fill="var(--superficie)" stroke="var(--suave)" stroke-width="1.5"/></svg>`;
-    if(tipo === "vieja") return base + `<circle r="9.5" fill="none" stroke="var(--estado-aviso)" stroke-width="2" stroke-dasharray="3 2.5"/><circle r="6" fill="var(--cat-neutro)"/></svg>`;
-    const anillo = tipo === "ia" ? "" : ` stroke="var(--texto)" stroke-width="2.2"`;
-    return base + `<circle r="6.5" fill="var(--cat-neutro)"${anillo}/>` +
-      (tipo === "movida" ? `<circle r="2.3" fill="var(--superficie)"/>` : "") + `</svg>`;
-  }
+  const muestraFlujo = color => `<svg width="22" height="12" aria-hidden="true"><path d="M1 2C11 2 11 6 21 6L21 11C11 11 11 7 1 7Z" fill="${color}" opacity=".75"/></svg>`;
   const chip = (d, clave) => `<span class="cl-chip"><i style="background:${colorDe(d, clave)}"></i>${esc(nombreCat(d, clave))}</span>`;
 
   /* ------------------------------ tooltip ------------------------------ */
 
-  function mostrarTip(ev, f){
-    const d = dimAbierta(), c = f.clasificacion, tip = $("#cl-tip");
+  function mostrarTip(sec, ev, lineas){
+    const tip = sec.querySelector(".cl-tip");
     tip.replaceChildren();
-    const b = document.createElement("b"); b.textContent = f.codigo; tip.appendChild(b);
-    const lin = (t, color) => {
-      const s = document.createElement("div");
-      if(color){ const i = document.createElement("i"); i.style.background = color; s.appendChild(i); }
-      s.appendChild(document.createTextNode(t)); tip.appendChild(s);
-    };
-    lin(f.municipio || "Sin municipio");
-    lin(c ? nombreCat(d, c.categoria) : "Por clasificar", c ? colorDe(d, c.categoria) : null);
-    lin(ETIQUETA_ESTADO[estadoDe(f)] + (c?.confianza && !c.categoria_final ? ` · confianza ${c.confianza}` : ""));
-    if(c?.categoria_final && c.categoria_ia && c.categoria_final !== c.categoria_ia) lin(`La IA había propuesto: ${nombreCat(d, c.categoria_ia)}`);
-    if(c?.desactualizada) lin("⚠ Las respuestas cambiaron o las reglas son nuevas");
+    lineas.forEach(([texto, color], i) => {
+      const s = document.createElement(i ? "div" : "b");
+      if(color){ const k = document.createElement("i"); k.style.background = color; s.appendChild(k); }
+      s.appendChild(document.createTextNode(texto)); tip.appendChild(s);
+    });
     tip.classList.remove("oculto");
-    moverTip(ev);
-  }
-  function moverTip(ev){
-    const tip = $("#cl-tip"), caja = $("#cl-red-caja").getBoundingClientRect();
+    const caja = sec.querySelector(".cl-red-caja").getBoundingClientRect();
     let x = ev.clientX - caja.left + 14, y = ev.clientY - caja.top + 14;
     if(x + tip.offsetWidth > caja.width - 6) x = ev.clientX - caja.left - tip.offsetWidth - 14;
     if(y + tip.offsetHeight > caja.height - 6) y = ev.clientY - caja.top - tip.offsetHeight - 14;
     tip.style.left = Math.max(6, x) + "px"; tip.style.top = Math.max(6, y) + "px";
   }
-  const ocultarTip = () => $("#cl-tip")?.classList.add("oculto");
+  const ocultarTips = () => $$(".cl-tip").forEach(t => t.classList.add("oculto"));
 
-  /* ------------------------------ arrastrar ------------------------------ */
-
-  let arr = null;        // circulito que se está arrastrando
-  let pan = null;        // desplazamiento del fondo en curso
-  let pellizco = null;   // zoom con dos dedos en curso
-  const toques = new Map();
-
-  /* Punto del puntero en las coordenadas de los dibujos (ya con el zoom aplicado) */
-  function aSvg(ev){
-    const svg = $("#cl-red"), pt = svg.createSVGPoint();
-    pt.x = ev.clientX; pt.y = ev.clientY;
-    const ref = $("#cl-vista") || svg;
-    return pt.matrixTransform(ref.getScreenCTM().inverse());
-  }
-  /* Punto del puntero en las coordenadas del lienzo, sin zoom */
-  function aLienzo(x, y){
-    const svg = $("#cl-red"), pt = svg.createSVGPoint();
-    pt.x = x; pt.y = y;
-    return pt.matrixTransform(svg.getScreenCTM().inverse());
-  }
-
-  /* ------------------------------ zoom y desplazamiento ------------------------------ */
-
-  function aplicarZoom(){
-    $("#cl-vista")?.setAttribute("transform", `translate(${zoom.x.toFixed(1)} ${zoom.y.toFixed(1)}) scale(${zoom.k.toFixed(3)})`);
-    $("#cl-zoom-menos").disabled = zoom.k <= ZOOM_MIN + 1e-3;
-    $("#cl-zoom-mas").disabled = zoom.k >= ZOOM_MAX - 1e-3;
-  }
-  /* Acerca o aleja manteniendo fijo el punto (px, py) del lienzo */
-  function zoomEn(px, py, factor){
-    const k = Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, zoom.k * factor)), f = k / zoom.k;
-    zoom = {k, x: px - (px - zoom.x) * f, y: py - (py - zoom.y) * f};
-    aplicarZoom();
-  }
-  const zoomCentro = factor => zoomEn(lienzo.W / 2, lienzo.H / 2, factor);
-  function restablecerZoom(){ zoom = {k:1, x:0, y:0}; aplicarZoom(); }
-  /* Cuántas unidades del lienzo hay en un píxel de pantalla */
-  const escalaPantalla = () => lienzo.W / ($("#cl-red").clientWidth || lienzo.W);
-
-  function alRodar(ev){
-    if(!dim || !(ev.ctrlKey || ev.metaKey)) return;      // la rueda sola sigue bajando la página
-    ev.preventDefault();
-    const p = aLienzo(ev.clientX, ev.clientY);
-    zoomEn(p.x, p.y, Math.exp(-ev.deltaY * 0.0025 * (ev.deltaMode === 1 ? 16 : 1)));
-  }
-
-  function datosPellizco(){
-    const [a, b] = [...toques.values()];
-    return {d: Math.hypot(a.x - b.x, a.y - b.y) || 1, x: (a.x + b.x) / 2, y: (a.y + b.y) / 2};
-  }
-  function hubBajo(x, y){
-    let mejor = null, dmin = Infinity;
-    for(const h of hubs){
-      if(!h.clave) continue;                       // a «por clasificar» no se suelta
-      const dd = Math.hypot(h.x - x, h.y - y);
-      if(dd < Math.max(R_HUB + 34, h.radio * 0.8) && dd < dmin){ mejor = h; dmin = dd; }
+  function tipDe(ev){
+    const sec = ev.target.closest?.(".cl-modulo"); if(!sec) return ocultarTips();
+    const D = diagramas[sec.dataset.dim]; if(!D?.geo) return;
+    const e = ev.target.closest?.("[data-enlace]"), n = ev.target.closest?.("[data-nodo]");
+    if(e){
+      const g = D.geo.enlaces[e.dataset.enlace]; if(!g) return ocultarTips();
+      const lineas = [[plural(g.n, "entrevista")], [`${g.textoDe} → ${g.textoA}`, g.color]];
+      if(g.cambio) lineas.push(["Movidas por el equipo"]);
+      lineas.push(["Toque para ver la lista"]);
+      return mostrarTip(sec, ev, lineas);
     }
-    return mejor;
-  }
-  function marcarDestino(h){
-    $$("#cl-red .hub").forEach(g => g.classList.toggle("destino", !!h && g.dataset.hub === h.clave));
+    if(n){
+      const g = D.geo.nodos[n.dataset.nodo]; if(!g) return ocultarTips();
+      const lineas = [[plural(g.n, "entrevista")], [g.etiqueta, g.punteado ? null : g.color]];
+      if(g.destino) lineas.push(["Suelte aquí una tarjeta para moverla a esta categoría"]);
+      else if(g.n) lineas.push(["Toque para ver la lista"]);
+      return mostrarTip(sec, ev, lineas);
+    }
+    ocultarTips();
   }
 
-  function alPresionar(ev){
-    if(ev.button > 0) return;
-    const svg = $("#cl-red");
-    if(dim && ev.pointerType === "touch"){
-      toques.set(ev.pointerId, {x:ev.clientX, y:ev.clientY});
-      if(toques.size === 2){                     // segundo dedo: se cancela lo demás y empieza el pellizco
-        if(arr?.moviendo){ arr = null; marcarDestino(null); pintar(); }
-        arr = null; pan = null;
-        pellizco = datosPellizco();
-        svg.setPointerCapture(ev.pointerId);
-        return;
-      }
-    }
-    const g = ev.target.closest(".punto");
-    if(!g){
-      if(!dim || ev.target.closest(".hub")) return;
-      pan = {x0:ev.clientX, y0:ev.clientY, zx:zoom.x, zy:zoom.y};
-      svg.classList.add("desplazando"); ocultarTip();
-      svg.setPointerCapture(ev.pointerId);
-      return;
-    }
-    const f = filas.find(x => x.id === g.dataset.id); if(!f) return;
-    arr = {g, f, x0:ev.clientX, y0:ev.clientY, moviendo:false, id:ev.pointerId};
-    svg.setPointerCapture(ev.pointerId);
-  }
-  function alMover(ev){
-    if(toques.has(ev.pointerId)) toques.set(ev.pointerId, {x:ev.clientX, y:ev.clientY});
-    if(pellizco && toques.size === 2){
-      const ahora = datosPellizco(), k = escalaPantalla();
-      zoom.x += (ahora.x - pellizco.x) * k; zoom.y += (ahora.y - pellizco.y) * k;
-      const p = aLienzo(ahora.x, ahora.y);
-      zoomEn(p.x, p.y, ahora.d / pellizco.d);
-      pellizco = ahora;
-      return;
-    }
-    if(pan){
-      const k = escalaPantalla();
-      zoom.x = pan.zx + (ev.clientX - pan.x0) * k;
-      zoom.y = pan.zy + (ev.clientY - pan.y0) * k;
-      aplicarZoom();
-      return;
-    }
-    if(!arr){
-      const g = ev.target.closest?.(".punto");
-      if(g){ const f = filas.find(x => x.id === g.dataset.id); if(f) mostrarTip(ev, f); }
-      else ocultarTip();
-      return;
-    }
-    if(!arr.moviendo && Math.hypot(ev.clientX - arr.x0, ev.clientY - arr.y0) < UMBRAL_ARRASTRE) return;
-    if(!arr.moviendo){
-      arr.moviendo = true; ocultarTip();
-      arr.g.classList.add("arrastrando");
-      arr.g.parentNode.appendChild(arr.g);        // queda encima de los demás
-    }
-    const p = aSvg(ev);
-    arr.g.style.transform = `translate(${p.x.toFixed(1)}px,${p.y.toFixed(1)}px)`;
-    arr.destino = hubBajo(p.x, p.y);
-    marcarDestino(arr.destino);
-  }
-  function alSoltar(ev){
-    toques.delete(ev?.pointerId);
-    if(pellizco){ if(toques.size < 2) pellizco = null; return; }
-    if(pan){ pan = null; $("#cl-red").classList.remove("desplazando"); return; }
-    if(!arr) return;
-    const {g, f, moviendo, destino} = arr;
-    arr = null;
-    marcarDestino(null);
-    g.classList.remove("arrastrando");
-    if(!moviendo){ abrirFicha(f.id); return; }
-    const actual = f.clasificacion?.categoria || null;
-    const volver = () => { g.style.transform = `translate(${f._x.toFixed(1)}px,${f._y.toFixed(1)}px)`; };
-    if(!destino || destino.clave === actual){ volver(); return; }
-    confirmarMovida(f, destino.clave).then(ok => { if(!ok) volver(); });
-  }
+  /* --------------------------- mover y deshacer --------------------------- */
 
   /* Confirmación con motivo opcional; resuelve true si se movió */
   function confirmarMovida(f, a){
     const d = dimAbierta(), dlg = $("#dlg-mover");
     const de = f.clasificacion ? `de «${nombreCat(d, f.clasificacion.categoria)}» ` : "";
-    $("#mover-texto").textContent = `¿Mover la entrevista ${f.codigo} ${de}a «${nombreCat(d, a)}»?`;
+    $("#mover-texto").textContent = `Módulo «${d.nombre}»: ¿mover la entrevista ${f.codigo} ${de}a «${nombreCat(d, a)}»?`;
     $("#mover-motivo").value = "";
     dlg.showModal();
     return new Promise(res => {
@@ -550,16 +897,15 @@ const Clasificacion = (() => {
 
   /* Guarda la categoría del equipo. Con `deshacible` ofrece volver atrás unos segundos. */
   async function asignar(f, categoria, motivo, deshacible){
-    const antes = f.clasificacion ? f.clasificacion.categoria_final : null;
+    const clave = dim, antes = f.clasificacion ? f.clasificacion.categoria_final : null;
     try{
-      const nueva = await api(`/clasificaciones/${dim}/${f.id}/asignar`,
-        {method:"POST", body: JSON.stringify({categoria, motivo})});
-      reemplazarFila(nueva);
+      const nueva = await api(`/clasificaciones/${clave}/${f.id}/asignar`, {method:"POST", body: JSON.stringify({categoria, motivo})});
+      reemplazarFila(nueva, clave);
       pintar();
-      if(deshacible) ofrecerDeshacer(`${f.codigo} quedó en «${nombreCat(dimAbierta(), categoria)}»`, async () => {
-        const vuelta = await api(`/clasificaciones/${dim}/${f.id}/asignar`,
+      if(deshacible) ofrecerDeshacer(`${f.codigo} quedó en «${nombreCat(dimDe(clave), categoria)}»`, async () => {
+        const vuelta = await api(`/clasificaciones/${clave}/${f.id}/asignar`,
           {method:"POST", body: JSON.stringify({categoria: antes, motivo: "Deshacer"})});
-        reemplazarFila(vuelta); pintar(); aviso("Cambio deshecho");
+        reemplazarFila(vuelta, clave); pintar(); aviso("Cambio deshecho");
       });
       else aviso("Categoría guardada");
       return true;
@@ -580,7 +926,7 @@ const Clasificacion = (() => {
 
   function abrirFicha(id){
     const f = filas.find(x => x.id === id); if(!f) return;
-    ocultarTip();
+    ocultarTips();
     const d = dimAbierta(), c = f.clasificacion, estado = estadoDe(f);
     const fecha = t => t ? new Date(t).toLocaleString("es-CO", {dateStyle:"medium", timeStyle:"short"}) : "";
     const otras = d.categorias.filter(x => x.clave !== c?.categoria);
@@ -589,7 +935,7 @@ const Clasificacion = (() => {
       <ul class="cl-citas">${c.evidencias[x.clave].map(t => `<li>«${esc(t)}»</li>`).join("")}</ul>`).join("") : "";
 
     $("#clas-ficha").innerHTML = `
-      <div class="gorro">${esc(d.nombre)}</div>
+      <div class="gorro">Módulo: ${esc(d.nombre)}</div>
       <h2 class="titulo" id="clas-titulo" style="font-size:21px">${esc(f.codigo)}</h2>
       <p class="bajada" style="font-size:14.5px">${esc(f.municipio || "Sin municipio")} · entrevista ${esc(f.estado)}</p>
       ${c?.desactualizada ? `<div class="cl-aviso"><span aria-hidden="true">⚠</span><span>Las respuestas cambiaron o las reglas
@@ -631,7 +977,7 @@ const Clasificacion = (() => {
       if(acc === "confirmar") await asignar(f, c.categoria, "", false);
       if(acc === "cambiar"){ dlg.close(); await confirmarMovida(f, $("#clas-otra").value); return; }
       if(acc === "volver") await asignar(f, null, "", false);
-      if(acc === "ia") await clasificarUna(f, true);
+      if(acc === "ia") await clasificarUna(f, true, dim);
       abrirFicha(id);
     });
     $("#clas-ver").onclick = () => { dlg.close(); verDetalle(id); };
@@ -640,27 +986,31 @@ const Clasificacion = (() => {
 
   /* ------------------------------ clasificar con IA ------------------------------ */
 
-  async function clasificarUna(f, forzar){
+  async function clasificarUna(f, forzar, clave){
     try{
-      const nueva = await api(`/clasificaciones/${dim}/${f.id}/ia`, {method:"POST", body: JSON.stringify({forzar})});
-      reemplazarFila(nueva);
+      const nueva = await api(`/clasificaciones/${clave}/${f.id}/ia`, {method:"POST", body: JSON.stringify({forzar})});
+      reemplazarFila(nueva, clave);
       pintar();
       return true;
     }catch(e){ aviso(e.message); return false; }
   }
 
-  const pendientes = () => filas.filter(f => !f.clasificacion?.categoria_ia || f.clasificacion.desactualizada);
+  const pendientesDe = clave => (datos[clave]?.filas || []).filter(f => !f.clasificacion?.categoria_ia || f.clasificacion.desactualizada);
   /* Propuestas vigentes hechas con un modelo anterior. El botón para rehacerlas
      solo aparece mientras queden: al terminar, desaparece solo. */
-  const deOtroModelo = () => filas.filter(f => f.clasificacion?.otro_modelo && !f.clasificacion.desactualizada);
+  const deOtroModeloDe = clave => (datos[clave]?.filas || []).filter(f => f.clasificacion?.otro_modelo && !f.clasificacion.desactualizada);
 
-  function pintarBoton(){
-    const b = $("#cl-clasificar"), r = $("#cl-reclasificar");
-    const n = pendientes().length, m = deOtroModelo().length;
+  function pintarBotones(clave){
+    const sec = diagramas[clave]?.seccion; if(!sec) return;
+    const b = sec.querySelector('[data-accion="clasificar"]'), r = sec.querySelector('[data-accion="reclasificar"]');
+    if(!b) return;
+    const n = pendientesDe(clave).length, m = deOtroModeloDe(clave).length;
     if(corriendo){
-      const activo = corriendo === "reclasificar" ? r : b, otro = activo === r ? b : r;
-      activo.textContent = "Detener"; activo.disabled = false;
-      otro.disabled = true;
+      b.disabled = r.disabled = true;
+      if(corriendo.clave === clave){
+        const activo = corriendo.modo === "reclasificar" ? r : b;
+        activo.textContent = "Detener"; activo.disabled = false;
+      }
       return;
     }
     b.textContent = n ? `Clasificar con IA (${n})` : "Todo clasificado";
@@ -669,73 +1019,91 @@ const Clasificacion = (() => {
     r.classList.toggle("oculto", !m || !ia.disponible);
     r.disabled = false;
     r.textContent = `Reclasificar con ${ia.modelo} (${m})`;
-    r.title = `Estas propuestas las hizo otro modelo. Las decisiones del equipo se mantienen.`;
+    r.title = "Estas propuestas las hizo otro modelo. Las decisiones del equipo se mantienen.";
   }
 
   /* Corre la IA de a una entrevista; un error de clave o saldo detiene el lote */
-  async function clasificarLote(modo){
+  async function clasificarLote(clave, modo){
     if(corriendo){ corriendo = false; return; }
     const reclasificar = modo === "reclasificar";
-    const cola = reclasificar ? deOtroModelo() : pendientes(); if(!cola.length) return;
+    const cola = reclasificar ? deOtroModeloDe(clave) : pendientesDe(clave); if(!cola.length) return;
+    const nombre = dimDe(clave).nombre;
     if(reclasificar && !confirm(
-      `Se volverán a clasificar ${cola.length} entrevista${cola.length === 1 ? "" : "s"} con ${ia.modelo}, ` +
-      `una por una (unos 10 segundos cada una). Se reemplaza solo la propuesta de la IA: ` +
+      `Se volverán a clasificar ${cola.length} entrevista${cola.length === 1 ? "" : "s"} del módulo «${nombre}» con ${ia.modelo}, ` +
+      `una por una (unos segundos cada una). Se reemplaza solo la propuesta de la IA: ` +
       `las categorías que el equipo confirmó o movió se mantienen.\n\n¿Continuar?`)) return;
-    corriendo = modo; pintarBoton();
+    corriendo = {clave, modo};
+    Object.keys(datos).forEach(pintarBotones);
+    const prog = diagramas[clave].seccion.querySelector(".cl-progreso");
     let hechas = 0;
     for(const f of cola){
       if(!corriendo) break;
-      $("#cl-progreso").textContent = `${reclasificar ? "Reclasificando" : "Clasificando"} ${hechas + 1} de ${cola.length}…`;
-      if(!await clasificarUna(f, reclasificar)) break;
+      prog.textContent = `${reclasificar ? "Reclasificando" : "Clasificando"} ${hechas + 1} de ${cola.length}…`;
+      if(!await clasificarUna(f, reclasificar, clave)) break;
       hechas++;
     }
     corriendo = false;
-    $("#cl-progreso").textContent = hechas ? `${hechas} ${reclasificar ? "reclasificada" : "clasificada"}${hechas === 1 ? "" : "s"}` : "";
-    pintarBoton();
+    prog.textContent = hechas ? `${hechas} ${reclasificar ? "reclasificada" : "clasificada"}${hechas === 1 ? "" : "s"}` : "";
+    Object.keys(datos).forEach(pintarBotones);
   }
 
   /* ------------------------------ eventos ------------------------------ */
 
   function conectar(){
-    const svg = $("#cl-red");
-    svg.addEventListener("pointerdown", alPresionar);
-    svg.addEventListener("pointermove", alMover);
-    svg.addEventListener("pointerup", alSoltar);
-    svg.addEventListener("pointercancel", ev => {
-      toques.delete(ev.pointerId); pellizco = null;
-      if(pan){ pan = null; svg.classList.remove("desplazando"); }
-      if(arr){ arr = null; marcarDestino(null); pintar(); }
+    const caja = $("#cl-modulos"), lista = $("#cl-lista");
+    caja.addEventListener("pointermove", ev => { if(!arr) tipDe(ev); });
+    caja.addEventListener("pointerleave", ocultarTips);
+    caja.addEventListener("click", ev => {
+      const accion = ev.target.closest("[data-accion]");
+      if(accion){
+        const clave = accion.closest(".cl-modulo").dataset.dim;
+        trabajarEn(clave);
+        return clasificarLote(clave, accion.dataset.accion === "reclasificar" ? "reclasificar" : "pendientes");
+      }
+      const sec = ev.target.closest(".cl-modulo");
+      if(!sec || !ev.target.closest(".cl-red")) return;
+      const clave = sec.dataset.dim, D = diagramas[clave];
+      const e = ev.target.closest("[data-enlace]"), n = ev.target.closest("[data-nodo]");
+      if(e) return elegir({dim: clave, tipo:"enlace", clave: e.dataset.enlace});
+      if(n && D?.geo?.nodos[n.dataset.nodo]?.n) return elegir({dim: clave, tipo:"nodo", clave: n.dataset.nodo});
+      if(seleccion) elegir(null);
     });
-    svg.addEventListener("wheel", alRodar, {passive:false});
-    $("#cl-zoom-mas").onclick = () => zoomCentro(1.35);
-    $("#cl-zoom-menos").onclick = () => zoomCentro(1 / 1.35);
-    $("#cl-zoom-reset").onclick = restablecerZoom;
-    svg.addEventListener("pointerleave", () => { if(!arr) ocultarTip(); });
-    svg.addEventListener("click", ev => {
-      const n = ev.target.closest(".nodo:not(.inactivo)");
-      if(n && !dim) irA(n.dataset.dim);
-    });
-    svg.addEventListener("keydown", ev => {
+    caja.addEventListener("keydown", ev => {
       if(ev.key !== "Enter" && ev.key !== " ") return;
-      const n = ev.target.closest(".nodo:not(.inactivo)"), p = ev.target.closest(".punto");
-      if(n && !dim){ ev.preventDefault(); irA(n.dataset.dim); }
-      if(p){ ev.preventDefault(); abrirFicha(p.dataset.id); }
+      const sec = ev.target.closest(".cl-modulo"), e = ev.target.closest("[data-enlace]"), n = ev.target.closest("[data-nodo]");
+      if(!sec) return;
+      if(e){ ev.preventDefault(); elegir({dim: sec.dataset.dim, tipo:"enlace", clave: e.dataset.enlace}); }
+      else if(n){ ev.preventDefault(); elegir({dim: sec.dataset.dim, tipo:"nodo", clave: n.dataset.nodo}); }
     });
-    svg.addEventListener("focusin", ev => {
-      const p = ev.target.closest(".punto"); if(!p) return;
-      const f = filas.find(x => x.id === p.dataset.id), r = p.getBoundingClientRect();
-      if(f) mostrarTip({clientX: r.right, clientY: r.bottom}, f);
+    caja.addEventListener("focusin", ev => {
+      if(!ev.target.closest?.(".cl-red")) return;
+      const r = ev.target.getBoundingClientRect?.(); if(r) tipDe({target: ev.target, clientX: r.right, clientY: r.top + r.height / 2});
     });
-    svg.addEventListener("focusout", ocultarTip);
-    $("#cl-municipio").onchange = pintar;
-    $("#cl-revision").onchange = pintar;
-    $("#cl-confianza").onchange = pintar;
-    $("#cl-clasificar").onclick = () => clasificarLote("pendientes");
-    $("#cl-reclasificar").onclick = () => clasificarLote("reclasificar");
+    caja.addEventListener("focusout", ocultarTips);
+
+    lista.addEventListener("pointerdown", alPresionarTarjeta);
+    lista.addEventListener("pointermove", alMoverTarjeta);
+    lista.addEventListener("pointerup", alSoltarTarjeta);
+    lista.addEventListener("pointercancel", () => { if(arr){ terminarArrastre(); arr = null; } });
+    lista.addEventListener("keydown", ev => {
+      const t = ev.target.closest(".cl-tarjeta");
+      if(t && (ev.key === "Enter" || ev.key === " ")){ ev.preventDefault(); abrirFicha(t.dataset.id); }
+    });
+
+    $("#cl-pausa").onclick = alternarPausa;
+    $("#cl-municipio").onchange = () => pintar();
+    $("#cl-revision").onchange = () => pintar();
+    $("#cl-confianza").onchange = () => pintar();
     $("#clas-cerrar").onclick = () => $("#dlg-clas").close();
-    let t; window.addEventListener("resize", () => {
-      clearTimeout(t); t = setTimeout(() => { if(!$("#vista-clasificacion").classList.contains("oculto")) pintar(); }, 200);
+    let t, anchoAntes = 0;
+    window.addEventListener("resize", () => {
+      clearTimeout(t); t = setTimeout(() => {
+        const ancho = $("#cl-modulos .cl-red-caja")?.clientWidth || 0;
+        if(ancho === anchoAntes || $("#vista-clasificacion").classList.contains("oculto")) return;
+        anchoAntes = ancho; pintar();
+      }, 200);
     });
+    window.matchMedia("(prefers-reduced-motion: reduce)").addEventListener?.("change", () => { pintar(); arrancarParticulas(); });
   }
 
   return { abrir };

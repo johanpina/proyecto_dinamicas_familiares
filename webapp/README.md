@@ -141,8 +141,10 @@ Los CSV usan `;` como separador y llevan BOM, así que Excel en español los abr
 
 ## Clasificación por dimensiones
 
-En el panel, la pestaña **Clasificación** muestra un diagrama de red: un círculo por
-módulo de la entrevista y, al tocar uno, sus categorías con un circulito por entrevista.
+En el panel, la pestaña **Clasificación** muestra todos los módulos de la entrevista a la vez,
+cada uno con su diagrama de Sankey: entrevistas → respondieron el módulo / no → confianza de la
+IA → propuesta de la IA → categoría final (los módulos sin reglas llegan hasta «sin reglas aún»).
+Un punto por entrevista recorre el diagrama y los contadores suben a medida que llegan.
 Cada entrevista queda en **una sola** categoría por dimensión.
 
 - Las dimensiones, sus categorías, definiciones y reglas están en `app/dimensiones.py`.
@@ -154,7 +156,8 @@ Cada entrevista queda en **una sola** categoría por dimensión.
   desactualizadas.
 - La IA propone la categoría con una justificación y las frases de la persona que la
   sustentan. Se le envían **solo las respuestas del módulo**, nunca la ficha.
-- El equipo confirma o corrige **arrastrando el circulito** a otra categoría (o desde la
+- El equipo confirma o corrige **arrastrando la tarjeta de la entrevista** (al tocar un flujo
+  se listan sus entrevistas) a una categoría de la columna final (o desde la
   ficha). Se guardan las dos —la de la IA y la del equipo— con quién, cuándo y por qué, y
   volver a clasificar con IA nunca pisa una decisión del equipo.
 - Si las respuestas cambian o se suben las reglas, la clasificación queda marcada como
@@ -184,7 +187,7 @@ webapp/
 │   ├── js/app.js      guía de preguntas, pasos, guardado y sincronización
 │   ├── js/dibujo.js   el dibujo de la familia
 │   ├── js/panel.js
-│   └── js/clasificacion.js  diagrama de red de la clasificación
+│   └── js/clasificacion.js  diagrama de Sankey de la clasificación
 ├── usuarios.py        administración de cuentas
 └── docker-compose.yml
 ```

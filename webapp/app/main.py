@@ -482,13 +482,18 @@ def _anotar(c: Clasificacion, **cambio) -> None:
 
 @app.get("/api/dimensiones")
 def listar_dimensiones(u: Usuario = Depends(usuario_actual), s: Session = Depends(obtener_sesion)):
-    """Las dimensiones de análisis con sus categorías y cuántas entrevistas hay en cada una."""
-    entrevistas = s.scalars(select(Entrevista)).all()
+    """Las dimensiones de análisis con sus categorías y cuántas entrevistas hay en cada una.
+    Trae también la lista liviana de entrevistas y, por dimensión, cuáles respondieron
+    el módulo (aunque todavía no tenga reglas), para dibujar todos los módulos a la vez."""
+    entrevistas = s.scalars(select(Entrevista).order_by(Entrevista.codigo)).all()
     salida = []
     for d in DIMENSIONES:
         conteo = {"elegibles": 0, "clasificadas": 0, "revisadas": 0,
                   "por_categoria": {k: 0 for k in claves_categoria(d)}}
-        if activa(d):
+        respondieron = [e.id for e in entrevistas if _elegible(d, e)]
+        if not activa(d):
+            conteo["elegibles"] = len(respondieron)
+        else:
             clas = _clasificaciones(s, d["clave"])
             for e in entrevistas:
                 c = clas.get(e.id)
@@ -505,10 +510,12 @@ def listar_dimensiones(u: Usuario = Depends(usuario_actual), s: Session = Depend
             "activa": activa(d), "version": d.get("version", ""), "fuente": d.get("fuente", ""),
             "categorias": [{k: c[k] for k in ("clave", "nombre", "definicion", "incluye")}
                            for c in d.get("categorias", [])],
-            "conteo": conteo,
+            "conteo": conteo, "respondieron": respondieron,
         })
     return {"total_entrevistas": len(entrevistas),
             "ia": {"disponible": clasificador.disponible(), "modelo": clasificador.modelo()},
+            "entrevistas": [{"id": e.id, "codigo": e.codigo, "municipio": e.municipio, "estado": e.estado}
+                            for e in entrevistas],
             "dimensiones": salida}
 
 
@@ -517,12 +524,15 @@ def listar_clasificaciones(dimension: str, u: Usuario = Depends(usuario_actual),
                            s: Session = Depends(obtener_sesion)):
     d = _dimension(dimension)
     clas = _clasificaciones(s, dimension)
-    filas = []
+    filas, otras = [], []
     for e in s.scalars(select(Entrevista).order_by(Entrevista.codigo)).all():
         c = clas.get(e.id)
         if _elegible(d, e) or (c and c.categoria):
             filas.append(_fila_clasificacion(d, e, c))
-    return {"dimension": dimension, "entrevistas": filas,
+        else:
+            # Las que no respondieron el módulo: solo para contarlas en el diagrama
+            otras.append({"id": e.id, "codigo": e.codigo, "municipio": e.municipio, "estado": e.estado})
+    return {"dimension": dimension, "entrevistas": filas, "otras": otras,
             "ia": {"disponible": clasificador.disponible(), "modelo": clasificador.modelo()}}
 
 
