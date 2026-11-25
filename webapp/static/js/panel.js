@@ -11,6 +11,10 @@ const esc = s => String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&
 let token = localStorage.getItem("uc_token") || "";
 let perfil = null;
 let actual = null;
+let filasLista = [];
+
+// Solo la coordinación puede eliminar entrevistas (el servidor también lo exige)
+const esCoordinacion = () => perfil?.rol === "coordinador";
 
 function aviso(m){
   const t = $("#aviso"); t.textContent = m; t.classList.add("on");
@@ -99,7 +103,8 @@ async function cargarLista(){
   const q = new URLSearchParams();
   if($("#f-municipio").value.trim()) q.set("municipio", $("#f-municipio").value.trim());
   if($("#f-estado").value) q.set("estado", $("#f-estado").value);
-  const filas = await api("/entrevistas" + (q.toString() ? "?"+q : ""));
+  const filas = filasLista = await api("/entrevistas" + (q.toString() ? "?"+q : ""));
+  const borra = esCoordinacion();
   $("#filas").innerHTML = filas.length ? filas.map(e => `
     <tr>
       <td><b>${esc(e.codigo)}</b></td>
@@ -110,10 +115,15 @@ async function cargarLista(){
       <td>${e.personas}</td>
       <td>${e.respondidas}</td>
       <td><span class="etiqueta et-${e.estado}">${e.estado}</span></td>
-      <td><button class="btn chico" data-ver="${e.id}">Ver</button></td>
+      <td style="white-space:nowrap"><button class="btn chico" data-ver="${e.id}">Ver</button>${borra
+        ? ` <button class="btn chico peligro" data-borrar="${e.id}" aria-label="Eliminar la entrevista ${esc(e.codigo)}">Eliminar</button>` : ""}</td>
     </tr>`).join("")
     : `<tr><td colspan="9" style="color:var(--suave)">No hay entrevistas con ese filtro.</td></tr>`;
   $$("#filas [data-ver]").forEach(b => b.onclick = () => verDetalle(b.dataset.ver));
+  $$("#filas [data-borrar]").forEach(b => b.onclick = () => {
+    const e = filasLista.find(f => f.id === b.dataset.borrar);
+    if(e) pedirEliminar({id:e.id, codigo:e.codigo, municipio:e.municipio, identidad:e.identidad, estado:e.estado});
+  });
 }
 
 async function verDetalle(id){
@@ -157,7 +167,39 @@ async function verDetalle(id){
     <h3>Revisión</h3>
     <textarea id="d-nota" class="corto" placeholder="Observaciones de la revisión…">${esc(e.nota_revision||"")}</textarea>
     ${e.revisada_por ? `<p style="font-size:13.5px;color:var(--suave);margin-top:8px">Revisada por ${esc(e.revisada_por)}.</p>` : ""}`;
+  $("#d-eliminar").classList.toggle("oculto", !esCoordinacion());
   $("#dlg-detalle").showModal();
+}
+
+/* ---------------------------- eliminar (coordinación) ---------------------------- */
+
+let porEliminar = null;
+
+function pedirEliminar(e){
+  if(!esCoordinacion()) return;
+  porEliminar = e;
+  $("#elim-texto").textContent = `${e.codigo} · ${e.municipio || "sin municipio"} · ` +
+    `participante: ${e.identidad || "—"} · estado: ${e.estado}`;
+  $("#elim-confirmar").disabled = false;
+  $("#dlg-eliminar").showModal();
+  $("#elim-cancelar").focus();          // el foco arranca en la opción segura
+}
+
+async function eliminar(){
+  if(!porEliminar) return;
+  const e = porEliminar;
+  $("#elim-confirmar").disabled = true;
+  try{
+    await api("/entrevistas/" + encodeURIComponent(e.id), {method:"DELETE"});
+    $("#dlg-eliminar").close();
+    if($("#dlg-detalle").open && actual?.id === e.id) $("#dlg-detalle").close();
+    porEliminar = null;
+    aviso(`Entrevista ${e.codigo} eliminada`);
+    await Promise.all([cargarKpis(), cargarLista()]);
+  }catch(err){
+    $("#elim-confirmar").disabled = false;
+    aviso(err.message);
+  }
 }
 
 async function marcar(estado){
@@ -182,6 +224,13 @@ function init(){
   $("#d-cerrar").onclick = () => $("#dlg-detalle").close();
   $("#d-revisar").onclick = () => marcar("revisada");
   $("#d-devolver").onclick = () => marcar("enviada");
+  $("#d-eliminar").onclick = () => {
+    if(!actual) return;
+    const f = (actual.datos || {}).datos || {};
+    pedirEliminar({id:actual.id, codigo:actual.codigo, municipio:f.municipio, identidad:f.identidad, estado:actual.estado});
+  };
+  $("#elim-cancelar").onclick = () => $("#dlg-eliminar").close();
+  $("#elim-confirmar").onclick = eliminar;
   if(token) abrirPanel();
 }
 init();

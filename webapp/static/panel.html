@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Panel de revisión — Familia, diversidad y territorio</title>
 <link rel="icon" href="/static/img/ucaldas.png">
-<link rel="stylesheet" href="/static/css/app.css?v=20261030p">
+<link rel="stylesheet" href="/static/css/app.css?v=20261125a">
 <style>main{max-width:1140px}</style>
 <!-- ?v=… obliga al navegador a bajar los archivos nuevos tras cada cambio: súbalo al modificarlos -->
 </head>
@@ -125,7 +125,21 @@
     <button class="btn chico pri" id="d-revisar">Marcar como revisada</button>
     <button class="btn chico" id="d-devolver">Devolver a «enviada»</button>
     <span class="crece"></span>
+    <button class="btn chico peligro oculto" id="d-eliminar">Eliminar entrevista</button>
     <button class="btn chico" id="d-cerrar">Cerrar</button>
+  </div>
+</dialog>
+
+<!-- Confirmación para eliminar: solo la ve la coordinación -->
+<dialog id="dlg-eliminar" aria-labelledby="elim-titulo">
+  <h2 class="titulo" id="elim-titulo" style="font-size:20px">¿Eliminar esta entrevista?</h2>
+  <p class="bajada" id="elim-texto" style="font-size:14.5px"></p>
+  <p style="font-size:14.5px;color:var(--peligro)">Se borran sus respuestas, el dibujo y sus clasificaciones. No se puede deshacer:
+    si la necesita después, descargue antes el JSON.</p>
+  <div style="display:flex;gap:10px;margin-top:20px;flex-wrap:wrap">
+    <span class="crece"></span>
+    <button class="btn chico" id="elim-cancelar">Cancelar</button>
+    <button class="btn chico peligro" id="elim-confirmar">Sí, eliminar</button>
   </div>
 </dialog>
 
@@ -153,8 +167,8 @@
 
 <div class="aviso-flotante" id="aviso"></div>
 
-<script src="/static/js/dibujo.js?v=20261030p"></script>
-<script src="/static/js/panel.js?v=20261030p"></script>
-<script src="/static/js/clasificacion.js?v=20261030p"></script>
+<script src="/static/js/dibujo.js?v=20261125a"></script>
+<script src="/static/js/panel.js?v=20261125a"></script>
+<script src="/static/js/clasificacion.js?v=20261125a"></script>
 </body>
 </html>
